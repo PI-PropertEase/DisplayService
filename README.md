@@ -1,11 +1,13 @@
 # Display Service
+
 ```
-This microservice is responsible
-for providing the user interface and handling interaction with the use.
+This microservice is responsible for providing the user interface and handling interaction with the use.
 ```
 
 ### To run:
-* ``` pnpm run dev ```
+
+- `pnpm run dev`
 
 ### Note:
-* Comands with ```npx``` pass to ```pnpm dlx```
+
+- Comands with `npx` pass to `pnpm dlx`
