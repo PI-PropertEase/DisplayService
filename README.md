@@ -4,10 +4,22 @@
 This microservice is responsible for providing the user interface and handling interaction with the use.
 ```
 
-### To run:
+## Installation
 
-- `pnpm run dev`
+- If it's the first time running the service, install the dependencies by executing:
+
+```BASH
+pnpm install
+```
+
+## Running the Service
+
+- To start the service, run the following command:
+
+```BASH
+pnpm run dev
+```
 
 ### Note:
 
-- Comands with `npx` pass to `pnpm dlx`
+- Commands using `npx` should be replaced with `pnpm dlx`.
