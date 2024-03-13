@@ -1,8 +1,6 @@
 # Display Service
 
-```
-This microservice is responsible for providing the user interface and handling interaction with the use.
-```
+<span style="font-size: 120%">This microservice is responsible for providing the user interface and handling interaction with the use.</span>
 
 ## Installation
 
