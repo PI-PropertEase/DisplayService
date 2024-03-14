@@ -21,10 +21,9 @@ const myRouter = createBrowserRouter([
  ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+  <React.StrictMode >
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={myRouter} />
     </QueryClientProvider>
-
   </React.StrictMode>,
 )
