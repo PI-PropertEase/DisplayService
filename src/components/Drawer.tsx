@@ -1,4 +1,4 @@
-export default function Navbar() {
+export default function Drawer() {
   return (
     <div className="h-full w-[16rem] invisible lg:visible bg-primary text-black font-bold">
       {/* Drawer buttons here */}
