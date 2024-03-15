@@ -6,4 +6,7 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  --fc-button-bg-color: white;
+  --fc-button-text-color: black;
+  --fc-button-border-color: white;
 }
