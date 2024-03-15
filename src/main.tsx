@@ -4,6 +4,7 @@ import './index.css'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./routes/Home";
+import SignIn from './routes/SignIn';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,6 +19,10 @@ const myRouter = createBrowserRouter([
      path: '/',
      element: <Home />,
   },
+  {
+    path: '/signin',
+    element: <SignIn />,
+  }
  ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

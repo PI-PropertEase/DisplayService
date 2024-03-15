@@ -18,6 +18,7 @@ body {
   margin: 0;
   display: flex;
   place-items: center;
+  place-content: center;
   min-height: 100dvh;
   @apply bg-base-100;
 }

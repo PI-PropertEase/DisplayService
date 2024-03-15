@@ -5,6 +5,7 @@ import { BsTagsFill } from "react-icons/bs";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { PiChartPieSliceFill } from "react-icons/pi";
+import { Link } from "react-router-dom";
 
 export default function Home() {
     return (
@@ -21,9 +22,11 @@ export default function Home() {
                             <button className="btn btn-outline btn-primary btn-lg md:btn-wide text-3xl font-light">
                                 Sign Up
                             </button>
-                            <button className="btn btn-primary btn-lg md:btn-wide text-3xl font-light">
+                            <Link to="/signin">
+                            <button className="btn btn-primary btn-lg md:btn-wide text-3xl font-light" >
                                 Sign in
                             </button>
+                            </Link>
                         </div>
                     </div>
                     <div className="">
