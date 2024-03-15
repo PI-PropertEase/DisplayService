@@ -1,12 +1,12 @@
-import * as React from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { RxHamburgerMenu } from "react-icons/rx";
+import ToogleDarkMode from "./ToogleDarkMode";
 
 export default function Navbar() {
   const userData = {
     name: "Alice Zuquete",
     profilePicUrl:
-      "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F220453%2Fpexels-photo-220453.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-pixabay-220453.jpg%26fm%3Djpg&f=1&nofb=1&ipt=1c05cba628c6529df1cc657a69aa26675817a569bd441dd2cbb3afe87d01aff8&ipo=images",
+      "https://images.unsplash.com/photo-1524704796725-9fc3044a58b2?q=80&w=2105&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   };
 
   /*
@@ -44,7 +44,7 @@ export default function Navbar() {
               {/* Navbar menu content here */}
               <li>
                 <img
-                  className="h-[3.2rem]"
+                  className="h-[3.2rem] w-[3.2rem] rounded-full p-0"
                   src={userData.profilePicUrl}
                   alt="Profile picture"
                 />
@@ -52,6 +52,11 @@ export default function Navbar() {
               <li>
                 <span className="text-black text-xl">
                   {transformName(userData.name)}
+                </span>
+              </li>
+              <li>
+                <span className="text-black">
+                  <ToogleDarkMode />
                 </span>
               </li>
               <li>
