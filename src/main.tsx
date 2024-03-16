@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./routes/Home";
 import SignIn from './routes/SignIn';
+import SignUp from './routes/SignUp';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,6 +23,10 @@ const myRouter = createBrowserRouter([
   {
     path: '/signin',
     element: <SignIn />,
+  },
+  {
+    path: '/signup',
+    element: <SignUp />,
   }
  ]);
 

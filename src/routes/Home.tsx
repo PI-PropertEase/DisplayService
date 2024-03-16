@@ -19,13 +19,15 @@ export default function Home() {
                         <h1 className="text-8xl md:text-6xl xl:text-8xl font-bold">Unlock Your Property&apos;s Potential with PropertEase!</h1>
                         <p className="text-4xl font-light">With PropertEase, you will automate processes and maximize profit, while minimizing effort required.</p>
                         <div className="flex space-x-4">
-                            <button className="btn btn-outline btn-primary btn-lg md:btn-wide text-3xl font-light">
-                                Sign Up
-                            </button>
+                            <Link to="/signup">
+                                <button className="btn btn-outline btn-primary btn-lg md:btn-wide text-3xl font-light">
+                                    Sign Up
+                                </button>
+                            </Link>
                             <Link to="/signin">
-                            <button className="btn btn-primary btn-lg md:btn-wide text-3xl font-light" >
-                                Sign in
-                            </button>
+                                <button className="btn btn-primary btn-lg md:btn-wide text-3xl font-light" >
+                                    Sign in
+                                </button>
                             </Link>
                         </div>
                     </div>
