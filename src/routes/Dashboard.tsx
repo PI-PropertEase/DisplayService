@@ -3,6 +3,7 @@ import Drawer from "../components/Drawer";
 import PropertyListDashboard, {
   IProperty,
 } from "../components/PropertyListDashboard";
+import WeekCalendar from "../components/WeekCalendar";
 
 const Dashboard = () => {
   const mockProperties: IProperty[] = [
@@ -39,7 +40,9 @@ const Dashboard = () => {
           <Drawer />
           {/* Main page content (calendar, etc...)*/}
           <div className="grid grid-rows-[22rem_auto]">
-            <div className="border border-green-500">Calendar</div>
+            <div className="p-4">
+              <WeekCalendar />
+            </div>
             <div className="grid grid-cols-2">
               <div className="border border-blue-600">Property List</div>
               <div className="border border-pink-700">Chat</div>

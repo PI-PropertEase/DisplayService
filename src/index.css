@@ -6,4 +6,34 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  --fc-button-text-color: black;
+  --fc-button-bg-color: white;
+  --fc-button-border-color: white;
+  --fc-button-hover-bg-color: #FEEBE2;
+  --fc-button-hover-border-color: white;
+  --fc-button-active-bg-color: #FEEBE2;
+  --fc-button-active-border-color: white;
+}
+
+.fc-daygrid-event-harness {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.fc-daygrid-block-event {
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  min-height: 2.5rem;
+  font-size: 16px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  margin-top: 10px;
+}
+
+.fc-scrollgrid-liquid {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
