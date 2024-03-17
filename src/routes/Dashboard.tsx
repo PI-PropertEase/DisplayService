@@ -59,7 +59,7 @@ const Dashboard = () => {
           {/* Main page content (calendar, etc...)*/}
           <div className="grid grid-rows-[22rem_auto]">
             <div className="border border-green-500">Calendar</div>
-            <div className="grid grid-cols-2">
+            <div className="grid lg:grid-cols-2">
               <div className="border border-blue-600">
                 <PropertyListDashboard propertyList={mockProperties} />
               </div>
