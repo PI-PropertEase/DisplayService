@@ -11,40 +11,61 @@ const Dashboard = () => {
       id: 1,
       name: "Hotel A",
       address: "123 Main Street Braga",
-      status: "occupied",
+      status: "Occupied",
     },
     {
       id: 2,
       name: "Hotel B",
       address: "456 Elm Street ABCDEF",
-      status: "free",
+      status: "Free",
     },
     {
       id: 3,
       name: "Hotel C",
       address: "789 Oak Street BLABLA",
-      status: "check-in soon",
+      status: "Check-in Soon",
     },
     {
       id: 4,
       name: "Hotel D",
       address: "101 Pine St",
-      status: "check-out soon",
+      status: "Check-out Soon",
+    },
+    {
+      id: 5,
+      name: "Hotel E",
+      address: "101 Pine St asdfasdg",
+      status: "Check-out Soon",
+    },
+    {
+      id: 6,
+      name: "Hotel F",
+      address: "101 Pine St asdfasdg",
+      status: "Check-out Soon",
+    },
+    {
+      id: 7,
+      name: "Hotel G",
+      address: "101 Pine St asdfasdg",
+      status: "Check-out Soon",
     },
   ];
   return (
     <>
-      <div className="h-screen w-screen fixed">
+      <div className="h-screen relative">
         <Navbar />
-        <div className="grid lg:grid-cols-[16rem_auto] gap-1 h-full">
+        {/* TODO: epic code :) 0.0001rem is a workaround to hide the drawer in small screens, because this uses grid layout, idk a better solution */}
+        <div className="grid grid-cols-[0.0001rem_auto] lg:grid-cols-[16rem_auto] gap-1 h-full">
           <Drawer />
           {/* Main page content (calendar, etc...)*/}
           <div className="grid grid-rows-[22rem_auto]">
             <div className="p-4">
               <WeekCalendar />
             </div>
-            <div className="grid grid-cols-2">
-              <div className="border border-blue-600">Property List</div>
+            <div className="grid lg:grid-cols-2">
+              <div className="border border-blue-600">
+                <PropertyListDashboard propertyList={mockProperties} />
+              </div>
               <div className="border border-pink-700">Chat</div>
             </div>
           </div>
