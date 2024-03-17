@@ -87,7 +87,7 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
           {props.propertyList.length}
         </span>
       </div>
-      <div role="tablist" className="tabs tabs-lifted mt-4">
+      <div role="tablist" className="tabs tabs-bordered mt-4 shadow-md">
         {[
           { id: "all_tab", label: "All" },
           { id: "occupied_tab", label: "Occupied" },
@@ -99,9 +99,14 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
             key={tab.id}
             id={tab.id}
             role="tab"
-            className={`tab ${
-              propertyListState.activeTab === tab.id ? "tab-active" : ""
+            className={`inline-block tab tabs-lg  ${
+              propertyListState.activeTab === tab.id ? "tab-active " : ""
             }`}
+            style={{
+              borderColor: "#FDA883",
+              backgroundColor:
+                propertyListState.activeTab === tab.id ? "#FEECE4" : "",
+            }}
             onClick={(e) => handlePropertyTabSelection(e)}
           >
             {tab.label}
