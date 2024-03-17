@@ -69,7 +69,7 @@ export default function Navbar() {
         </div>
       </div>
       {/* Only visible in mobile size */}
-      <div className="drawer-side">
+      <div className="drawer-side z-10">
         <label
           htmlFor="my-drawer-3"
           aria-label="close sidebar"
