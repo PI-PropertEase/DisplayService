@@ -1,11 +1,9 @@
-import Navbar from "../components/Navbar";
 import Drawer from "../components/Drawer";
-import PropertyListDashboard, {
-  IProperty,
-} from "../components/PropertyListDashboard";
-import WeekCalendar from "../components/WeekCalendar";
+import Navbar from "../components/Navbar";
+import { IProperty } from "../components/PropertyListDashboard";
+import PropertyTable from "../components/PropertyTable";
 
-const Dashboard = () => {
+const PropertyListPage: React.FC = () => {
   const mockProperties: IProperty[] = [
     {
       id: 1,
@@ -71,24 +69,16 @@ const Dashboard = () => {
       price: 200.06,
     },
   ];
+
   return (
     <>
       <div className="h-screen relative">
         <Navbar />
-        {/* TODO: epic code :) 0.0001rem is a workaround to hide the drawer in small screens, because this uses grid layout, idk a better solution */}
         <div className="grid grid-cols-[0.0001rem_auto] lg:grid-cols-[16rem_auto] gap-1 h-full">
           <Drawer />
           {/* Main page content (calendar, etc...)*/}
-          <div className="grid grid-rows-[22rem_auto]">
-            <div className="p-4">
-              <WeekCalendar />
-            </div>
-            <div className="grid lg:grid-cols-2">
-              <div className="border border-blue-600">
-                <PropertyListDashboard propertyList={mockProperties} />
-              </div>
-              <div className="border border-pink-700">Chat</div>
-            </div>
+          <div className="border border-gray-200 dark:border-gray-800 mt-4 mr-6 ml-6 mb-4 rounded-xl shadow-lg">
+            <PropertyTable propertyList={mockProperties} />
           </div>
         </div>
       </div>
@@ -96,4 +86,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default PropertyListPage;

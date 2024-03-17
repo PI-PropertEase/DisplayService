@@ -1,10 +1,11 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import './index.css'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./routes/Home";
-import Dashboard from './routes/Dashboard';
+import Dashboard from "./routes/Dashboard";
+import PropertyListPage from "./routes/PropertyListPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,19 +17,23 @@ const queryClient = new QueryClient({
 
 const myRouter = createBrowserRouter([
   {
-     path: '/',
-     element: <Home />,
+    path: "/",
+    element: <Home />,
   },
   {
     path: "/dashboard",
     element: <Dashboard />,
-  }
- ]);
+  },
+  {
+    path: "/properties",
+    element: <PropertyListPage />,
+  },
+]);
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode >
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={myRouter} />
     </QueryClientProvider>
-  </React.StrictMode>,
-)
+  </React.StrictMode>
+);
