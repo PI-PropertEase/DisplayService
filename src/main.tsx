@@ -4,6 +4,8 @@ import "./index.css";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./routes/Home";
+import SignIn from "./routes/SignIn";
+import SignUp from "./routes/SignUp";
 import Dashboard from "./routes/Dashboard";
 import PropertyListPage from "./routes/PropertyListPage";
 
@@ -19,6 +21,14 @@ const myRouter = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+  },
+  {
+    path: "/signin",
+    element: <SignIn />,
+  },
+  {
+    path: "/signup",
+    element: <SignUp />,
   },
   {
     path: "/dashboard",
