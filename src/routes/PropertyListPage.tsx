@@ -518,7 +518,7 @@ const PropertyListPage: React.FC = () => {
         <div className="grid grid-cols-[0.0001rem_auto] lg:grid-cols-[16rem_auto] gap-1 h-full">
           <Drawer />
           {/* Main page content (calendar, etc...)*/}
-          <div className="border border-gray-200 dark:border-gray-800 mt-4 mr-6 ml-6 mb-4 rounded-xl shadow-lg">
+          <div className="border border-gray-200 dark:border-gray-800 m-1 md:m-4 rounded-xl shadow-lg">
             <PropertyTable propertyList={mockProperties} />
           </div>
         </div>

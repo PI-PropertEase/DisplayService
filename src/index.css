@@ -65,3 +65,23 @@ body {
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
 }
+
+@layer utilities {
+  .content-datalabel {
+    content: attr(data-label);
+    float: left;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .clip-out {
+    border: none;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+}

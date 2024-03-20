@@ -34,17 +34,17 @@ const PropertyTable: React.FC<IPropertyTableProps> = (
   );
 
   return (
-    <div className="overflow-auto h-full relative">
+    <div className="overflow-auto h-full">
       <div className="table-cell h-[4rem] pl-6 align-middle text-xl">
         Properties
-        <span className="ml-3 badge text-[0.75rem] bg-[#FEEBE2] text-[#FDA882] dark:bg-orange-900 dark:text-[#FEEBE2] border-none">
+        <span className="ml-3 badge text-[0.75rem] bg-secondary text-[#FDA882] dark:bg-orange-900 dark:text-secondary border-none">
           100 Properties
         </span>
       </div>
       <table className="table">
         {/* head */}
-        <thead className="bg-[#FEEBE2] dark:bg-[#1A0C01] text-black dark:text-white">
-          <tr>
+        <thead className="bg-secondary dark:bg-[#1A0C01] text-black dark:text-white">
+          <tr className="max-[760px]:block max-[760px]:clip-out">
             <th>
               <label>
                 <input type="checkbox" className="checkbox" />
@@ -68,14 +68,20 @@ const PropertyTable: React.FC<IPropertyTableProps> = (
             )
             .map((property: IProperty) => {
               return (
-                <tr key={property.id}>
-                  <th>
+                <tr
+                  key={property.id}
+                  className="max-[760px]:block max-[760px]:border-[#eee] max-[760px]:dark:border-[#223] max-[760px]:border-t-8 max-[760px]:border-b-0 max-[760px]:mb-2 max-[760px]:p-2"
+                >
+                  <th className="max-[760px]:clip-out">
                     <label>
                       <input type="checkbox" className="checkbox" />
                     </label>
                   </th>
-                  <td>
-                    <div className="flex items-center gap-3">
+                  <td
+                    data-label="Address"
+                    className="max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
+                  >
+                    <div className="lg:flex items-center gap-3">
                       <div>
                         <div className="font-bold">{property.name}</div>
                         <div className="text-sm opacity-50">
@@ -84,22 +90,42 @@ const PropertyTable: React.FC<IPropertyTableProps> = (
                       </div>
                     </div>
                   </td>
-                  <td>
+                  <td
+                    className="max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
+                    data-label="Status"
+                  >
                     <PropertyListBadge text={property.status} />
                   </td>
-                  <td className="text-center">
+                  <td
+                    data-label="Departure"
+                    className="text-center max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
+                  >
                     {property.arrival.toLocaleString()}
                   </td>
-                  <td className="text-center">
+                  <td
+                    data-label="Arrival"
+                    className="text-center max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
+                  >
                     {property.departure.toLocaleString()}
                   </td>
-                  <td className="text-center">{property.price}€</td>
-                  <td>
+                  <td
+                    data-label="Price"
+                    className="text-center max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
+                  >
+                    {property.price}€
+                  </td>
+                  <td
+                    data-label="Delete"
+                    className="text-center max-[760px]:block max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
+                  >
                     <a href="">
                       <FaRegTrashAlt />
                     </a>
                   </td>
-                  <td>
+                  <td
+                    data-label="More Details"
+                    className="text-center max-[760px]:block max-[760px]:before:content-datalabel"
+                  >
                     <a href="">
                       <BsBoxArrowUpRight />
                     </a>
@@ -110,7 +136,7 @@ const PropertyTable: React.FC<IPropertyTableProps> = (
         </tbody>
       </table>
       {/* Table Footer */}
-      <div className="w-full pt-4 pl-6 pr-6 absolute bottom-10">
+      <div className="w-full p-6">
         <div className="flex">
           <button
             className="btn btn-outline flex-1"
