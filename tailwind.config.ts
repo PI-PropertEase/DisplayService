@@ -22,6 +22,7 @@ export default {
           "base-100": "#FFFFFE",
           "--color-card": "#f5f5f5",
           "base-200": "#D9D9D9",
+          "base-300": "#FEEBE2",
         },
         dark: {
           primary: "#FD6423",
@@ -30,6 +31,7 @@ export default {
           "base-100": "#191919",
           "--color-card": "#2f3132",
           "base-200": "#9C9C9C",
+          "base-300": "#FEEBE2",
         },
       },
     ],

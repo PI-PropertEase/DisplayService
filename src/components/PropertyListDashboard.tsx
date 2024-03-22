@@ -79,7 +79,7 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
   };
 
   return (
-    <div className="p-[1.5rem]">
+    <div className="flex flex-col">
       <div className="font-bold text-2xl content-center justify-center">
         <RxPencil2 className="inline-block" />
         <span className="ml-2">Properties</span>
@@ -87,7 +87,7 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
           {props.propertyList.length}
         </span>
       </div>
-      <div role="tablist" className="tabs tabs-bordered mt-4 shadow-md">
+      <div role="tablist" className="tabs mt-4 shadow-md rounded-md">
         {[
           { id: "all_tab", label: "All" },
           { id: "occupied_tab", label: "Occupied" },
@@ -99,21 +99,16 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
             key={tab.id}
             id={tab.id}
             role="tab"
-            className={`inline-block tab tabs-lg  ${
-              propertyListState.activeTab === tab.id ? "tab-active " : ""
+            className={`inline-block tab tabs-lg border-b   ${
+              propertyListState.activeTab === tab.id && " bg-secondary border-primary border-b-2 rounded-md"
             }`}
-            style={{
-              borderColor: "#FDA883",
-              backgroundColor:
-                propertyListState.activeTab === tab.id ? "#FEECE4" : "",
-            }}
-            onClick={(e) => handlePropertyTabSelection(e)}
+            onClick={handlePropertyTabSelection}
           >
             {tab.label}
           </button>
         ))}
       </div>
-      <div className="overflow-x-auto mt-5 border rounded-xl">
+      <div className="overflow-x-auto mt-5 shadow-lg  rounded-xl">
         <table className="table">
           <thead>
             <tr>
