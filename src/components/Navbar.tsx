@@ -21,7 +21,7 @@ export default function Navbar() {
       <div className="navbar bg-secondary z-20">
         <div className="flex-1">
           <img
-                className="h-24 pl-16"
+                className="h-16 pl-16"
                 src="/src/assets/logo.png"
                 alt="PropertEase Logo"
           />

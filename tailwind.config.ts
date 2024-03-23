@@ -8,6 +8,20 @@ export default {
       fontFamily: {
         sans: ["Outfit"],
       },
+      height: {
+        '128': '32rem',
+        '144': '36rem',
+        '160': '40rem',
+        '176': '44rem',
+        '192': '48rem',
+      },
+      colors: {
+        'primary': '#FD6423',
+        'hover-bg': '#FEEBE2',
+        'hover-border': '#FFFFFE',
+        'active-bg': '#E2CBC0',
+        'active-border': '#2f3132',
+      },
     },
   },
   plugins: [daisyui],

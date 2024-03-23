@@ -49,6 +49,12 @@ const Dashboard = () => {
       address: "101 Pine St asdfasdg",
       status: "Check-out Soon",
     },
+    {
+      id: 8,
+      name: "Hotel G",
+      address: "101 Pine St asdfasdg",
+      status: "Check-out Soon",
+    },
   ];
   return (
     <>
@@ -60,11 +66,13 @@ const Dashboard = () => {
           {/* Main page content (calendar, etc...)*/}
           <div className="flex flex-col flex-1 p-8">
               <WeekCalendar />
-            <div className="flex flex-row h-full">
+            <div className="flex flex-row h-full pt-8 pb-20">
               <div className="w-full">
                 <PropertyListDashboard propertyList={mockProperties} />
               </div>
-              <div className="w-full">Chat</div>
+              <div className="w-full">
+                <h1>Chat</h1>
+              </div>
             </div>
           </div>
         </div>

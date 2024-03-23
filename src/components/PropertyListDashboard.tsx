@@ -80,14 +80,14 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
 
   return (
     <div className="flex flex-col">
-      <div className="font-bold text-2xl content-center justify-center">
-        <RxPencil2 className="inline-block" />
+      <div className="flex flex-row font-bold text-2xl items-center">
+        <RxPencil2 className="" />
         <span className="ml-2">Properties</span>
         <span className="ml-2 badge text-base bg-[#FAAD1F] dark:bg-orange-800">
           {props.propertyList.length}
         </span>
       </div>
-      <div role="tablist" className="tabs mt-4 shadow-md rounded-md">
+      <div role="tablist" className="tabs mt-8 shadow-sm rounded-md shadow-base-200">
         {[
           { id: "all_tab", label: "All" },
           { id: "occupied_tab", label: "Occupied" },
@@ -99,8 +99,8 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
             key={tab.id}
             id={tab.id}
             role="tab"
-            className={`inline-block tab tabs-lg border-b   ${
-              propertyListState.activeTab === tab.id && " bg-secondary border-primary border-b-2 rounded-md"
+            className={`tab tabs-lg border-b   ${
+              propertyListState.activeTab === tab.id && " bg-secondary border-primary border-b-2 rounded-md text-black"
             }`}
             onClick={handlePropertyTabSelection}
           >
@@ -108,11 +108,10 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
           </button>
         ))}
       </div>
-      <div className="overflow-x-auto mt-5 shadow-lg  rounded-xl">
+      <div className="mt-5 shadow-md rounded-xl overflow-auto h-[350px] shadow-base-200">
         <table className="table">
-          <thead>
+          <thead className="sticky top-0 bg-base-100 shadow-sm shadow-base-200">
             <tr>
-              <th></th>
               <th className="text-accent dark:text-slate-50 text-base">Name</th>
               <th className="text-accent dark:text-slate-50 text-base">
                 Address
@@ -125,7 +124,6 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
           <tbody>
             {propertyListState.propertyList.map((property) => (
               <tr key={property.id}>
-                <th></th>
                 <td>{property.name}</td>
                 <td>{property.address}</td>
                 <td>

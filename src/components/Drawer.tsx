@@ -9,7 +9,7 @@ export default function Drawer() {
     <div className="">
       <input id="my-drawer" type="checkbox" className="drawer-toggle" defaultChecked />
       <div className="h-screen">
-        <ul className="menu w-72 h-full bg-primary flex flex-col gap-8 pt-24 text-white  shadow-lg">
+        <ul className="menu h-full bg-primary flex flex-col gap-8 pt-8 text-white  shadow-lg">
           <li className="text-2xl font-light rounded-md"><a><LuLayoutDashboard />My business</a></li>
           <li className="text-2xl font-light rounded-md"><a><CiBoxList/>Properties List</a></li>
           <li className="text-2xl font-light rounded-md"><a><FaRegCalendarAlt/> Calendar</a></li>

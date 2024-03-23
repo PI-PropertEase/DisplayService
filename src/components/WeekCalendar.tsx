@@ -54,6 +54,7 @@ export default function WeekCalendar() {
       eventColor="#FD642395"
       eventBorderColor="#FD642395"
       eventTextColor="#000000"
-    />
+      
+     />
   );
 }
