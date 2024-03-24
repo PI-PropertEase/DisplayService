@@ -8,6 +8,21 @@ export default {
       fontFamily: {
         sans: ["Outfit"],
       },
+      height: {
+        '112': '28rem',
+        '128': '32rem',
+        '144': '36rem',
+        '160': '40rem',
+        '176': '44rem',
+        '192': '48rem',
+      },
+      colors: {
+        'primary': '#FD6423',
+        'hover-bg': '#FEEBE2',
+        'hover-border': '#FFFFFE',
+        'active-bg': '#E2CBC0',
+        'active-border': '#2f3132',
+      },
     },
   },
   plugins: [daisyui],
@@ -22,6 +37,7 @@ export default {
           "base-100": "#FFFFFE",
           "--color-card": "#f5f5f5",
           "base-200": "#D9D9D9",
+          "base-300": "#FEEBE2",
         },
         dark: {
           primary: "#FD6423",
@@ -30,6 +46,7 @@ export default {
           "base-100": "#191919",
           "--color-card": "#2f3132",
           "base-200": "#9C9C9C",
+          "base-300": "#FEEBE2",
         },
       },
     ],

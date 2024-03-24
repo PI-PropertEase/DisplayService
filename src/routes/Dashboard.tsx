@@ -49,24 +49,30 @@ const Dashboard = () => {
       address: "101 Pine St asdfasdg",
       status: "Check-out Soon",
     },
+    {
+      id: 8,
+      name: "Hotel G",
+      address: "101 Pine St asdfasdg",
+      status: "Check-out Soon",
+    },
   ];
   return (
     <>
-      <div className="h-screen relative">
+      <div className="flex flex-col">
         <Navbar />
-        {/* TODO: epic code :) 0.0001rem is a workaround to hide the drawer in small screens, because this uses grid layout, idk a better solution */}
-        <div className="grid grid-cols-[0.0001rem_auto] lg:grid-cols-[16rem_auto] gap-1 h-full">
+        <div className="flex flex-row flex-1">
           <Drawer />
-          {/* Main page content (calendar, etc...)*/}
-          <div className="grid grid-rows-[22rem_auto]">
-            <div className="p-4">
+          <div className="flex flex-col flex-1 p-8 overflow-auto pt-28"> 
+            <div className=" min-h-80"> 
               <WeekCalendar />
             </div>
-            <div className="grid lg:grid-cols-2">
-              <div className="border border-blue-600">
+            <div className="flex flex-col sm:flex-col md:flex-row lg:flex-row pt-8 pb-20 min-h-full ">
+              <div className="w-full">
                 <PropertyListDashboard propertyList={mockProperties} />
               </div>
-              <div className="border border-pink-700">Chat</div>
+              <div className="w-full">
+                <h1>Chat</h1>
+              </div>
             </div>
           </div>
         </div>

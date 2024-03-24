@@ -7,6 +7,7 @@ import Home from "./routes/Home";
 import SignIn from './routes/SignIn';
 import SignUp from './routes/SignUp';
 import Dashboard from './routes/Dashboard';
+import PropertyDetails from './routes/PropertyDetails';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,6 +33,10 @@ const myRouter = createBrowserRouter([
   {
     path: "/dashboard",
     element: <Dashboard />,
+  },
+  {
+    path: '/property/:id',
+    element: <PropertyDetails />,
   }
  ]);
 
