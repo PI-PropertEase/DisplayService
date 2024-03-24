@@ -66,7 +66,7 @@ const Dashboard = () => {
             <div className=" min-h-80"> 
               <WeekCalendar />
             </div>
-            <div className="flex flex-row pt-8 pb-20 min-h-full">
+            <div className="flex flex-col sm:flex-col md:flex-row lg:flex-row pt-8 pb-20 min-h-full ">
               <div className="w-full">
                 <PropertyListDashboard propertyList={mockProperties} />
               </div>

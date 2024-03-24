@@ -72,7 +72,7 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
           {props.propertyList.length}
         </span>
       </div>
-      <div className="flex flex-row flex-grow items-center gap-4 mt-8 shadow-sm rounded-md shadow-base-200 h-max">
+      <div role="tablist" className=" flex flex-row flex-wrap mt-4 sm:flex-col md:flex-row lg:flex-row xl:flex-row">
         {[
           { id: "all_tab", label: "All" },
           { id: "occupied_tab", label: "Occupied" },
@@ -83,8 +83,9 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
           <button
             key={tab.id}
             id={tab.id}
-            className={`flex-grow justify-center content-center h-max ${
-              propertyListState.activeTab === tab.id ? "bg-secondary border-primary border-b-2 rounded-md text-black" : ""
+            role="tab" 
+            className={`tab flex-grow justify-center content-center border-b-2 rounded-tr-md rounded-tl-md ${
+              propertyListState.activeTab === tab.id ? "bg-secondary border-b-2 border-primary text-black" : ""
             }`}
             onClick={handlePropertyTabSelection}
           >
@@ -92,6 +93,8 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
           </button>
         ))}
       </div>
+
+
       <div className="mt-5 shadow-md rounded-xl overflow-auto shadow-base-200">
         <table className="table">
           <thead className="sticky top-0 bg-base-100 shadow-sm shadow-base-200">
