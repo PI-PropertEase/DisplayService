@@ -60,13 +60,13 @@ const Dashboard = () => {
     <>
       <div className="flex flex-col">
         <Navbar />
-        {/* TODO: epic code :) 0.0001rem is a workaround to hide the drawer in small screens, because this uses grid layout, idk a better solution */}
-        <div className="flex flex-row">
+        <div className="flex flex-row flex-1">
           <Drawer />
-          {/* Main page content (calendar, etc...)*/}
-          <div className="flex flex-col flex-1 p-8">
+          <div className="flex flex-col flex-1 p-8 overflow-auto pt-28"> 
+            <div className=" min-h-80"> 
               <WeekCalendar />
-            <div className="flex flex-row h-full pt-8 pb-20">
+            </div>
+            <div className="flex flex-row pt-8 pb-20 min-h-full">
               <div className="w-full">
                 <PropertyListDashboard propertyList={mockProperties} />
               </div>

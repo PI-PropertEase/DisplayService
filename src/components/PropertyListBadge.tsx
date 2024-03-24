@@ -15,7 +15,7 @@ const PropertyListBadge: React.FC<IPropertyListBadgeProps> = (
   return (
     <div>
       <span
-        className={`badge text-xs text-center content-center ${
+        className={`badge items-center text-xs text-center h-max ${
           textToColor[props.text.toLowerCase()].light
         } ${textToColor[props.text.toLowerCase()].dark}`}
       >

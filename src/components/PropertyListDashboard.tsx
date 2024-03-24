@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState} from "react";
 import { RxPencil2 } from "react-icons/rx";
 import PropertyListBadge from "./PropertyListBadge";
-
 export interface IProperty {
   id: number;
   name: string;
@@ -23,63 +22,49 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
     propertyList: [...props.propertyList],
     activeTab: "all_tab",
   });
-  /* 
-    When tab is selected, re-renders table with filtered values,
-    and updates the active html element to the element that was clicked 
-  */
+
   const handlePropertyTabSelection = (
     event: React.MouseEvent<HTMLButtonElement>
   ): void => {
-    const event_id = (event.target as HTMLElement).id;
-    if (event_id === "occupied_tab") {
-      setPropertyListState({
-        propertyList: props.propertyList.filter(
+    const eventId = event.currentTarget.id;
+    let filteredList: IProperty[] = [];
+
+    switch (eventId) {
+      case "occupied_tab":
+        filteredList = props.propertyList.filter(
           (p: IProperty) => p.status === "Occupied"
-        ),
-        activeTab: event_id,
-      });
-      return;
-    }
-    if (event_id === "check_in_tab") {
-      setPropertyListState({
-        propertyList: props.propertyList.filter(
+        );
+        break;
+      case "check_in_tab":
+        filteredList = props.propertyList.filter(
           (p: IProperty) => p.status === "Check-in Soon"
-        ),
-        activeTab: event_id,
-      });
-      return;
-    }
-
-    if (event_id === "check_out_tab") {
-      setPropertyListState({
-        propertyList: props.propertyList.filter(
+        );
+        break;
+      case "check_out_tab":
+        filteredList = props.propertyList.filter(
           (p: IProperty) => p.status === "Check-out Soon"
-        ),
-        activeTab: event_id,
-      });
-      return;
-    }
-    if (event_id === "free_tab") {
-      setPropertyListState({
-        propertyList: props.propertyList.filter(
+        );
+        break;
+      case "free_tab":
+        filteredList = props.propertyList.filter(
           (p: IProperty) => p.status === "Free"
-        ),
-        activeTab: event_id,
-      });
-      return;
+        );
+        break;
+      case "all_tab":
+      default:
+        filteredList = props.propertyList;
+        break;
     }
 
-    if (event_id === "all_tab") {
-      setPropertyListState({
-        propertyList: props.propertyList,
-        activeTab: event_id,
-      });
-      return;
-    }
+    setPropertyListState({
+      propertyList: filteredList,
+      activeTab: eventId,
+    });
   };
 
+
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col max-h-[32rem] pb-4">
       <div className="flex flex-row font-bold text-2xl items-center">
         <RxPencil2 className="" />
         <span className="ml-2">Properties</span>
@@ -87,7 +72,7 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
           {props.propertyList.length}
         </span>
       </div>
-      <div role="tablist" className="tabs mt-8 shadow-sm rounded-md shadow-base-200">
+      <div className="flex flex-row flex-grow items-center gap-4 mt-8 shadow-sm rounded-md shadow-base-200 h-max">
         {[
           { id: "all_tab", label: "All" },
           { id: "occupied_tab", label: "Occupied" },
@@ -98,9 +83,8 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
           <button
             key={tab.id}
             id={tab.id}
-            role="tab"
-            className={`tab tabs-lg border-b   ${
-              propertyListState.activeTab === tab.id && " bg-secondary border-primary border-b-2 rounded-md text-black"
+            className={`flex-grow justify-center content-center h-max ${
+              propertyListState.activeTab === tab.id ? "bg-secondary border-primary border-b-2 rounded-md text-black" : ""
             }`}
             onClick={handlePropertyTabSelection}
           >
@@ -108,7 +92,7 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
           </button>
         ))}
       </div>
-      <div className="mt-5 shadow-md rounded-xl overflow-auto h-[350px] shadow-base-200">
+      <div className="mt-5 shadow-md rounded-xl overflow-auto shadow-base-200">
         <table className="table">
           <thead className="sticky top-0 bg-base-100 shadow-sm shadow-base-200">
             <tr>

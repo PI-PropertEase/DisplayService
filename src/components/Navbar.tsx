@@ -18,17 +18,30 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="navbar bg-secondary z-20">
+      <div className="navbar bg-secondary fixed z-20">
         <div className="flex-1">
           <img
-                className="h-16 pl-16"
+                className="h-16 pl-4"
                 src="/src/assets/logo.png"
                 alt="PropertEase Logo"
           />
         </div>
-        <div className="flex flex-row gap-8">
-          <ToogleDarkMode />
-
+        <div className="dropdown">
+          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
+          </div>
+          <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+            <li>
+            <a><b>{transformName(userData.name)}</b></a>
+              <ul className="p-2">
+                <li><a>Settings</a></li>
+                <li><a>Logout</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <div className="flex-row gap-8 hidden lg:flex">
+          
           <div tabIndex={0} role="button" className=" avatar">
               <div className="w-10 rounded-full ">
                 <img
@@ -53,7 +66,9 @@ export default function Navbar() {
               <li><a>Logout</a></li>
             </ul>
           </div>
-         
+        </div>
+        <div className="px-4">
+          <ToogleDarkMode />
         </div>
       </div>
       

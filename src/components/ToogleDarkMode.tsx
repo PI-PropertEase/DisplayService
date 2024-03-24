@@ -36,7 +36,7 @@ export default function ToogleDarkMode() {
         />
         {/* sun icon */}
         <svg
-          className="swap-off fill-current text-black w-10 h-10"
+          className="swap-off fill-current text-black w-6 h-10"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
         >
@@ -45,7 +45,7 @@ export default function ToogleDarkMode() {
 
         {/* moon icon */}
         <svg
-          className="swap-on fill-current text-black w-10 h-10"
+          className="swap-on fill-current text-black w-6 h-10"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
         >
