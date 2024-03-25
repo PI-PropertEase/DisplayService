@@ -75,16 +75,20 @@ const Dashboard = () => {
       name: "Hotel G",
       address: "101 Pine St asdfasdg",
       status: "Check-out Soon",
+      arrival: new Date(),
+      departure: new Date(),
+      price: 105.02,
     },
   ];
+
   return (
     <>
       <div className="flex flex-col">
         <Navbar />
         <div className="flex flex-row flex-1">
           <Drawer />
-          <div className="flex flex-col flex-1 p-8 overflow-auto pt-28"> 
-            <div className=" min-h-80"> 
+          <div className="flex flex-col flex-1 p-8 overflow-auto pt-28">
+            <div className=" min-h-80">
               <WeekCalendar />
             </div>
             <div className="flex flex-col sm:flex-col md:flex-row lg:flex-row pt-8 pb-20 min-h-full ">

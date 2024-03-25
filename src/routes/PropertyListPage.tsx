@@ -513,12 +513,11 @@ const PropertyListPage: React.FC = () => {
 
   return (
     <>
-      <div className="h-screen relative">
+      <div className="flex flex-col">
         <Navbar />
-        <div className="grid grid-cols-[0.0001rem_auto] lg:grid-cols-[16rem_auto] gap-1 h-full">
+        <div className="flex flex-row flex-1">
           <Drawer />
-          {/* Main page content (calendar, etc...)*/}
-          <div className="border border-gray-200 dark:border-gray-800 m-1 md:m-4 rounded-xl shadow-lg">
+          <div className="flex flex-col flex-1 pt-16 h-screen border-gray-200 dark:border-gray-800 m-2 rounded-xl shadow-lg">
             <PropertyTable propertyList={mockProperties} />
           </div>
         </div>
