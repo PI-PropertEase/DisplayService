@@ -116,17 +116,17 @@ const PropertyTable: React.FC<IPropertyTableProps> = (
                   </td>
                   <td
                     data-label="Delete"
-                    className="text-center max-[760px]:block max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
+                    className="text-center max-[760px]:flex max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
                   >
-                    <a href="">
+                    <a href="" className="max-[760px]:ml-auto">
                       <FaRegTrashAlt />
                     </a>
                   </td>
                   <td
                     data-label="More Details"
-                    className="text-center max-[760px]:block max-[760px]:before:content-datalabel"
+                    className="text-center max-[760px]:flex max-[760px]:before:content-datalabel"
                   >
-                    <a href="">
+                    <a href="" className="max-[760px]:ml-auto">
                       <BsBoxArrowUpRight />
                     </a>
                   </td>
