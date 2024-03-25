@@ -6,6 +6,9 @@ export interface IProperty {
   name: string;
   address: string;
   status: "Occupied" | "Free" | "Check-in Soon" | "Check-out Soon";
+  arrival: Date; // TODO: arrival e departure provavelmente vêm noutro formato
+  departure: Date;
+  price: number;
 }
 
 interface IPropertyListDashboardProps {

@@ -1,13 +1,14 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import './index.css'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./routes/Home";
-import SignIn from './routes/SignIn';
-import SignUp from './routes/SignUp';
-import Dashboard from './routes/Dashboard';
-import PropertyDetails from './routes/PropertyDetails';
+import SignIn from "./routes/SignIn";
+import SignUp from "./routes/SignUp";
+import Dashboard from "./routes/Dashboard";
+import PropertyListPage from "./routes/PropertyListPage";
+import PropertyDetails from "./routes/PropertyDetails";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,15 +20,15 @@ const queryClient = new QueryClient({
 
 const myRouter = createBrowserRouter([
   {
-     path: '/',
-     element: <Home />,
+    path: "/",
+    element: <Home />,
   },
   {
-    path: '/signin',
+    path: "/signin",
     element: <SignIn />,
   },
   {
-    path: '/signup',
+    path: "/signup",
     element: <SignUp />,
   },
   {
@@ -35,15 +36,19 @@ const myRouter = createBrowserRouter([
     element: <Dashboard />,
   },
   {
-    path: '/property/:id',
+    path: "/properties",
+    element: <PropertyListPage />,
+  },
+  {
+    path: "/property/:id",
     element: <PropertyDetails />,
-  }
- ]);
+  },
+]);
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode >
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={myRouter} />
     </QueryClientProvider>
-  </React.StrictMode>,
-)
+  </React.StrictMode>
+);
