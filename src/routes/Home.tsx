@@ -14,25 +14,25 @@ export default function Home() {
                 <img src="./src/assets/logo.png" alt="logo" className="max-h-24 m-2" />
                 <ToogleDarkMode />
             </div>
-            <div className="flex flex-col md:flex-row items-center justify-center py-64 gap-24 px-8">
+            <div className="flex flex-col md:flex-row items-center justify-center py-32 gap-24 px-8">
                     <div className="md:w-1/2 flex flex-col gap-16">
-                        <h1 className="text-8xl md:text-6xl xl:text-8xl font-bold">Unlock Your Property&apos;s Potential with PropertEase!</h1>
-                        <p className="text-4xl font-light">With PropertEase, you will automate processes and maximize profit, while minimizing effort required.</p>
+                        <h1 className="text-6xl md:text-4xl xl:text-6xl font-bold">Unlock Your Property&apos;s Potential with PropertEase!</h1>
+                        <p className="text-2xl font-light">With PropertEase, you will automate processes and maximize profit, while minimizing effort required.</p>
                         <div className="flex space-x-4">
                             <Link to="/signup">
-                                <button className="btn btn-outline btn-primary btn-lg md:btn-wide text-3xl font-light">
+                                <button className="btn btn-outline btn-primary btn-lg md:btn-wide text-2xl font-light">
                                     Sign Up
                                 </button>
                             </Link>
                             <Link to="/signin">
-                                <button className="btn btn-primary btn-lg md:btn-wide text-3xl font-light" >
+                                <button className="btn btn-primary btn-lg md:btn-wide text-2xl font-light" >
                                     Sign in
                                 </button>
                             </Link>
                         </div>
                     </div>
                     <div className="">
-                        <figure><img src="./src/assets/imgHomePage.png" alt="PropertEase" className="rounded-3xl shadow shadow-base-200 "/></figure>
+                        <figure className=""><img src="./src/assets/imgHomePage.png" alt="PropertEase" className="rounded-3xl shadow shadow-base-200 h-192"/></figure>
                     </div>
             </div>
             <div className="flex flex-col md:flex-row justify-center px-10 sm:px-10 md:px-20 lg:px-24 xl:px-40">

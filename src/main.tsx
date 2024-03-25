@@ -8,6 +8,7 @@ import SignIn from "./routes/SignIn";
 import SignUp from "./routes/SignUp";
 import Dashboard from "./routes/Dashboard";
 import PropertyListPage from "./routes/PropertyListPage";
+import PropertyDetails from "./routes/PropertyDetails";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,6 +38,10 @@ const myRouter = createBrowserRouter([
   {
     path: "/properties",
     element: <PropertyListPage />,
+  },
+  {
+    path: "/property/:id",
+    element: <PropertyDetails />,
   },
 ]);
 

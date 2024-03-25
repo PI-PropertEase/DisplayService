@@ -8,13 +8,12 @@
 @tailwind utilities;
 
 :root {
-  --fc-button-text-color: black;
-  --fc-button-bg-color: white;
-  --fc-button-border-color: white;
-  --fc-button-hover-bg-color: #FEEBE2;
-  --fc-button-hover-border-color: white;
-  --fc-button-active-bg-color: #FEEBE2;
-  --fc-button-active-border-color: white;
+  --fc-button-text-color: #000000; 
+  --fc-button-bg-color: #FFFFFE; 
+  --fc-button-border-color: #FFFFFE; 
+  --fc-button-hover-bg-color: #FEEBE2; 
+  --fc-button-hover-border-color: #FFFFFE; 
+  --fc-button-active-bg-color: #FEEBE2; 
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -27,6 +26,16 @@
   padding-bottom: 4px;
 }
   
+
+
+[data-theme="dark"] {
+  --fc-button-text-color: #ffffff; 
+  --fc-button-bg-color: #191919; 
+  --fc-button-border-color: #191919; 
+  --fc-button-hover-bg-color: #E2CBC0; 
+  --fc-button-hover-border-color: #191919; 
+  --fc-button-active-bg-color: #E2CBC0; 
+ }
 
 body {
   margin: 0;

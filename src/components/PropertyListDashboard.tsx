@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState} from "react";
 import { RxPencil2 } from "react-icons/rx";
 import PropertyListBadge from "./PropertyListBadge";
-
 export interface IProperty {
   id: number;
   name: string;
@@ -26,71 +25,57 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
     propertyList: [...props.propertyList],
     activeTab: "all_tab",
   });
-  /* 
-    When tab is selected, re-renders table with filtered values,
-    and updates the active html element to the element that was clicked 
-  */
+
   const handlePropertyTabSelection = (
     event: React.MouseEvent<HTMLButtonElement>
   ): void => {
-    const event_id = (event.target as HTMLElement).id;
-    if (event_id === "occupied_tab") {
-      setPropertyListState({
-        propertyList: props.propertyList.filter(
+    const eventId = event.currentTarget.id;
+    let filteredList: IProperty[] = [];
+
+    switch (eventId) {
+      case "occupied_tab":
+        filteredList = props.propertyList.filter(
           (p: IProperty) => p.status === "Occupied"
-        ),
-        activeTab: event_id,
-      });
-      return;
-    }
-    if (event_id === "check_in_tab") {
-      setPropertyListState({
-        propertyList: props.propertyList.filter(
+        );
+        break;
+      case "check_in_tab":
+        filteredList = props.propertyList.filter(
           (p: IProperty) => p.status === "Check-in Soon"
-        ),
-        activeTab: event_id,
-      });
-      return;
-    }
-
-    if (event_id === "check_out_tab") {
-      setPropertyListState({
-        propertyList: props.propertyList.filter(
+        );
+        break;
+      case "check_out_tab":
+        filteredList = props.propertyList.filter(
           (p: IProperty) => p.status === "Check-out Soon"
-        ),
-        activeTab: event_id,
-      });
-      return;
-    }
-    if (event_id === "free_tab") {
-      setPropertyListState({
-        propertyList: props.propertyList.filter(
+        );
+        break;
+      case "free_tab":
+        filteredList = props.propertyList.filter(
           (p: IProperty) => p.status === "Free"
-        ),
-        activeTab: event_id,
-      });
-      return;
+        );
+        break;
+      case "all_tab":
+      default:
+        filteredList = props.propertyList;
+        break;
     }
 
-    if (event_id === "all_tab") {
-      setPropertyListState({
-        propertyList: props.propertyList,
-        activeTab: event_id,
-      });
-      return;
-    }
+    setPropertyListState({
+      propertyList: filteredList,
+      activeTab: eventId,
+    });
   };
 
+
   return (
-    <div className="p-[1.5rem]">
-      <div className="font-bold text-2xl content-center justify-center">
-        <RxPencil2 className="inline-block" />
+    <div className="flex flex-col max-h-[32rem] pb-4">
+      <div className="flex flex-row font-bold text-2xl items-center">
+        <RxPencil2 className="" />
         <span className="ml-2">Properties</span>
         <span className="ml-2 badge text-base bg-[#FAAD1F] dark:bg-orange-800">
           {props.propertyList.length}
         </span>
       </div>
-      <div role="tablist" className="tabs tabs-bordered mt-4 shadow-md">
+      <div role="tablist" className=" flex flex-row flex-wrap mt-4 sm:flex-col md:flex-row lg:flex-row xl:flex-row">
         {[
           { id: "all_tab", label: "All" },
           { id: "occupied_tab", label: "Occupied" },
@@ -101,26 +86,22 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
           <button
             key={tab.id}
             id={tab.id}
-            role="tab"
-            className={`inline-block tab tabs-lg  ${
-              propertyListState.activeTab === tab.id ? "tab-active " : ""
+            role="tab" 
+            className={`tab flex-grow justify-center content-center border-b-2 rounded-tr-md rounded-tl-md ${
+              propertyListState.activeTab === tab.id ? "bg-secondary border-b-2 border-primary text-black" : ""
             }`}
-            style={{
-              borderColor: "#FDA883",
-              backgroundColor:
-                propertyListState.activeTab === tab.id ? "#FEECE4" : "",
-            }}
-            onClick={(e) => handlePropertyTabSelection(e)}
+            onClick={handlePropertyTabSelection}
           >
             {tab.label}
           </button>
         ))}
       </div>
-      <div className="overflow-x-auto mt-5 border rounded-xl">
+
+
+      <div className="mt-5 shadow-md rounded-xl overflow-auto shadow-base-200">
         <table className="table">
-          <thead>
+          <thead className="sticky top-0 bg-base-100 shadow-sm shadow-base-200">
             <tr>
-              <th></th>
               <th className="text-accent dark:text-slate-50 text-base">Name</th>
               <th className="text-accent dark:text-slate-50 text-base">
                 Address
@@ -133,7 +114,6 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
           <tbody>
             {propertyListState.propertyList.map((property) => (
               <tr key={property.id}>
-                <th></th>
                 <td>{property.name}</td>
                 <td>{property.address}</td>
                 <td>
