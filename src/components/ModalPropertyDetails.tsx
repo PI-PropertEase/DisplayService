@@ -171,7 +171,7 @@ export default function ModalPropertyDetails() {
         {modalData && modalData.isOpen && (
             <>
             <div className="fixed inset-0 bg-smoke z-50"></div>
-            <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle p-8" open>
+            <dialog id="my_modal_5" className="modal sm:modal-middle p-8" open>
                 <div className="modal-box">
                     <div className='flex flex-row items-center justify-between'>
                         <h3 className=" font-medium text-2xl text-center py-2">{modalData.type.includes("New") ? `Add ${modalData.type}` : `Change ${modalData.type}` } </h3>

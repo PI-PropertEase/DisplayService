@@ -6,6 +6,8 @@ import ModalPropertyDetails from "../components/ModalPropertyDetails";
 import { useQueryClient, useQuery } from "react-query";
 import { IPropertyDetails } from "../main";
 import { BsPlusSquare } from "react-icons/bs";
+import { IoTrashOutline } from "react-icons/io5";
+import ModalDeletePropertyDetail from "../components/ModalDeletePropertyDetail";
 
 export interface IModalData {
     content: string | number | { number_beds: number;type: string[]} | string[] | { name: string; phone: number; email: string; } |undefined ,
@@ -13,8 +15,15 @@ export interface IModalData {
     isOpen: boolean;
 }
 
+export interface IModalDeleteData {
+    id: string ;
+    isOpen: boolean;
+}
+
+
 export default function PropertyDetails() {
     const { id } = useParams<{ id: string }>();
+
 
     const queryClient = useQueryClient();
 
@@ -53,6 +62,15 @@ export default function PropertyDetails() {
         }
 
         queryClient.setQueryData<IModalData>("modalData", modalData);
+    }
+
+    const handleOpenDeleteModal = (id: string) => {
+        const modalDeleteData: IModalDeleteData = {
+            id: id,
+            isOpen: true
+        }
+
+        queryClient.setQueryData<IModalDeleteData>("modalDeleteData", modalDeleteData);
     }
 
 
@@ -151,14 +169,16 @@ export default function PropertyDetails() {
                                                     <th>Bathroom</th>
                                                     <th>Items</th>
                                                     <th></th>
+                                                    <th></th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
                                                     {Array.from(propertyDetails?.bathrooms ?? new Map()).map(([bathroomId, items]) => (                                                    
                                                     <tr key={bathroomId as string}>
                                                         <th>{bathroomId}</th>
-                                                        <td>{(items as string[] ).join(', ')}</td>
-                                                        <td className="text-end"><button onClick={() => handleOpenModal((items as string[] ).join(', '), "Bathroom " + bathroomId)}><FaRegEdit className="text-accent" /></button></td>
+                                                        <td className="w-full">{(items as string[] ).join(', ')}</td>
+                                                        <td className="text-end w-full"><button onClick={() => handleOpenModal((items as string[] ).join(', '), "Bathroom " + bathroomId)}><FaRegEdit className="text-accent" /></button></td>
+                                                        <td className="text-end"><button onClick={() => handleOpenDeleteModal("Bathroom " + bathroomId)}><IoTrashOutline className=" text-red-600" /></button></td>
                                                     </tr>
                                                     ))}
                                                 </tbody>
@@ -176,6 +196,7 @@ export default function PropertyDetails() {
                                                     <th>Number of beds</th>
                                                     <th>Type</th>
                                                     <th></th>
+                                                    <th></th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -183,8 +204,9 @@ export default function PropertyDetails() {
                                                     <tr key={bedroomId}>
                                                         <th>{bedroomId}</th>
                                                         <td>{bedDetails.number_beds}</td>
-                                                        <td>{bedDetails.type.join(', ')}</td>
-                                                        <td className="text-end"><button onClick={() => handleOpenModal(bedDetails, "Bedroom " + bedroomId)}><FaRegEdit className="text-accent" /></button></td>
+                                                        <td className="w-full">{bedDetails.type.join(', ')}</td>
+                                                        <td className="text-end w-full"><button onClick={() => handleOpenModal(bedDetails, "Bedroom " + bedroomId)}><FaRegEdit className="text-accent" /></button></td>
+                                                        <td className="text-end"><button onClick={() => handleOpenDeleteModal("Bedroom " + bedroomId)}><IoTrashOutline className=" text-red-600" /></button></td>
                                                     </tr>
                                                     ))}
                                                 </tbody>
@@ -217,15 +239,17 @@ export default function PropertyDetails() {
                                                     <th>Phone</th>
                                                     <th>Email</th>
                                                     <th></th>
+                                                    <th></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     {propertyDetails?.contact.map((contact) => (
                                                     <tr key={contact.id}>
-                                                        <th>{contact.name}</th>
+                                                        <th className=" whitespace-nowrap">{contact.name}</th>
                                                         <td>{contact.phone}</td>
-                                                        <td>{contact.email}</td>
+                                                        <td className="w-full">{contact.email}</td>
                                                         <td className="text-end" ><button onClick={() => handleOpenModal(contact, "Contact " + contact.id)}><FaRegEdit className="text-accent" /></button></td>
+                                                        <td className="text-end"><button onClick={() => handleOpenDeleteModal("Contact " + contact.id)}><IoTrashOutline className=" text-red-600" /></button></td>
                                                     </tr>
                                                     ))}
                                                 </tbody>
@@ -240,6 +264,7 @@ export default function PropertyDetails() {
                 </div>
             </div>
             <ModalPropertyDetails />
+            <ModalDeletePropertyDetail />
         </>
     );
 }
