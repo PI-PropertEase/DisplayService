@@ -22,6 +22,7 @@ export default {
         'hover-border': '#FFFFFE',
         'active-bg': '#E2CBC0',
         'active-border': '#2f3132',
+        'smoke': 'rgba(0, 0, 0, 0.5)',
       },
     },
   },
