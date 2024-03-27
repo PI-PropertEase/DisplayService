@@ -5,7 +5,7 @@ import { FaRegEdit } from "react-icons/fa";
 import ModalPropertyDetails from "../components/ModalPropertyDetails";
 import { useQueryClient, useQuery } from "react-query";
 import { IPropertyDetails } from "../main";
-
+import { BsPlusSquare } from "react-icons/bs";
 
 export interface IModalData {
     content: string | number | { number_beds: number;type: string[]} | string[] | { name: string; phone: number; email: string; } |undefined ,
@@ -164,6 +164,7 @@ export default function PropertyDetails() {
                                                 </tbody>
                                             </table>
                                         </div>
+                                        <button className="absolute top-2 right-2 pt-6 text-xl" onClick={() => handleOpenModal("", "New Bathroom")}><BsPlusSquare className="text-accent" /></button>
                                     </div>
                                     <div className="relative pt-4">
                                         <label htmlFor="text" className="text-accent">Bedrooms:</label>
@@ -189,6 +190,7 @@ export default function PropertyDetails() {
                                                 </tbody>
                                             </table>
                                         </div>
+                                        <button className="absolute top-2 right-2 pt-6 text-xl" onClick={() => handleOpenModal({number_beds: 0, type: []}, "New Bedroom")}><BsPlusSquare className="text-accent" /></button>
                                     </div>
                                     <div className="relative pt-4">
                                         <label htmlFor="text" className="text-accent">Amenities:</label>
@@ -218,17 +220,18 @@ export default function PropertyDetails() {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {propertyDetails?.contact.map((contact, index) => (
-                                                    <tr key={index}>
+                                                    {propertyDetails?.contact.map((contact) => (
+                                                    <tr key={contact.id}>
                                                         <th>{contact.name}</th>
                                                         <td>{contact.phone}</td>
                                                         <td>{contact.email}</td>
-                                                        <td className="text-end" ><button onClick={() => handleOpenModal(contact, "Contact " + contact.name)}><FaRegEdit className="text-accent" /></button></td>
+                                                        <td className="text-end" ><button onClick={() => handleOpenModal(contact, "Contact " + contact.id)}><FaRegEdit className="text-accent" /></button></td>
                                                     </tr>
                                                     ))}
                                                 </tbody>
                                             </table>
                                         </div>
+                                        <button className="absolute top-2 right-2 pt-6 text-xl" onClick={() => handleOpenModal({name: "", phone: 0, email:""}, "New Contact")}><BsPlusSquare className="text-accent" /></button>
                                     </div>
                                 </div>
                             </div>

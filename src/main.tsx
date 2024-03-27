@@ -40,6 +40,7 @@ export interface IPropertyDetails {
   };
   notes: string;
   contact: {
+      id: number;
       name: string;
       phone: number;
       email: string;
@@ -97,6 +98,7 @@ queryClient.setQueryData<IPropertyDetails>("propertyDetails", {
   },
   notes: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec dui sed nunc vestibulum ultricies.",
   contact: [{
+      id: 1,
       name: "John Doe",
       phone: 123456789,
       email: "john@gmai.com"

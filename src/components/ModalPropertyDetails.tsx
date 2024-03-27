@@ -40,6 +40,8 @@ export default function ModalPropertyDetails() {
         let allowed: string[] = [];
         const allAllowed: string[] = [];
 
+        console.log(modalData?.type);
+
         switch (modalData?.type) {
             case "Title":
                 updatedPropertyDetails.title = stringInput.current?.value ?? ''; 
@@ -116,6 +118,48 @@ export default function ModalPropertyDetails() {
                 }
                 );
                 break;
+            case "New Bathroom":
+                updatedPropertyDetails.bathrooms.set(stringInput.current?.value ?? "", itemsInput.current?.value.split(',').map(item => item.trim()).filter(item => item !== null && item !== undefined && item !== "") ?? []);
+                break;
+            case "New Bedroom":
+                updatedPropertyDetails.bedrooms[stringInput.current?.value ?? ""] = {
+                    number_beds: Number(numBedsInput.current?.value),
+                    type: typeBedsInput.current?.value.split(',').map(item => item.trim()).filter(item => item !== null && item !== undefined && item !== "") ?? []
+                };
+                break;
+            case "New Contact":
+                updatedPropertyDetails.contact.push({
+                    id: updatedPropertyDetails.contact.length + 1,
+                    name: nameContactInput.current?.value ?? '',
+                    phone: Number(phoneContactInput.current?.value),
+                    email: emailContactInput.current?.value ?? ''
+                });
+                break;
+            default:
+                if (modalData?.type.includes("Bedroom")) {
+                    const id = modalData?.type.substring(modalData?.type.split(' ')[0].length).trim();
+                    updatedPropertyDetails.bedrooms[id] = {
+                        number_beds: Number(numBedsInput.current?.value),
+                        type: typeBedsInput.current?.value.split(',').map(item => item.trim()).filter(item => item !== null && item !== undefined && item !== "") ?? []
+                    };
+                } else if (modalData?.type.includes("Bathroom")) {
+                    const id = modalData?.type.substring(modalData?.type.split(' ')[0].length).trim();
+                    updatedPropertyDetails.bathrooms.set(id, itemsInput.current?.value.split(',').map(item => item.trim()).filter(item => item !== null && item !== undefined && item !== "") ?? []);    
+             
+                } else if (modalData?.type.includes("Contact")) {
+                    const id = modalData?.type.substring(modalData?.type.split(' ')[0].length).trim();
+                    const existingContactIndex = updatedPropertyDetails.contact.findIndex(contact => contact.id === Number(id));
+                    if (existingContactIndex !== -1) {
+                        updatedPropertyDetails.contact[existingContactIndex] = {
+                            id: Number(id),
+                            name: nameContactInput.current?.value ?? '',
+                            phone: Number(phoneContactInput.current?.value),
+                            email: emailContactInput.current?.value ?? ''
+                        };
+                    }
+                }
+                break;
+            
         }
 
         queryClient.setQueryData('propertyDetails', updatedPropertyDetails);
@@ -130,7 +174,7 @@ export default function ModalPropertyDetails() {
             <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle p-8" open>
                 <div className="modal-box">
                     <div className='flex flex-row items-center justify-between'>
-                        <h3 className=" font-medium text-2xl text-center py-2">Change {modalData.type}</h3>
+                        <h3 className=" font-medium text-2xl text-center py-2">{modalData.type.includes("New") ? `Add ${modalData.type}` : `Change ${modalData.type}` } </h3>
                         <IoCloseOutline className='text-2xl cursor-pointer' onClick={handleModalClose}/>
                     </div>
                     <hr/>
@@ -142,6 +186,12 @@ export default function ModalPropertyDetails() {
                             <div className='flex flex-col'>
                                 {typeof modalData.content === 'object' && 'number_beds' in modalData.content && (
                                     <div className=''>  
+                                        {modalData.type === "New Bedroom" && (
+                                            <>
+                                             <p className='font-light'>ID: </p>
+                                             <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={stringInput}/>
+                                            </>
+                                        )}
                                         <p className='font-light'>Number of beds: </p>
                                         <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={numBedsInput} defaultValue={modalData.content.number_beds}/>
                                         <p className='font-light'>Type: </p>
@@ -162,10 +212,17 @@ export default function ModalPropertyDetails() {
                                     </div>
                                 )}
                             </div> :
-                            modalData.type.includes("Bedrooom") ?
+                            modalData.type.includes("Bathroom") ?
                             <div className='flex flex-col'>
                                 {typeof modalData.content === 'string' && (
                                     <div className=''>  
+                                        {modalData.type === "New Bathroom" && (
+                                            <>
+                                             <p className='font-light'>ID: </p>
+                                             <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={stringInput}/>
+                                             </>
+                                        )}
+                                       
                                         <p className='font-light'>Items: </p>
                                         <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={itemsInput} defaultValue={modalData.content}/>
                                     </div>
