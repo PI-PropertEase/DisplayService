@@ -98,3 +98,7 @@ body {
 .fc.fc-media-screen.fc-direction-ltr.fc-theme-standard.fc-liquid-hack {
   margin: 12px;
 }
+
+.calendar-filter {
+  background: #F6F6F6;
+}
