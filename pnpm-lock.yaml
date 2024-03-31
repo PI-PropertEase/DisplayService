@@ -46,54 +46,51 @@ dependencies:
     version: 6.22.3(react-dom@18.2.0)(react@18.2.0)
 
 devDependencies:
-  '@types/node':
-    specifier: ^20.11.30
-    version: 20.11.30
   '@types/react':
-    specifier: ^18.2.72
+    specifier: ^18.2.64
     version: 18.2.72
   '@types/react-dom':
-    specifier: ^18.2.22
+    specifier: ^18.2.21
     version: 18.2.22
   '@typescript-eslint/eslint-plugin':
-    specifier: ^7.4.0
+    specifier: ^7.1.1
     version: 7.4.0(@typescript-eslint/parser@7.4.0)(eslint@8.57.0)(typescript@5.4.3)
   '@typescript-eslint/parser':
-    specifier: ^7.4.0
+    specifier: ^7.1.1
     version: 7.4.0(eslint@8.57.0)(typescript@5.4.3)
   '@vitejs/plugin-react-swc':
     specifier: ^3.6.0
     version: 3.6.0(vite@5.2.6)
   autoprefixer:
-    specifier: ^10.4.19
+    specifier: ^10.4.18
     version: 10.4.19(postcss@8.4.38)
   daisyui:
-    specifier: ^4.9.0
+    specifier: ^4.7.3
     version: 4.9.0(postcss@8.4.38)
   eslint:
     specifier: ^8.57.0
     version: 8.57.0
   eslint-plugin-react:
-    specifier: ^7.34.1
+    specifier: ^7.34.0
     version: 7.34.1(eslint@8.57.0)
   eslint-plugin-react-hooks:
     specifier: ^4.6.0
     version: 4.6.0(eslint@8.57.0)
   eslint-plugin-react-refresh:
-    specifier: ^0.4.6
+    specifier: ^0.4.5
     version: 0.4.6(eslint@8.57.0)
   postcss:
-    specifier: ^8.4.38
+    specifier: ^8.4.35
     version: 8.4.38
   tailwindcss:
     specifier: ^3.4.1
     version: 3.4.1
   typescript:
-    specifier: ^5.4.3
+    specifier: ^5.2.2
     version: 5.4.3
   vite:
-    specifier: ^5.2.6
-    version: 5.2.6(@types/node@20.11.30)
+    specifier: ^5.1.6
+    version: 5.2.6
 
 packages:
 
@@ -805,12 +802,6 @@ packages:
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
     dev: true
 
-  /@types/node@20.11.30:
-    resolution: {integrity: sha512-dHM6ZxwlmuZaRmUPfv1p+KrdD1Dci04FbdEm/9wEMouFqxYoFl5aMkt0VMAUtYRQDyYvD41WJLukhq/ha3YuTw==}
-    dependencies:
-      undici-types: 5.26.5
-    dev: true
-
   /@types/prop-types@15.7.12:
     resolution: {integrity: sha512-5zvhXYtRNRluoE/jAp4GVsSduVUzNWKkOZrCDBWYtE7biZywwdC2AcEzg+cSMLFRfVgeAFqpfNabiPjxFddV1Q==}
     dev: true
@@ -974,7 +965,7 @@ packages:
       vite: ^4 || ^5
     dependencies:
       '@swc/core': 1.4.11
-      vite: 5.2.6(@types/node@20.11.30)
+      vite: 5.2.6
     transitivePeerDependencies:
       - '@swc/helpers'
     dev: true
@@ -3179,10 +3170,6 @@ packages:
       which-boxed-primitive: 1.0.2
     dev: true
 
-  /undici-types@5.26.5:
-    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
-    dev: true
-
   /unload@2.2.0:
     resolution: {integrity: sha512-B60uB5TNBLtN6/LsgAf3udH9saB5p7gqJwcFfbOEZ8BcBHnGwCf6G/TGiEqkRAxX7zAFIUtzdrXQSdL3Q/wqNA==}
     dependencies:
@@ -3211,7 +3198,7 @@ packages:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
     dev: true
 
-  /vite@5.2.6(@types/node@20.11.30):
+  /vite@5.2.6:
     resolution: {integrity: sha512-FPtnxFlSIKYjZ2eosBQamz4CbyrTizbZ3hnGJlh/wMtCrlp1Hah6AzBLjGI5I2urTfNnpovpHdrL6YRuBOPnCA==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -3239,7 +3226,6 @@ packages:
       terser:
         optional: true
     dependencies:
-      '@types/node': 20.11.30
       esbuild: 0.20.2
       postcss: 8.4.38
       rollup: 4.13.0
