@@ -2,6 +2,7 @@ import FullCalendar from "@fullcalendar/react";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 
 export interface CalendarEventInterface {
+  platform: string
   resourceId: string
   title: string
   start: string
@@ -9,6 +10,8 @@ export interface CalendarEventInterface {
 }
 
 export function CalendarTimelineView({properties} : {properties: CalendarEventInterface[]}) {
+  const uniqueProperties = [...new Set(properties.map((property) => property.resourceId)).values()];
+
   return (
     <FullCalendar
       plugins={[resourceTimelinePlugin]}
@@ -26,13 +29,7 @@ export function CalendarTimelineView({properties} : {properties: CalendarEventIn
       }}
       resourceAreaWidth={"20%"}
       resourceGroupField="id"
-      resources={[
-        { id: "Hotel 1" },
-        { id: "Hotel 2" },
-        { id: "Alojamento Local 1" },
-        { id: "Alojamento Local 2" },
-        { id: "Alojamento Local 3" },
-      ]}
+      resources={uniqueProperties.map((property) => ({ id: property }))}
       events={properties}
       eventColor="#FD642395"
       eventBorderColor="#FD642395"
