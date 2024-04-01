@@ -76,37 +76,33 @@ const Calendar = () => {
   const [selectedProperty, setSelectedProperty] = useState<string | null>(null);
 
   return (
-    <div className="h-screen relative">
+    <div className="flex flex-col h-screen">
       <Navbar />
-      <div className="grid grid-cols-[0.0001rem_auto] lg:grid-cols-[16rem_auto] gap-1 h-full">
+      <div className="flex flex-row flex-1 h-full">
         <Drawer />
         {/* Main page content (calendar, etc...)*/}
-        <div>
-          <div className="flex pt-24 px-4">
-            <div className="w-48">
+        <div className="flex flex-col flex-1 p-8 overflow-auto pt-28">
+          <div className="flex flex-row px-4 gap-8">
               <h3 className="text-2xl">Platforms</h3>
               <Dropdown
                 placeholder="Choose a platform"
                 options={uniquePlatforms.sort()}
                 onSelect={(platform: string | null) => setSelectedPlatform(platform)}
               />
-            </div>
-            <div className="w-48">
               <h3 className="text-2xl">Properties</h3>
               <Dropdown
                 placeholder="Choose a property"
                 options={uniqueProperties.sort()}
                 onSelect={(property : string | null) => setSelectedProperty(property)}
               />
-            </div>
           </div>
-          <CalendarTimelineView
-            properties={events.filter(
-              (event) =>
-                (!selectedPlatform || event.platform === selectedPlatform) &&
-                (!selectedProperty || event.resourceId === selectedProperty)
-            )}
-          />
+            <CalendarTimelineView
+              properties={events.filter(
+                (event) =>
+                  (!selectedPlatform || event.platform === selectedPlatform) &&
+                  (!selectedProperty || event.resourceId === selectedProperty)
+              )}
+            />
         </div>
       </div>
     </div>

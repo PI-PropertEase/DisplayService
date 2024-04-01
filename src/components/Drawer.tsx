@@ -4,6 +4,7 @@ import { CiBoxList } from "react-icons/ci";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { GrIntegration } from "react-icons/gr";
 import { LuBarChart } from "react-icons/lu";
+import { Link } from "react-router-dom";
 
 export default function Drawer() {
   const [showText, setShowText] = useState(false);
@@ -13,38 +14,46 @@ export default function Drawer() {
   };
 
   return (
-    <div className="pt-20" onMouseEnter={toggleShowText} onMouseLeave={toggleShowText}>
+    <div className="" onMouseEnter={toggleShowText} onMouseLeave={toggleShowText} >
       <input id="my-drawer" type="checkbox" className="drawer-toggle" defaultChecked />
       <div className="h-screen">
         <ul className="menu h-full bg-primary flex flex-col gap-8 pt-8 text-white shadow-lg">
-          {/* Ícones visíveis em telas pequenas */}
+          <Link to="/dashboard">
           <li
             className="text-2xl font-light rounded-md lg:hidden"
             
           >
-            <a>
+            
+            <p>
               <LuLayoutDashboard />
               {showText && <span className="ml-2">My business</span>}
-            </a>
+            </p>
+            
           </li>
+          </Link>
+          <Link to="/properties">
           <li
             className="text-2xl font-light rounded-md lg:hidden"
             
           >
-            <a>
+            
+            <p>
               <CiBoxList />
               {showText && <span className="ml-2">Properties List</span>}
-            </a>
+            </p>
           </li>
+          </Link>
+          <Link to="/calendar">
           <li
             className="text-2xl font-light rounded-md lg:hidden"
             
           >
-            <a>
+            <p>
               <FaRegCalendarAlt />
               {showText && <span className="ml-2">Calendar</span>}
-            </a>
+            </p>
           </li>
+          </Link>
           <li
             className="text-2xl font-light rounded-md lg:hidden"
             
@@ -65,21 +74,27 @@ export default function Drawer() {
           </li>
 
           {/* Ícones e textos visíveis em telas maiores */}
+          <Link to="/dashboard">
           <li className="text-2xl font-light rounded-md hidden lg:flex">
-            <a>
+            <p>
               <LuLayoutDashboard /> My business
-            </a>
+            </p>
           </li>
+          </Link>
+          <Link to="/properties">
           <li className="text-2xl font-light rounded-md hidden lg:flex">
-            <a>
+            <p>
               <CiBoxList /> Properties List
-            </a>
+            </p>
           </li>
+          </Link>
+          <Link to="/calendar">
           <li className="text-2xl font-light rounded-md hidden lg:flex">
-            <a>
+            <p>
               <FaRegCalendarAlt /> Calendar
-            </a>
+            </p>
           </li>
+          </Link>
           <li className="text-2xl font-light rounded-md hidden lg:flex">
             <a>
               <GrIntegration /> Integrations
