@@ -10,6 +10,7 @@ import Dashboard from "./routes/Dashboard";
 import PropertyListPage from "./routes/PropertyListPage";
 import PropertyDetails from "./routes/PropertyDetails";
 import Calendar from './routes/Calendar';
+import Integrations from "./routes/Integrations";
 
 export interface IPropertyDetails {
   user_id: number;
@@ -136,6 +137,10 @@ const myRouter = createBrowserRouter([
   {
     path: "/calendar",
     element: <Calendar />,
+  },
+  {
+    path: "/integrations",
+    element: <Integrations />,
   }
 ]);
 

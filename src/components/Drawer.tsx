@@ -54,6 +54,7 @@ export default function Drawer() {
             </p>
           </li>
           </Link>
+          <Link to="/integrations">
           <li
             className="text-2xl font-light rounded-md lg:hidden"
             
@@ -63,6 +64,7 @@ export default function Drawer() {
               {showText && <span className="ml-2">Integrations</span>}
             </a>
           </li>
+          </Link>
           <li
             className="text-2xl font-light rounded-md lg:hidden"
             
@@ -95,11 +97,13 @@ export default function Drawer() {
             </p>
           </li>
           </Link>
+          <Link to="/integrations">
           <li className="text-2xl font-light rounded-md hidden lg:flex">
             <a>
               <GrIntegration /> Integrations
             </a>
           </li>
+          </Link>
           <li className="text-2xl font-light rounded-md hidden lg:flex">
             <a>
               <LuBarChart /> Statistics
