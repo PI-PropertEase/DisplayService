@@ -1,6 +1,8 @@
-import React, { useState} from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { RxPencil2 } from "react-icons/rx";
 import PropertyListBadge from "./PropertyListBadge";
+import { PropertyContext } from "../context/PropertyContext";
+import { IPropertyDetails } from "../main";
 export interface IProperty {
   id: number;
   name: string;
@@ -11,25 +13,30 @@ export interface IProperty {
   price: number;
 }
 
-interface IPropertyListDashboardProps {
-  propertyList: IProperty[];
-}
+const PropertyListDashboard = () => {
+  const { properties, reservations } = useContext(PropertyContext);
 
-const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
-  props: IPropertyListDashboardProps
-) => {
   const [propertyListState, setPropertyListState] = useState<{
-    propertyList: IProperty[];
+    propertyList: IPropertyDetails[];
     activeTab: string;
   }>({
-    propertyList: [...props.propertyList],
+    propertyList: [...properties],
     activeTab: "all_tab",
   });
+
+  useEffect(() => {
+    setPropertyListState({
+      propertyList: [...properties],
+      activeTab: "all_tab",
+    });
+  }, [properties]);
+
+  console.log("the properties list state em questão: ", propertyListState);
 
   const handlePropertyTabSelection = (
     event: React.MouseEvent<HTMLButtonElement>
   ): void => {
-    const eventId = event.currentTarget.id;
+    /* const eventId = event.currentTarget.id;
     let filteredList: IProperty[] = [];
 
     switch (eventId) {
@@ -62,9 +69,8 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
     setPropertyListState({
       propertyList: filteredList,
       activeTab: eventId,
-    });
+    }); */
   };
-
 
   return (
     <div className="flex flex-col max-h-[32rem] pb-4">
@@ -72,10 +78,13 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
         <RxPencil2 className="" />
         <span className="ml-2">Properties</span>
         <span className="ml-2 badge text-base bg-[#FAAD1F] dark:bg-orange-800">
-          {props.propertyList.length}
+          {propertyListState.propertyList.length}
         </span>
       </div>
-      <div role="tablist" className=" flex flex-row flex-wrap mt-4 sm:flex-col md:flex-row lg:flex-row xl:flex-row">
+      <div
+        role="tablist"
+        className=" flex flex-row flex-wrap mt-4 sm:flex-col md:flex-row lg:flex-row xl:flex-row"
+      >
         {[
           { id: "all_tab", label: "All" },
           { id: "occupied_tab", label: "Occupied" },
@@ -86,9 +95,11 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
           <button
             key={tab.id}
             id={tab.id}
-            role="tab" 
+            role="tab"
             className={`tab flex-grow justify-center content-center border-b-2 rounded-tr-md rounded-tl-md ${
-              propertyListState.activeTab === tab.id ? "bg-secondary border-b-2 border-primary text-black" : ""
+              propertyListState.activeTab === tab.id
+                ? "bg-secondary border-b-2 border-primary text-black"
+                : ""
             }`}
             onClick={handlePropertyTabSelection}
           >
@@ -96,7 +107,6 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
           </button>
         ))}
       </div>
-
 
       <div className="mt-5 shadow-md rounded-xl overflow-auto shadow-base-200">
         <table className="table">
@@ -113,11 +123,11 @@ const PropertyListDashboard: React.FC<IPropertyListDashboardProps> = (
           </thead>
           <tbody>
             {propertyListState.propertyList.map((property) => (
-              <tr key={property.id}>
-                <td>{property.name}</td>
+              <tr key={property._id}>
+                <td>{property.title}</td>
                 <td>{property.address}</td>
                 <td>
-                  <PropertyListBadge text={property.status} />
+                  <PropertyListBadge text="Static" />
                 </td>
               </tr>
             ))}
