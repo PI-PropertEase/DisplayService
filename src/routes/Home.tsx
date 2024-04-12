@@ -4,7 +4,7 @@ import { BsGraphUpArrow, BsTagsFill } from "react-icons/bs";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { PiChartPieSliceFill } from "react-icons/pi";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useSignIn from "react-auth-kit/hooks/useSignIn";
 import { handleFirebaseLogin } from "../utils/firebase";
 import axios from "axios";
@@ -17,41 +17,89 @@ export default function Home() {
   const handleSignIn = async () => {
     const result = await handleFirebaseLogin();
 
-    try {
-      const res = await axios.get(
-        "http://localhost:4040/api/UserService/users",
-        {
-          headers: { Authorization: `Bearer ${result.user.accessToken}` },
-        }
-      );
+    if (result) {
+      const idToken = await result.user.getIdToken();
 
-      const user_data = res.data as IUser;
-      if (
-        signIn({
-          auth: {
-            token: result.user.accessToken,
-            type: "Bearer",
-          },
-          //refresh: result.user.refreshToken,
-          userState: {
-            email: user_data.email,
-            id: user_data.id,
-            connected_services: user_data.connected_services,
-          },
-        })
-      ) {
-        navigate("/dashboard");
-      } else {
-        console.error("Failure signing in with react auth kit");
+      try {
+        const res = await axios.get(
+          "http://localhost:4040/api/UserService/users",
+          {
+            headers: {
+              Authorization: `Bearer ${idToken}`,
+            },
+          }
+        );
+
+        const user_data = res.data as IUser;
+        if (
+          signIn({
+            auth: {
+              token: idToken,
+              type: "Bearer",
+            },
+            //refresh: result.user.refreshToken,
+            userState: {
+              email: user_data.email,
+              id: user_data.id,
+              connected_services: user_data.connected_services,
+            },
+          })
+        ) {
+          navigate("/dashboard");
+        } else {
+          console.error("Failure signing in with react auth kit");
+        }
+      } catch (error) {
+        console.log("Error occured during authentication: ", error);
       }
-    } catch (error) {
-      console.log("Error occured during authentication: ", error);
     }
   };
 
   const handleSignUp = async () => {
-    // TODO: fazer isto
-    console.log("hi");
+    const result = await handleFirebaseLogin();
+
+    if (result) {
+      const idToken = await result.user.getIdToken();
+
+      try {
+        // Create user in backend
+        const res = await axios.post(
+          "http://localhost:4040/api/UserService/users",
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${idToken}`,
+            },
+          }
+        );
+        if (res.status != 201) {
+          console.error("Error occurred while signing up: ", res);
+          return;
+        }
+
+        const user_data = res.data as IUser;
+        if (
+          signIn({
+            auth: {
+              token: idToken,
+              type: "Bearer",
+            },
+            //refresh: result.user.refreshToken,
+            userState: {
+              email: user_data.email,
+              id: user_data.id,
+              connected_services: user_data.connected_services,
+            },
+          })
+        ) {
+          navigate("/dashboard");
+        } else {
+          console.error("Failure signing in with react auth kit");
+        }
+      } catch (error) {
+        console.log("Error occured during authentication: ", error);
+      }
+    }
   };
 
   return (
@@ -70,16 +118,14 @@ export default function Home() {
             while minimizing effort required.
           </p>
           <div className="flex space-x-4">
-            <Link to="/signup">
-              <button
-                onClick={async () => {
-                  await handleSignUp();
-                }}
-                className="btn btn-outline btn-primary btn-lg md:btn-wide text-2xl font-light"
-              >
-                Sign Up
-              </button>
-            </Link>
+            <button
+              onClick={async () => {
+                await handleSignUp();
+              }}
+              className="btn btn-outline btn-primary btn-lg md:btn-wide text-2xl font-light"
+            >
+              Sign Up
+            </button>
             <button
               onClick={async () => {
                 await handleSignIn();

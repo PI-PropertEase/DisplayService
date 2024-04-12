@@ -13,7 +13,6 @@ import Calendar from "./routes/Calendar";
 import { PropertyContextProvider } from "./context/PropertyContext";
 import AuthProvider from "react-auth-kit";
 import createStore from "react-auth-kit/createStore";
-import { refresh } from "./utils/auth";
 import RequireAuth from "@auth-kit/react-router/RequireAuth";
 
 export interface IPropertyDetails {
