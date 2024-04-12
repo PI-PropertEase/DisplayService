@@ -9,7 +9,6 @@ RUN npm install -g pnpm
 
 RUN pnpm install 
 
-
 EXPOSE 8080
 
 CMD ["pnpm", "run", "dev"]
