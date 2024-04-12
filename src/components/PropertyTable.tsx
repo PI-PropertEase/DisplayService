@@ -38,7 +38,7 @@ const PropertyTable: React.FC<IPropertyTableProps> = (
       <div className="table-cell h-[4rem] pl-6 align-middle text-xl">
         Properties
         <span className="ml-3 badge text-[0.75rem] bg-secondary text-[#FDA882] dark:bg-orange-900 dark:text-secondary border-none">
-          100 Properties
+          {props.propertyList.length} Properties
         </span>
       </div>
       <table className="table">
