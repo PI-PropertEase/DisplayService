@@ -1,7 +1,17 @@
 import { MdKeyboardArrowDown } from "react-icons/md";
 import ToogleDarkMode from "./ToogleDarkMode";
+import useSignOut from 'react-auth-kit/hooks/useSignOut'
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
+  const signOut = useSignOut();
+  const navigate = useNavigate();
+
+  const handleSignOut = () => {
+    signOut();
+    navigate("/");
+  }
+
   const userData = {
     name: "Alice Zuquete",
     profilePicUrl:
@@ -35,7 +45,7 @@ export default function Navbar() {
             <a><b>{transformName(userData.name)}</b></a>
               <ul className="p-2">
                 <li><a>Settings</a></li>
-                <li><a>Logout</a></li>
+                <li><button onClick={() => {console.log("clicked logout"); signOut()}}>Logout</button></li>
               </ul>
             </li>
           </ul>
@@ -63,7 +73,7 @@ export default function Navbar() {
                 </a>
               </li>
               <li><a>Settings</a></li>
-              <li><a>Logout</a></li>
+              <li><button onClick={() => handleSignOut()}>Logout</button></li>
             </ul>
           </div>
         </div>
