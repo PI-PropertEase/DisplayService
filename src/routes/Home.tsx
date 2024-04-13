@@ -22,7 +22,7 @@ export default function Home() {
 
       try {
         const res = await axios.get(
-          "http://localhost:4040/api/UserService/users",
+          "http://localhost/api/UserService/users",
           {
             headers: {
               Authorization: `Bearer ${idToken}`,
@@ -64,7 +64,7 @@ export default function Home() {
       try {
         // Create user in backend
         const res = await axios.post(
-          "http://localhost:4040/api/UserService/users",
+          "http://localhost/api/UserService/users",
           {},
           {
             headers: {
