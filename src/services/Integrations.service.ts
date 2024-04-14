@@ -32,9 +32,17 @@ export const fetchUserConnectedServices = async (authHeader: string) => {
         },
     })
 
-    console.log(res.data)
-
     return res.data.connected_services as IIntegration[]
+}
+
+export const fetchUser = async (authHeader: string) => {
+    const res = await axios.get<UserConnectedServicesResponse>(`${URL}/UserService/users`, {
+        headers: {
+            Authorization: authHeader,
+        },
+    })
+
+    return res.data as IUser;
 }
 
 export const connectUserToService = async (authHeader: string, service: IIntegration) => {

@@ -5,17 +5,18 @@ import PropertyListDashboard, {
 } from "../components/PropertyListDashboard";
 import WeekCalendar from "../components/WeekCalendar";
 import { IReservation, IReservationType } from "../types/ReservationType";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { IUser } from "../types/UserType";
 import { fetchProperties } from "../services/Property.service";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import { useQuery } from "react-query";
 import { IFetchProperty } from "../types/PropertyType";
+import { fetchUser } from "../services/Integrations.service";
 
 const Dashboard = () => {
-  const user = useAuthUser<IUser>();
   const authHeader = useAuthHeader() ?? '';
-
+  const {data: user} = useQuery<IUser>("user", () => fetchUser(authHeader).then(data => data), {
+    staleTime: Infinity
+  })
   const mockProperties: IProperty[] = [];
 
   const mockReservations: IReservation[] = [
@@ -58,16 +59,17 @@ const Dashboard = () => {
   ];
 
   const fetchPropers = async () : Promise<IFetchProperty[]> => {
-    const userId = Number(user?.id) ?? '';
-    const res = await fetchProperties(userId, authHeader);
-  
+    if (user) {
+      const userEmail = user.email;
+      const res = await fetchProperties(userEmail, authHeader);
       return res;
+    }
   };
    
    const { data: fetchPropertiesData, } = useQuery({
     queryKey: 'fetchProperties',
     queryFn: fetchPropers,
-    refetchInterval: 30000, 
+    refetchInterval: 1000, 
    });
 
   return (
@@ -76,7 +78,7 @@ const Dashboard = () => {
         <Navbar />
         <div className="flex flex-row flex-1">
           <Drawer />
-          {(fetchPropertiesData?.length ?? 0) == 0 ? (
+          {(user?.connected_services?.length ?? 0) == 0 ? (
             <div className="flex flex-col flex-1 p-8 overflow-auto pt-28 justify-center text-center text-4xl">
               You have not yet connected to any external service!
             </div>

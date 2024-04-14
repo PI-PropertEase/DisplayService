@@ -4,12 +4,15 @@ import Navbar from "../components/Navbar"
 import { connectUserToService, fetchExternalServices, fetchUserConnectedServices } from "../services/Integrations.service"
 import { useEffect, useState } from "react"
 import { IUser } from "../types/UserType"
+import { useQueryClient } from "react-query";
+
 
 export interface IIntegration {
     title: string
 }
 
 export default function Integrations() {
+    const queryClient = useQueryClient();
     const authHeader = useAuthHeader()
     const [allExternalServices, setAllExternalServices] = useState<IIntegration[]>([])
     const [userConnectedServices, setUserConnectedServices] = useState<IIntegration[]>([])
@@ -35,6 +38,7 @@ export default function Integrations() {
         // returns new user state
         const res = connectUserToService(authHeader ? authHeader : "", integration).then((data: IUser) => {
                 setUserConnectedServices(data.connected_services);
+                queryClient.invalidateQueries("user");
             }
         );
     }

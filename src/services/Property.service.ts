@@ -4,8 +4,8 @@ import { IFetchProperty } from "../types/PropertyType";
 const URL = 'http://localhost/api';
 
 
-const fetchProperties = async (userId: number, authHeader: string) => {
-    const res = await axios.get(`${URL}/PropertyService/properties?user_id=${userId}`, {
+const fetchProperties = async (userEmail: string, authHeader: string) => {
+    const res = await axios.get(`${URL}/PropertyService/properties?user_email=${userEmail}`, {
         headers: {
             Authorization: authHeader,
         },

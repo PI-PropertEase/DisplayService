@@ -182,22 +182,6 @@ const store = createStore({
   debug: true,
 });
 
-function getUser() {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; _auth_propertease_state=`);
-  if (parts.length === 2) {
-    const jsonString = parts.pop()?.split(';').shift();
-    const decodedJsonString = decodeURIComponent(jsonString ?? '');
-    const userData = JSON.parse(decodedJsonString) as IUser;
-
-    return userData;
-  }
-  return null;
-}
-
-queryClient.setQueryData<IUser | undefined>("user", getUser() ?? undefined);
-
-
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <AuthProvider store={store}>
