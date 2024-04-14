@@ -3,7 +3,7 @@ import { IModalData } from '../routes/PropertyDetails';
 import { useQueryClient } from 'react-query';
 import { IoCloseOutline } from "react-icons/io5";
 import { useRef } from 'react';
-import { IPropertyDetails } from '../main';
+import { Amenity, IFetchProperty } from '../types/PropertyType';
 
 export interface IAlerts {
     type: string;
@@ -26,7 +26,6 @@ export default function ModalPropertyDetails() {
     const typeBedsInput = useRef<HTMLInputElement>(null);
     const nameContactInput = useRef<HTMLInputElement>(null);
     const phoneContactInput = useRef<HTMLInputElement>(null);
-    const emailContactInput = useRef<HTMLInputElement>(null);
     const itemsInput = useRef<HTMLInputElement>(null);
     
 
@@ -42,7 +41,7 @@ export default function ModalPropertyDetails() {
     };
 
     const handleSave = () => {
-        const updatedPropertyDetails: IPropertyDetails = queryClient.getQueryData('propertyDetails')!;
+        const updatedPropertyDetails: IFetchProperty = queryClient.getQueryData('propertyDetails')!;
 
         let notAllowed: string[] = [];
         const allNotAllowed: string[] = [];
@@ -142,7 +141,7 @@ export default function ModalPropertyDetails() {
                 break;
             case "Price (per night €)":
                 if (stringInput.current?.value && Number(stringInput.current?.value) > 0){
-                    updatedPropertyDetails.price_per_night = Number(stringInput.current?.value);
+                    updatedPropertyDetails.price = Number(stringInput.current?.value);
                     queryClient.setQueryData('alertData', {
                         type: 'Price (per night €)',
                         message: '',
@@ -158,10 +157,10 @@ export default function ModalPropertyDetails() {
                 }
                 break;
             case "Amenities":
-                updatedPropertyDetails.amenities = stringInput.current?.value.split(',').map(item => item.trim()) ?? [];
+                updatedPropertyDetails.amenities = stringInput.current?.value.split(',').map(item => item.trim() as Amenity) ?? [];
                 break;
             case "Notes":
-                updatedPropertyDetails.notes = textareaInput.current?.value ?? '';
+                updatedPropertyDetails.additional_info = textareaInput.current?.value ?? '';
                 break;
             case "Cancellation Policy":
                 updatedPropertyDetails.cancellation_policy = textareaInput.current?.value ?? '';
@@ -290,12 +289,11 @@ export default function ModalPropertyDetails() {
                 }
                 break;
             case "New Contact":
-                if (nameContactInput.current?.value && ( phoneContactInput.current?.value || emailContactInput.current?.value)){
+                if (nameContactInput.current?.value && ( phoneContactInput.current?.value)){
                     updatedPropertyDetails.contact.push({
                         id: updatedPropertyDetails.contact.length + 1,
                         name: nameContactInput.current?.value,
                         phone: Number(phoneContactInput.current?.value) ?? 0,
-                        email: emailContactInput.current?.value ?? ''
                     });
                     queryClient.setQueryData('alertData', {
                         type: 'New Contact',
@@ -354,12 +352,11 @@ export default function ModalPropertyDetails() {
                     const id = modalData?.type.substring(modalData?.type.split(' ')[0].length).trim();
                     const existingContactIndex = updatedPropertyDetails.contact.findIndex(contact => contact.id === Number(id));
 
-                    if (existingContactIndex !== -1 && nameContactInput.current?.value && (phoneContactInput.current?.value || emailContactInput.current?.value)){
+                    if (existingContactIndex !== -1 && nameContactInput.current?.value && (phoneContactInput.current?.value)){
                         updatedPropertyDetails.contact[existingContactIndex] = {
                             id: Number(id),
                             name: nameContactInput.current?.value,
                             phone: Number(phoneContactInput.current?.value) ?? 0,
-                            email: emailContactInput.current?.value ?? ''
                         };
                         queryClient.setQueryData('alertData', {
                             type: 'Contact',
@@ -424,9 +421,7 @@ export default function ModalPropertyDetails() {
                                         <p className='font-light'>Name: </p>
                                         <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={nameContactInput} defaultValue={modalData.content.name}/>
                                         <p className='font-light'>Number: </p>
-                                        <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={phoneContactInput} defaultValue={modalData.content.phone}/>
-                                        <p className='font-light'>Email: </p>
-                                        <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={emailContactInput} defaultValue={modalData.content.email}/>
+                                        <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={phoneContactInput} defaultValue={modalData.content.phone_number}/>
                                     </div>
                                 )}
                             </div> :

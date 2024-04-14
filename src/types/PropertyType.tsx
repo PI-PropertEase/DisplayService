@@ -6,6 +6,7 @@ export interface IFetchProperty {
     description: string;
     number_guests: number;
     square_meters: number;
+    price: number;
     bedrooms: Record<string, Bedroom>;
     bathrooms: Record<string, Bathroom>;
     amenities: Amenity[];
