@@ -135,7 +135,7 @@ const PropertyTable = (
                     data-label="Price"
                     className="text-center max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
                   >
-                    100€
+                    {property.price}€
                   </td>
                   <td
                     data-label="Delete"
