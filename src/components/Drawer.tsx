@@ -59,20 +59,20 @@ export default function Drawer() {
             className="text-2xl font-light rounded-md lg:hidden"
             
           >
-            <a>
+            <p>
               <GrIntegration />
               {showText && <span className="ml-2">Integrations</span>}
-            </a>
+            </p>
           </li>
           </Link>
           <li
             className="text-2xl font-light rounded-md lg:hidden"
             
           >
-            <a>
+            <p>
               <LuBarChart />
               {showText && <span className="ml-2">Statistics</span>}
-            </a>
+            </p>
           </li>
 
           {/* Ícones e textos visíveis em telas maiores */}
@@ -99,15 +99,15 @@ export default function Drawer() {
           </Link>
           <Link to="/integrations">
           <li className="text-2xl font-light rounded-md hidden lg:flex">
-            <a>
+            <p>
               <GrIntegration /> Integrations
-            </a>
+            </p>
           </li>
           </Link>
           <li className="text-2xl font-light rounded-md hidden lg:flex">
-            <a>
+            <p>
               <LuBarChart /> Statistics
-            </a>
+            </p>
           </li>
         </ul>
       </div>

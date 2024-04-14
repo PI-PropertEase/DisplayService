@@ -3,6 +3,9 @@ import { RxPencil2 } from "react-icons/rx";
 import PropertyListBadge from "./PropertyListBadge";
 import { PropertyContext } from "../context/PropertyContext";
 import { IPropertyDetails } from "../main";
+import { useQueryClient } from "react-query";
+import { IFetchProperty } from "../types/PropertyType";
+
 export interface IProperty {
   id: number;
   name: string;
@@ -14,10 +17,12 @@ export interface IProperty {
 }
 
 const PropertyListDashboard = () => {
-  const { properties, reservations } = useContext(PropertyContext);
+  const queryClient = useQueryClient();
+
+  const properties = queryClient.getQueryData<IFetchProperty[]>("fetchProperties") ?? [];
 
   const [propertyListState, setPropertyListState] = useState<{
-    propertyList: IPropertyDetails[];
+    propertyList: IFetchProperty[];
     activeTab: string;
   }>({
     propertyList: [...properties],
@@ -30,8 +35,6 @@ const PropertyListDashboard = () => {
       activeTab: "all_tab",
     });
   }, [properties]);
-
-  console.log("the properties list state em questão: ", propertyListState);
 
   const handlePropertyTabSelection = (
     event: React.MouseEvent<HTMLButtonElement>

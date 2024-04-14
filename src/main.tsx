@@ -15,6 +15,7 @@ import AuthProvider from "react-auth-kit";
 import createStore from "react-auth-kit/createStore";
 import RequireAuth from "@auth-kit/react-router/RequireAuth";
 import Integrations from "./routes/Integrations";
+import { IUser } from "./types/UserType";
 
 export interface IPropertyDetails {
   _id: string;
