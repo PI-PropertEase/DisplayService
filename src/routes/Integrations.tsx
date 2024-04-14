@@ -4,11 +4,17 @@ import Navbar from "../components/Navbar"
 import { connectUserToService, fetchExternalServices, fetchUserConnectedServices } from "../services/Integrations.service"
 import { useEffect, useState } from "react"
 import { IUser } from "../types/UserType"
-import { useQueryClient } from "react-query";
+import { useQueryClient, useQuery} from "react-query";
 
 
 export interface IIntegration {
     title: string
+}
+
+export interface IIntegrationAlert {
+    active: boolean
+    alertType: string
+    alertText: string
 }
 
 export default function Integrations() {
@@ -32,15 +38,48 @@ export default function Integrations() {
         )
     }
 
+    const {data: alerts} = useQuery<IIntegrationAlert>('alertsIntegrations');
+
     function handleConnectService(integration: IIntegration) {
-        if (userConnectedServices.includes(integration))
+        if (userConnectedServices.includes(integration)) {
+            updateAlertState("info", "Integration already connected!");
             return;
-        // returns new user state
-        const res = connectUserToService(authHeader ? authHeader : "", integration).then((data: IUser) => {
+        }
+    
+        connectUserToService(authHeader ? authHeader : "", integration)
+            .then((data: IUser | null) => {
+                if (!data) {
+                    updateAlertState("error", "Integration failed!");
+                    return;
+                }
+
+                updateAlertState("success", "Integration successful!");
+    
                 setUserConnectedServices(data.connected_services);
                 queryClient.invalidateQueries("user");
-            }
-        );
+            })
+            .catch((error: undefined) => {
+                console.error("Error connecting to service:", error);
+                updateAlertState("error", "An error occurred while connecting!");
+            });
+    }
+
+    function updateAlertState(type: string, text: string) {
+        const alertData = {
+            active: true,
+            alertType: type,
+            alertText: text
+        };
+    
+        queryClient.setQueryData<IIntegrationAlert>('alertsIntegrations', alertData);
+    
+        setTimeout(() => {
+            queryClient.setQueryData<IIntegrationAlert>('alertsIntegrations', {
+                active: false,
+                alertType: "",
+                alertText: ""
+            });
+        }, 3000);
     }
 
     return (
@@ -49,7 +88,23 @@ export default function Integrations() {
                 <Navbar />
                 <div className="flex flex-row flex-1">
                     <Drawer />
-                    <div className="flex flex-col flex-1 p-8 overflow-auto pt-28">
+                    <div className="flex flex-col flex-1 p-8 overflow-auto pt-28 gap-8">
+                        {alerts?.active && (
+                            <>
+                                <div role="alert" className={`alert alert-${alerts.alertType}`}>
+                                {alerts.alertType === "success" && (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                )}
+                                {alerts.alertType === "error" && (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                )}
+                                {alerts.alertType === "info" && (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v3m0 4 0 4m-4-4h8" /></svg>
+                                )}
+                                <span>{alerts.alertText}</span>
+                            </div>
+                            </>
+                        )}
                         <div className="flex items-center justify-center">
                             <h1 className="text-4xl font-light text-accent">
                                 Connect to your external services and start synchronizing
