@@ -1,5 +1,6 @@
 import axios from "axios"
 import { IIntegration } from "../routes/Integrations"
+import { IUser } from "../types/UserType"
 
 const URL = "http://localhost/api"
 
@@ -21,7 +22,7 @@ export const fetchExternalServices = async (authHeader: string) => {
         },
     })
 
-    return res.data.map((item) => ({ name: item.title })) as IIntegration[]
+    return res.data as IIntegration[]
 }
 
 export const fetchUserConnectedServices = async (authHeader: string) => {
@@ -33,5 +34,17 @@ export const fetchUserConnectedServices = async (authHeader: string) => {
 
     console.log(res.data)
 
-    return res.data.connected_services.map((item) => ({ name: item.title })) as IIntegration[]
+    return res.data.connected_services as IIntegration[]
+}
+
+export const connectUserToService = async (authHeader: string, service: IIntegration) => {
+    const res = await axios.post<UserConnectedServicesResponse>(`${URL}/UserService/services`, 
+        service,
+        {
+        headers: {
+            Authorization: authHeader,
+        },
+    })
+
+    return res.data as IUser;
 }

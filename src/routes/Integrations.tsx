@@ -1,11 +1,12 @@
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader"
 import Drawer from "../components/Drawer"
 import Navbar from "../components/Navbar"
-import { fetchExternalServices, fetchUserConnectedServices } from "../services/Integrations.service"
+import { connectUserToService, fetchExternalServices, fetchUserConnectedServices } from "../services/Integrations.service"
 import { useEffect, useState } from "react"
+import { IUser } from "../types/UserType"
 
 export interface IIntegration {
-    name: string
+    title: string
 }
 
 export default function Integrations() {
@@ -24,8 +25,18 @@ export default function Integrations() {
 
     function isUserIntegration(integration: IIntegration) {
         return userConnectedServices.some(
-            (userIntegration) => userIntegration.name === integration.name
+            (userIntegration) => userIntegration.title === integration.title
         )
+    }
+
+    function handleConnectService(integration: IIntegration) {
+        if (userConnectedServices.includes(integration))
+            return;
+        // returns new user state
+        const res = connectUserToService(authHeader ? authHeader : "", integration).then((data: IUser) => {
+                setUserConnectedServices(data.connected_services);
+            }
+        );
     }
 
     return (
@@ -44,13 +55,14 @@ export default function Integrations() {
                         <div className="flex flex-wrap gap-16 items-center justify-center pt-16">
                             {allExternalServices.map((integration, index) => (
                                 <div
+                                    onClick={() => { handleConnectService(integration)} }
                                     key={index}
                                     className={`relative flex flex-col items-center justify-center gap-4 p-4 shadow-sm shadow-base-200 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 rounded-xl ${
                                         !isUserIntegration(integration) &&
                                         "cursor-pointer hover:bg-accent hover:bg-opacity-10 hover:transition-all hover:duration-500"
                                     } `}
                                 >
-                                    <h2 className="text-2xl font-light">{integration.name}</h2>
+                                    <h2 className="text-2xl font-light capitalize">{integration.title}</h2>
                                     {isUserIntegration(integration) && (
                                         <div className="absolute inset-0 bg-neutral opacity-15 rounded-xl z-10"></div>
                                     )}
