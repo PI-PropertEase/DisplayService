@@ -26,20 +26,11 @@ export interface IModalDeleteData {
 export default function PropertyDetails() {
     const authHeader = useAuthHeader() ?? '';
     const queryClient = useQueryClient();
-
     const id = useParams<{ id: string }>()?.id?.toString() ?? "";
 
     const { data: propertyDetails } = useQuery<IFetchProperty>("property", () => fetchProperty(id, authHeader).then(data => data), { staleTime: Infinity });
     
-    // DEBUG To show contacts and more beds in the propertyDetails object
-    // 
-    // const bed: Bed = { number_beds: 5, type: "king" };
-    // propertyDetails?.bedrooms["bedroom_1"].beds.push(bed);
-    // const contact: Contact = { name: "John Doe", phone_number: "123456789"}
-    // propertyDetails?.contacts.push(contact);
-    // console.log("Props dasdassa", propertyDetails)
-
-
+    
     if (!propertyDetails) {
         return <div>Loading...</div>;
     }
@@ -146,8 +137,8 @@ export default function PropertyDetails() {
                                     </div>
                                     <div className="col-span-2 md:col-span-1 relative">
                                         <label htmlFor="price" className="text-accent">Price per night:</label>
-                                        <input id="price" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={"45.99€"}  readOnly />
-                                        <button className="absolute top-2 right-2"  onClick={() => handleOpenModal("45.99", "Price (per night €)")}><FaRegEdit className="text-accent" /></button>
+                                        <input id="price" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={`${propertyDetails?.price}€`}  readOnly />
+                                        <button className="absolute top-2 right-2"  onClick={() => handleOpenModal(`${propertyDetails?.price}`, "Price (per night €)")}><FaRegEdit className="text-accent" /></button>
                                     </div>
                                 </div>
                             </div>

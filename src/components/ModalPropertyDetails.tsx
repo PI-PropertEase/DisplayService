@@ -2,8 +2,11 @@ import { useQuery } from 'react-query';
 import { IModalData } from '../routes/PropertyDetails';
 import { useQueryClient } from 'react-query';
 import { IoCloseOutline } from "react-icons/io5";
-import { useRef } from 'react';
-import { Amenity, IFetchProperty } from '../types/PropertyType';
+import { useEffect, useRef } from 'react';
+import { Amenity, IFetchProperty, IUpdateProperty } from '../types/PropertyType';
+import { updateProperty } from '../services/Property.service';
+import useAuthHeader from 'react-auth-kit/hooks/useAuthHeader';
+import { useParams } from 'react-router-dom';
 
 export interface IAlerts {
     type: string;
@@ -13,6 +16,8 @@ export interface IAlerts {
 }
 
 export default function ModalPropertyDetails() {
+
+    const authHeader = useAuthHeader() ?? "";
 
     const {data: modalData} = useQuery<IModalData>('modalData')
 
@@ -27,9 +32,10 @@ export default function ModalPropertyDetails() {
     const nameContactInput = useRef<HTMLInputElement>(null);
     const phoneContactInput = useRef<HTMLInputElement>(null);
     const itemsInput = useRef<HTMLInputElement>(null);
+
+    const updatedPropertyDetails: IFetchProperty = queryClient.getQueryData('property')!;
+    const propertyId = useParams<{id: string}>().id;
     
-
-
     const handleModalClose = () => {
         const updatedModalData = { 
             ...modalData, 
@@ -40,15 +46,12 @@ export default function ModalPropertyDetails() {
         queryClient.setQueryData<IModalData>('modalData', updatedModalData);
     };
 
-    const handleSave = () => {
-        const updatedPropertyDetails: IFetchProperty = queryClient.getQueryData('propertyDetails')!;
+    const handleSave = async () => {
 
         let notAllowed: string[] = [];
         const allNotAllowed: string[] = [];
         let allowed: string[] = [];
         const allAllowed: string[] = [];
-
-        console.log(modalData?.type);
 
         switch (modalData?.type) {
             case "Title":
@@ -376,8 +379,9 @@ export default function ModalPropertyDetails() {
                 break;
             
         }
-
-        queryClient.setQueryData('propertyDetails', updatedPropertyDetails);
+        await queryClient.invalidateQueries('property')
+        queryClient.setQueryData('property', updatedPropertyDetails);
+        await updateProperty(propertyId ?? "", updatedPropertyDetails, authHeader);
         handleModalClose();
     }
 

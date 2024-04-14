@@ -1,6 +1,6 @@
 export interface IFetchProperty {
     _id?: string;
-    user_email: number;
+    user_email: string;
     title: string;
     address: string;
     description: string;
@@ -62,4 +62,20 @@ export interface HouseRules {
 export interface TimeSlot {
     begin_time: string;
     end_time: string;
+}
+
+export interface IUpdateProperty {
+    title?: string;
+    address?: string;
+    description?: string;
+    number_guests?: number;
+    square_meters?: number;
+    price?: number;
+    bedrooms?: Record<string, Bedroom>;
+    bathrooms?: Record<string, Bathroom>;
+    amenities?: Amenity[];
+    house_rules?: HouseRules;
+    additional_info?: string;
+    cancellation_policy?: string;
+    contacts?: Contact[];
 }
