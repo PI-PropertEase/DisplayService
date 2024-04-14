@@ -1,25 +1,48 @@
-import React, { useState } from "react";
-import { IProperty } from "./PropertyListDashboard";
+import { useState } from "react";
 import PropertyListBadge from "./PropertyListBadge";
 import { BsBoxArrowUpRight } from "react-icons/bs";
 import { FaArrowLeft, FaArrowRight, FaRegTrashAlt } from "react-icons/fa";
+import { useQuery } from "react-query";
 import {
   MdKeyboardDoubleArrowLeft,
   MdKeyboardDoubleArrowRight,
 } from "react-icons/md";
+import { IFetchProperty } from "../types/PropertyType";
+import { fetchProperties } from "../services/Property.service";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { IUser } from "../types/UserType";
+import { fetchUser } from "../services/Integrations.service";
+import { Link } from "react-router-dom";
 
-interface IPropertyTableProps {
-  propertyList: IProperty[];
-}
 
-const PropertyTable: React.FC<IPropertyTableProps> = (
-  props: IPropertyTableProps
+const PropertyTable = (
 ) => {
   const PAGE_SIZE = 10;
 
+  const authHeader = useAuthHeader() ?? '';
+  const {data: user} = useQuery<IUser>("user", () => fetchUser(authHeader).then(data => data), {
+    staleTime: Infinity
+  })
+
+
+  const fetchPropers = async () : Promise<IFetchProperty[]> => {
+    if (user) {
+      const userEmail = user.email;
+      const res = await fetchProperties(userEmail, authHeader);
+      return res;
+    }
+  };
+   
+   const { data: propertyList, } = useQuery({
+    queryKey: 'fetchProperties',
+    queryFn: fetchPropers,
+    refetchInterval: 1000, 
+   });
+
+
   const [paginationNumber, setPaginationNumber] = useState<number>(1);
 
-  const numberOfPages = Math.ceil(props.propertyList.length / PAGE_SIZE);
+  const numberOfPages = Math.ceil((propertyList?.length ?? 0) / PAGE_SIZE);
 
   let paginationArray: number[] = []; // [1,2, ..., n] where n = number of pages
 
@@ -38,7 +61,7 @@ const PropertyTable: React.FC<IPropertyTableProps> = (
       <div className="table-cell h-[4rem] pl-6 align-middle text-xl">
         Properties
         <span className="ml-3 badge text-[0.75rem] bg-secondary text-[#FDA882] dark:bg-orange-900 dark:text-secondary border-none">
-          {props.propertyList.length} Properties
+          {propertyList?.length ?? 0} Properties
         </span>
       </div>
       <table className="table">
@@ -61,15 +84,15 @@ const PropertyTable: React.FC<IPropertyTableProps> = (
         </thead>
         <tbody>
           {/* row 1 */}
-          {props.propertyList
+          {(propertyList ?? [])
             .slice(
               PAGE_SIZE * (paginationNumber - 1),
               PAGE_SIZE * paginationNumber
             )
-            .map((property: IProperty) => {
+            .map((property: IFetchProperty) => {
               return (
                 <tr
-                  key={property.id}
+                  key={property._id}
                   className="max-[760px]:block max-[760px]:border-[#eee] max-[760px]:dark:border-[#223] max-[760px]:border-t-8 max-[760px]:border-b-0 max-[760px]:mb-2 max-[760px]:p-2"
                 >
                   <th className="max-[760px]:clip-out">
@@ -83,7 +106,7 @@ const PropertyTable: React.FC<IPropertyTableProps> = (
                   >
                     <div className="lg:flex items-center gap-3">
                       <div>
-                        <div className="font-bold">{property.name}</div>
+                        <div className="font-bold">{property.title}</div>
                         <div className="text-sm opacity-50">
                           {property.address}
                         </div>
@@ -94,19 +117,19 @@ const PropertyTable: React.FC<IPropertyTableProps> = (
                     className="max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
                     data-label="Status"
                   >
-                    <PropertyListBadge text={property.status} />
-                  </td>
-                  <td
-                    data-label="Departure"
-                    className="text-center max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
-                  >
-                    {property.arrival.toLocaleString()}
+                    <PropertyListBadge text="Static" />
                   </td>
                   <td
                     data-label="Arrival"
                     className="text-center max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
                   >
-                    {property.departure.toLocaleString()}
+                    {new Date("2024-04-16").toLocaleString()}
+                  </td>
+                  <td
+                    data-label="Departure"
+                    className="text-center max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
+                  >
+                    {new Date("2022-04-25").toLocaleString()}
                   </td>
                   <td
                     data-label="Price"
@@ -118,7 +141,7 @@ const PropertyTable: React.FC<IPropertyTableProps> = (
                     data-label="Delete"
                     className="text-center max-[760px]:flex max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
                   >
-                    <a href="" className="max-[760px]:ml-auto">
+                    <a className="max-[760px]:ml-auto">
                       <FaRegTrashAlt />
                     </a>
                   </td>
@@ -126,9 +149,9 @@ const PropertyTable: React.FC<IPropertyTableProps> = (
                     data-label="More Details"
                     className="text-center max-[760px]:flex max-[760px]:before:content-datalabel"
                   >
-                    <a href="" className="max-[760px]:ml-auto">
+                    <Link to={`../property/${property._id}`} className="max-[760px]:ml-auto">
                       <BsBoxArrowUpRight />
-                    </a>
+                    </Link>
                   </td>
                 </tr>
               );

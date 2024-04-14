@@ -17,7 +17,6 @@ const Dashboard = () => {
   const {data: user} = useQuery<IUser>("user", () => fetchUser(authHeader).then(data => data), {
     staleTime: Infinity
   })
-  const mockProperties: IProperty[] = [];
 
   const mockReservations: IReservation[] = [
     {
