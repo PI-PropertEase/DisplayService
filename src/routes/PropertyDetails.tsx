@@ -1,15 +1,15 @@
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { BsPlusSquare } from "react-icons/bs";
+import { FaRegEdit } from "react-icons/fa";
+import { IoTrashOutline } from "react-icons/io5";
+import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import Drawer from "../components/Drawer";
-import Navbar from "../components/Navbar";
-import { FaRegEdit } from "react-icons/fa";
-import ModalPropertyDetails from "../components/ModalPropertyDetails";
-import { useQueryClient, useQuery } from "react-query";
-import { BsPlusSquare } from "react-icons/bs";
-import { IoTrashOutline } from "react-icons/io5";
 import ModalDeletePropertyDetail from "../components/ModalDeletePropertyDetail";
-import { Bed, Contact, IFetchProperty } from "../types/PropertyType";
+import ModalPropertyDetails from "../components/ModalPropertyDetails";
+import Navbar from "../components/Navbar";
 import { fetchProperty } from "../services/Property.service";
-import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { IFetchProperty } from "../types/PropertyType";
 
 export interface IModalData {
     content: string | number | { number_beds: number;type: string[]} | string[] | { name: string; phone_number: number; } |undefined ,
@@ -27,16 +27,19 @@ export default function PropertyDetails() {
     const authHeader = useAuthHeader() ?? '';
     const queryClient = useQueryClient();
 
-    const id = useParams<{ id: string }>() as string;
+    const id = useParams<{ id: string }>()?.id?.toString() ?? "";
 
-
-    const { data: propertyDetails } = useQuery<IFetchProperty>("property", () => fetchProperty(id.id, authHeader).then(data => data), { staleTime: Infinity });
-    const bed: Bed = { number_beds: 5, type: "king" };
+    const { data: propertyDetails } = useQuery<IFetchProperty>("property", () => fetchProperty(id, authHeader).then(data => data), { staleTime: Infinity });
     
-    propertyDetails?.bedrooms["bedroom_1"].beds.push(bed);
-    const contact: Contact = { name: "John Doe", phone_number: "123456789"}
-    propertyDetails?.contacts.push(contact);
-    console.log("Props dasdassa", propertyDetails)
+    // DEBUG To show contacts and more beds in the propertyDetails object
+    // 
+    // const bed: Bed = { number_beds: 5, type: "king" };
+    // propertyDetails?.bedrooms["bedroom_1"].beds.push(bed);
+    // const contact: Contact = { name: "John Doe", phone_number: "123456789"}
+    // propertyDetails?.contacts.push(contact);
+    // console.log("Props dasdassa", propertyDetails)
+
+
     if (!propertyDetails) {
         return <div>Loading...</div>;
     }
