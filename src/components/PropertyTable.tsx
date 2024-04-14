@@ -149,7 +149,7 @@ const PropertyTable = (
                     data-label="More Details"
                     className="text-center max-[760px]:flex max-[760px]:before:content-datalabel"
                   >
-                    <Link to={`properties/${property._id}`} className="max-[760px]:ml-auto">
+                    <Link to={`../property/${property._id}`} className="max-[760px]:ml-auto">
                       <BsBoxArrowUpRight />
                     </Link>
                   </td>
