@@ -11,8 +11,10 @@ import Navbar from "../components/Navbar";
 import { fetchProperty } from "../services/Property.service";
 import { IFetchProperty } from "../types/PropertyType";
 
+export type ModalContentType = string | number | { number_beds: number;type: string[]} | string[] | { name: string; phone_number: number; index: number; } | undefined;
+
 export interface IModalData {
-    content: string | number | { number_beds: number;type: string[]} | string[] | { name: string; phone_number: number; } |undefined ,
+    content: ModalContentType,
     type: string;
     isOpen: boolean;
 }
@@ -61,13 +63,14 @@ export default function PropertyDetails() {
         return notAllowed;
     }
 
-    const handleOpenModal = (content: string | number | { number_beds: number;type: string[]} | string[] | { name: string; phone_number: number; } | undefined, type: string) => {
+    const handleOpenModal = (content: ModalContentType, type: string) => {
         const modalData: IModalData = {
             content: content,
             type: type,
             isOpen: true
         }
-
+        console.log("MODALOPEN, content: ", content)
+        console.log("MODALOPEN, type: ", type)
         queryClient.setQueryData<IModalData>("modalData", modalData);
     }
 
@@ -248,11 +251,11 @@ export default function PropertyDetails() {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {propertyDetails?.contacts.map((contact) => (
+                                                    {propertyDetails?.contacts.map((contact, index) => (
                                                     <tr key={contact.phone_number}>
                                                         <th className=" whitespace-nowrap">{contact.name}</th>
                                                         <td>{contact.phone_number}</td>
-                                                        <td className="text-end" ><button onClick={() => handleOpenModal(contact, "Contact " + contact.name)}><FaRegEdit className="text-accent" /></button></td>
+                                                        <td className="text-end" ><button onClick={() => handleOpenModal({index, ...contact}, "Contact " + contact.name)}><FaRegEdit className="text-accent" /></button></td>
                                                         <td className="text-end"><button onClick={() => handleOpenDeleteModal("Contact " + contact.name)}><IoTrashOutline className=" text-red-600" /></button></td>
                                                     </tr>
                                                     ))}

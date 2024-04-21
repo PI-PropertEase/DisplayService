@@ -293,10 +293,10 @@ export default function ModalPropertyDetails() {
                 break;
             case "New Contact":
                 if (nameContactInput.current?.value && ( phoneContactInput.current?.value)){
-                    updatedPropertyDetails.contact.push({
-                        id: updatedPropertyDetails.contact.length + 1,
+                    updatedPropertyDetails.contacts.push({
                         name: nameContactInput.current?.value,
-                        phone: Number(phoneContactInput.current?.value) ?? 0,
+                        phone_number: phoneContactInput.current?.value,
+                        
                     });
                     queryClient.setQueryData('alertData', {
                         type: 'New Contact',
@@ -352,14 +352,13 @@ export default function ModalPropertyDetails() {
                     }
              
                 } else if (modalData?.type.includes("Contact")) {
-                    const id = modalData?.type.substring(modalData?.type.split(' ')[0].length).trim();
-                    const existingContactIndex = updatedPropertyDetails.contact.findIndex(contact => contact.id === Number(id));
-
-                    if (existingContactIndex !== -1 && nameContactInput.current?.value && (phoneContactInput.current?.value)){
-                        updatedPropertyDetails.contact[existingContactIndex] = {
-                            id: Number(id),
+                    const index = modalData.content?.index as number;
+                    console.log("test2", nameContactInput.current?.value)
+                    console.log("test3", phoneContactInput.current?.value)
+                    if (index !== undefined && nameContactInput.current?.value && (phoneContactInput.current?.value)){
+                        updatedPropertyDetails.contacts[index] = {
                             name: nameContactInput.current?.value,
-                            phone: Number(phoneContactInput.current?.value) ?? 0,
+                            phone_number: phoneContactInput.current?.value,
                         };
                         queryClient.setQueryData('alertData', {
                             type: 'Contact',
