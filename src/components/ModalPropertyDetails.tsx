@@ -26,6 +26,8 @@ export default function ModalPropertyDetails() {
     const queryClient = useQueryClient();
 
     const stringInput = useRef<HTMLInputElement>(null);
+    const beginTimeInput = useRef<HTMLInputElement>(null); // check-in/check-out
+    const endTimeInput = useRef<HTMLInputElement>(null);
     const textareaInput = useRef<HTMLTextAreaElement>(null);
     const numBedsInput = useRef<HTMLInputElement>(null);
     const typeBedsInput = useRef<HTMLInputElement>(null);
@@ -36,6 +38,26 @@ export default function ModalPropertyDetails() {
     const updatedPropertyDetails: IFetchProperty = queryClient.getQueryData('property')!;
     const propertyId = useParams<{id: string}>().id;
     
+    const isValidTimeslot = (beginTimeslot: string, endTimeslot: string) => {
+        // check regex HH:MM
+        if (!(/^\d{2}:\d{2}$/.test(beginTimeslot)) || !(/^\d{2}:\d{2}$/.test(endTimeslot)))
+            return false;
+
+        const beginHour = Number(beginTimeslot.split(":")[0]);
+        const beginMinute = Number(beginTimeslot.split(":")[1]);
+        const endHour = Number(endTimeslot.split(":")[0]);
+        const endMinute = Number(endTimeslot.split(":")[1]);
+        if (beginHour < 0 || beginHour > 23 || beginMinute < 0 || beginMinute > 59 
+            || endHour < 0 || endHour > 23 || endMinute < 0 || endMinute > 59)
+            return false;
+
+        // check if beginTimeslot < endTimeslot
+        if (beginHour > endHour) return false;
+        if (beginHour == endHour && beginMinute >= endMinute) return false;
+
+        return true;
+    }
+
     const handleModalClose = () => {
         const updatedModalData = { 
             ...modalData, 
@@ -43,6 +65,11 @@ export default function ModalPropertyDetails() {
             content: modalData?.content ?? '',
             type: modalData?.type ?? '',
         };
+        queryClient.setQueryData('alertData', {
+            type: '',
+            message: '',
+            active: false
+        });        
         queryClient.setQueryData<IModalData>('modalData', updatedModalData);
     };
 
@@ -169,50 +196,50 @@ export default function ModalPropertyDetails() {
                 updatedPropertyDetails.cancellation_policy = textareaInput.current?.value ?? '';
                 break;
             case "Check In":
-                if ( !stringInput.current?.value || !/^\d{2}:\d{2}H - \d{2}:\d{2}H$/.test(stringInput.current?.value)
-                    || Number(stringInput.current?.value.split(' - ')[0].split(':')[0]) > 23 || Number(stringInput.current?.value.split(' - ')[1].split(':')[0]) > 23 
-                    || Number(stringInput.current?.value.split(' - ')[0].split(':')[1]) > 59 || Number(stringInput.current?.value.split(' - ')[1].split(':')[1]) > 59
-                    || stringInput.current?.value.split(' - ')[0].split(':')[0] >= stringInput.current?.value.split(' - ')[1].split(':')[0]
-                    ){
-                    queryClient.setQueryData('alertData', {
-                        type: 'Check In',
-                        message: 'Invalid time format, must be hh:mmH - hh:mmH and begin time must be before end time',
-                        active: true
-                    });
-                    return;
-                }
-                else {
-                    updatedPropertyDetails.house_rules.check_in.begin_time = stringInput.current?.value.split(' - ')[0];
-                    updatedPropertyDetails.house_rules.check_in.end_time = stringInput.current?.value.split(' - ')[1];
+                if (endTimeInput.current?.value && beginTimeInput.current?.value 
+                    && isValidTimeslot(beginTimeInput.current?.value, endTimeInput.current?.value))
+                {
+                    updatedPropertyDetails.house_rules.check_in.begin_time = beginTimeInput.current?.value;
+                    updatedPropertyDetails.house_rules.check_in.end_time = endTimeInput.current?.value;
                     queryClient.setQueryData('alertData', {
                         type: 'Check In',
                         message: '',
                         active: false
                     });
+                    
+                }
+                else {
+                    queryClient.setQueryData('alertData', {
+                        type: 'Check In',
+                        message: 'Invalid time format, must be HH:MM - HH:MM and Begin Time must be before End Time. Example: 10:00 - 18:00',
+                        active: true
+                    });
+                    return;
                 }
                 
                 break;
             case "Check Out":
-                if ( !stringInput.current?.value || !/^\d{2}:\d{2}H - \d{2}:\d{2}H$/.test(stringInput.current?.value)
-                    || Number(stringInput.current?.value.split(' - ')[0].split(':')[0]) > 23 || Number(stringInput.current?.value.split(' - ')[1].split(':')[0]) > 23 
-                    || Number(stringInput.current?.value.split(' - ')[0].split(':')[1]) > 59 || Number(stringInput.current?.value.split(' - ')[1].split(':')[1]) > 59
-                    || stringInput.current?.value.split(' - ')[0].split(':')[0] >= stringInput.current?.value.split(' - ')[1].split(':')[0]
-                    ){
-                    queryClient.setQueryData('alertData', {
-                        type: 'Check Out',
-                        message: 'Invalid time format, must be hh:mmH - hh:mmH and begin time must be before end time',
-                        active: true
-                    });
-                    return;
-                }else {
-                    updatedPropertyDetails.house_rules.check_out.begin_time = stringInput.current?.value.split(' - ')[0];
-                    updatedPropertyDetails.house_rules.check_out.end_time = stringInput.current?.value.split(' - ')[1];
+                if (endTimeInput.current?.value && beginTimeInput.current?.value 
+                    && isValidTimeslot(beginTimeInput.current?.value, endTimeInput.current?.value))
+                {
+                    updatedPropertyDetails.house_rules.check_out.begin_time = beginTimeInput.current?.value;
+                    updatedPropertyDetails.house_rules.check_out.end_time = endTimeInput.current?.value;
                     queryClient.setQueryData('alertData', {
                         type: 'Check Out',
                         message: '',
                         active: false
                     });
+                    
                 }
+                else {
+                    queryClient.setQueryData('alertData', {
+                        type: 'Check Out',
+                        message: 'Invalid time format, must be HH:MM - HH:MM and Begin Time must be before End Time. Example: 10:00 - 18:00',
+                        active: true
+                    });
+                    return;
+                }
+                
                 break;
             case "Not Allowed":
                 notAllowed = stringInput.current?.value.split(',').map(item => item.trim().toLowerCase()) ?? [];
@@ -442,6 +469,24 @@ export default function ModalPropertyDetails() {
                                     </div>
                                 )}
                             </div> :
+                            ["Check In", "Check Out"].includes(modalData.type) ?
+                                (
+                                    <div className='flex gap-5'>
+                                        <div className='flex justify-center'>
+                                            <label>
+                                                Begin time:
+                                            </label>
+                                            <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={beginTimeInput} defaultValue={modalData.content.split(" - ")[0]} placeholder='HH:MM'></input>
+                                        </div>
+                                        <div className='flex justify-center'>
+                                            <label>
+                                                End time:
+                                            </label>
+                                            <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={endTimeInput} defaultValue={modalData.content.split(" - ")[1]} placeholder='HH:MM'></input>
+                                        </div>
+                                        
+                                    </div>
+                                ) :
                             <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={stringInput} defaultValue={typeof modalData.content === "string" || typeof modalData.content === "number"? modalData.content : ""}/>
                             }
                             {alertData?.active &&(
