@@ -4,7 +4,7 @@ import { useQueryClient } from 'react-query';
 import { IoCloseOutline } from "react-icons/io5";
 import { useEffect, useRef, useState } from 'react';
 import { Amenity, IFetchProperty } from '../types/PropertyType';
-import { updateProperty } from '../services/Property.service';
+import { fetchAmenities, updateProperty } from '../services/Property.service';
 import useAuthHeader from 'react-auth-kit/hooks/useAuthHeader';
 import { useParams } from 'react-router-dom';
 
@@ -38,11 +38,27 @@ export default function ModalPropertyDetails() {
     const propertyId = useParams<{id: string}>().id;
 
     const [ruleCheckboxes, setRuleCheckboxes] = useState({});
+
+    const [amenitiesCheckboxes, setAmenitiesCheckboxes] = useState({});
+
     
+    const { data: availableAmenities } = useQuery("amenities", () => fetchAmenities(authHeader));
+
     useEffect(() => {
         setRuleCheckboxes(modalData?.content)
     }, [modalData]);
-    
+
+    useEffect(() => {
+        if (availableAmenities && modalData)
+            // amenities checkboxes has this value: { "free_wifi": true, "parking_space": false, ...}
+            setAmenitiesCheckboxes(
+                availableAmenities.reduce((amenitiesObj, currAmenity) => {
+                    amenitiesObj[currAmenity] = (modalData?.content as Amenity[]).includes(currAmenity);
+                    return amenitiesObj;
+                }, {})
+            )
+    }, [availableAmenities, modalData])
+
     const isValidTimeslotRegex = (timeslot: string) => {
         return /^(2[0-3]|[01][0-9]):([0-5][0-9])$/.test(timeslot);
     }
@@ -80,11 +96,20 @@ export default function ModalPropertyDetails() {
         queryClient.setQueryData<IModalData>('modalData', updatedModalData);
     };
     
-    const handleCheckboxToggle = (rule) => {
+    const handleRuleCheckbox = (rule: string) => {
         setRuleCheckboxes(prevState => (
             {
                 ...prevState,
                 [rule]: !prevState[rule] // toggle
+            }
+        ))
+    }
+
+    const handleAmenitiesCheckbox = (amenity: string) => {
+        setAmenitiesCheckboxes(prevState => (
+            {
+                ...prevState,
+                [amenity]: !prevState[amenity]
             }
         ))
     }
@@ -202,9 +227,11 @@ export default function ModalPropertyDetails() {
                     return;
                 }
                 break;
-            case "Amenities":
-                updatedPropertyDetails.amenities = stringInput.current?.value.split(',').map(item => item.trim() as Amenity) ?? [];
+            case "Amenities": {
+                const selectedAmenities = Object.entries(amenitiesCheckboxes).filter(([, checked]) => checked === true).map(([amenity, ]) => amenity);
+                updatedPropertyDetails.amenities = selectedAmenities as Amenity[];
                 break;
+            }
             case "Additional Info":
                 updatedPropertyDetails.additional_info = textareaInput.current?.value ?? '';
                 break;
@@ -523,7 +550,25 @@ export default function ModalPropertyDetails() {
                                                     className='checkbox'
                                                     type="checkbox" 
                                                     checked={value} 
-                                                    onChange={() => handleCheckboxToggle(rule)}
+                                                    onChange={() => handleRuleCheckbox(rule)}
+                                                />
+                                            </label>
+                                        </div>
+                                    ))
+                                )}
+                            </div> :
+                            modalData.type === "Amenities" ?
+                            <div>
+                                {typeof modalData.content === "object" && typeof ruleCheckboxes === "object" && (
+                                    Object.entries(amenitiesCheckboxes).map(([amenity, checked], index) => (
+                                        <div key={index}>
+                                            <label className='label cursor-pointer'>
+                                                <span className='label-text capitalize'>{amenity}</span>
+                                                <input 
+                                                    className='checkbox'
+                                                    type="checkbox" 
+                                                    checked={checked} 
+                                                    onChange={() => handleAmenitiesCheckbox(amenity)}
                                                 />
                                             </label>
                                         </div>

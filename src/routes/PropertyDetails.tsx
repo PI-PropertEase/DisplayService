@@ -11,7 +11,7 @@ import Navbar from "../components/Navbar";
 import { fetchProperty } from "../services/Property.service";
 import { IFetchProperty } from "../types/PropertyType";
 
-export type ModalContentType = string | number | { number_beds: number;type: string[]} | string[] | { name: string; phone_number: number; index: number; } | Record<string, boolean> | undefined;
+export type ModalContentType = string | number | { number_beds: number;type: string[]} | string[] | { name: string; phone_number: number; index: number; } | Record<string, boolean> | Amenity[] | undefined;
 
 export interface IModalData {
     content: ModalContentType,
@@ -209,7 +209,7 @@ export default function PropertyDetails() {
                                     <div className="relative pt-4">
                                         <label htmlFor="text" className="text-accent">Amenities:</label>
                                         <textarea id="amenties" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails?.amenities.join(', ')} readOnly />
-                                        <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(propertyDetails?.amenities.join(', '), "Amenities")}><FaRegEdit className="text-accent" /></button>
+                                        <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(propertyDetails?.amenities, "Amenities")}><FaRegEdit className="text-accent" /></button>
                                     </div>
                                     <div className="relative pt-4">
                                         <label htmlFor="text" className="text-accent">Additional Information:</label>
