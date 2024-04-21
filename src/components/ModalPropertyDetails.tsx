@@ -2,8 +2,8 @@ import { useQuery } from 'react-query';
 import { IModalData } from '../routes/PropertyDetails';
 import { useQueryClient } from 'react-query';
 import { IoCloseOutline } from "react-icons/io5";
-import { useEffect, useRef } from 'react';
-import { Amenity, IFetchProperty, IUpdateProperty } from '../types/PropertyType';
+import { useEffect, useRef, useState } from 'react';
+import { Amenity, IFetchProperty } from '../types/PropertyType';
 import { updateProperty } from '../services/Property.service';
 import useAuthHeader from 'react-auth-kit/hooks/useAuthHeader';
 import { useParams } from 'react-router-dom';
@@ -34,22 +34,29 @@ export default function ModalPropertyDetails() {
     const nameContactInput = useRef<HTMLInputElement>(null);
     const phoneContactInput = useRef<HTMLInputElement>(null);
     const itemsInput = useRef<HTMLInputElement>(null);
-
     const updatedPropertyDetails: IFetchProperty = queryClient.getQueryData('property')!;
     const propertyId = useParams<{id: string}>().id;
+
+    const [ruleCheckboxes, setRuleCheckboxes] = useState({});
     
-    const isValidTimeslot = (beginTimeslot: string, endTimeslot: string) => {
+    useEffect(() => {
+        setRuleCheckboxes(modalData?.content)
+    }, [modalData]);
+    
+    const isValidTimeslotRegex = (timeslot: string) => {
+        return /^(2[0-3]|[01][0-9]):([0-5][0-9])$/.test(timeslot);
+    }
+
+
+    const isValidInterval = (beginTimeslot: string, endTimeslot: string) => {
         // check regex HH:MM
-        if (!(/^\d{2}:\d{2}$/.test(beginTimeslot)) || !(/^\d{2}:\d{2}$/.test(endTimeslot)))
+        if (!isValidTimeslotRegex(beginTimeslot) || !isValidTimeslotRegex(endTimeslot))
             return false;
 
         const beginHour = Number(beginTimeslot.split(":")[0]);
         const beginMinute = Number(beginTimeslot.split(":")[1]);
         const endHour = Number(endTimeslot.split(":")[0]);
         const endMinute = Number(endTimeslot.split(":")[1]);
-        if (beginHour < 0 || beginHour > 23 || beginMinute < 0 || beginMinute > 59 
-            || endHour < 0 || endHour > 23 || endMinute < 0 || endMinute > 59)
-            return false;
 
         // check if beginTimeslot < endTimeslot
         if (beginHour > endHour) return false;
@@ -72,6 +79,15 @@ export default function ModalPropertyDetails() {
         });        
         queryClient.setQueryData<IModalData>('modalData', updatedModalData);
     };
+    
+    const handleCheckboxToggle = (rule) => {
+        setRuleCheckboxes(prevState => (
+            {
+                ...prevState,
+                [rule]: !prevState[rule] // toggle
+            }
+        ))
+    }
 
     const handleSave = async () => {
 
@@ -197,7 +213,7 @@ export default function ModalPropertyDetails() {
                 break;
             case "Check In":
                 if (endTimeInput.current?.value && beginTimeInput.current?.value 
-                    && isValidTimeslot(beginTimeInput.current?.value, endTimeInput.current?.value))
+                    && isValidInterval(beginTimeInput.current?.value, endTimeInput.current?.value))
                 {
                     updatedPropertyDetails.house_rules.check_in.begin_time = beginTimeInput.current?.value;
                     updatedPropertyDetails.house_rules.check_in.end_time = endTimeInput.current?.value;
@@ -220,7 +236,7 @@ export default function ModalPropertyDetails() {
                 break;
             case "Check Out":
                 if (endTimeInput.current?.value && beginTimeInput.current?.value 
-                    && isValidTimeslot(beginTimeInput.current?.value, endTimeInput.current?.value))
+                    && isValidInterval(beginTimeInput.current?.value, endTimeInput.current?.value))
                 {
                     updatedPropertyDetails.house_rules.check_out.begin_time = beginTimeInput.current?.value;
                     updatedPropertyDetails.house_rules.check_out.end_time = endTimeInput.current?.value;
@@ -240,6 +256,33 @@ export default function ModalPropertyDetails() {
                     return;
                 }
                 
+                break;
+            case "Rest Time":
+                if (endTimeInput.current?.value && beginTimeInput.current?.value 
+                    && isValidTimeslotRegex(beginTimeInput.current.value) && isValidTimeslotRegex(endTimeInput.current.value))
+                {
+                    updatedPropertyDetails.house_rules.rest_time.begin_time = beginTimeInput.current?.value;
+                    updatedPropertyDetails.house_rules.rest_time.end_time = endTimeInput.current?.value;
+                    queryClient.setQueryData('alertData', {
+                        type: 'Rest Time',
+                        message: '',
+                        active: false
+                    });
+                    
+                }
+                else {
+                    queryClient.setQueryData('alertData', {
+                        type: 'Rest Time',
+                        message: 'Invalid time format, must be HH:MM - HH:MM and Begin Time must be before End Time. Example: 10:00 - 18:00',
+                        active: true
+                    });
+                    return;
+                }
+                break;
+            case "House Rules":
+                // update all boolean rules with values from checkboxes
+                for (const rule in ruleCheckboxes)
+                    updatedPropertyDetails.house_rules[rule] = ruleCheckboxes[rule];
                 break;
             case "Not Allowed":
                 notAllowed = stringInput.current?.value.split(',').map(item => item.trim().toLowerCase()) ?? [];
@@ -469,7 +512,25 @@ export default function ModalPropertyDetails() {
                                     </div>
                                 )}
                             </div> :
-                            ["Check In", "Check Out"].includes(modalData.type) ?
+                            modalData.type === "House Rules" ?
+                            <div>
+                                {typeof modalData.content === "object" && typeof ruleCheckboxes === "object" && (
+                                    Object.entries(ruleCheckboxes).map(([rule, value], index) => (
+                                        <div key={index}>
+                                            <label className='label cursor-pointer'>
+                                                <span className='label-text capitalize'>{rule}</span>
+                                                <input 
+                                                    className='checkbox'
+                                                    type="checkbox" 
+                                                    checked={value} 
+                                                    onChange={() => handleCheckboxToggle(rule)}
+                                                />
+                                            </label>
+                                        </div>
+                                    ))
+                                )}
+                            </div> :
+                            ["Check In", "Check Out", "Rest Time"].includes(modalData.type) ?
                                 (
                                     <div className='flex gap-5'>
                                         <div className='flex justify-center'>

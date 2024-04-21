@@ -11,7 +11,7 @@ import Navbar from "../components/Navbar";
 import { fetchProperty } from "../services/Property.service";
 import { IFetchProperty } from "../types/PropertyType";
 
-export type ModalContentType = string | number | { number_beds: number;type: string[]} | string[] | { name: string; phone_number: number; index: number; } | undefined;
+export type ModalContentType = string | number | { number_beds: number;type: string[]} | string[] | { name: string; phone_number: number; index: number; } | Record<string, boolean> | undefined;
 
 export interface IModalData {
     content: ModalContentType,
@@ -36,33 +36,18 @@ export default function PropertyDetails() {
     if (!propertyDetails) {
         return <div>Loading...</div>;
     }
-    
-    function checkNotAllowed() {
-        const notAllowed = [];
 
-        
-        if (propertyDetails?.house_rules) {
-            for (const [key, value] of Object.entries(propertyDetails.house_rules)) {
-                if (typeof value === "boolean" && !value) {
-                    notAllowed.push(key.charAt(0).toUpperCase() + key.slice(1));
-                }
+    function getBooleanHouseRules() {
+        const bool_rules: Record<string, boolean> = {};
+        if (propertyDetails?.house_rules)
+            for (const [rule, value] of Object.entries(propertyDetails?.house_rules)) {
+                if (typeof value === "boolean")
+                    bool_rules[rule] = value;
             }
-        }
-        return notAllowed;
+
+        return bool_rules;
     }
     
-    const checkAllowed = () => {
-        const notAllowed = [];
-        if (propertyDetails?.house_rules) {
-            for (const [key, value] of Object.entries(propertyDetails.house_rules)) {
-                if (typeof value === "boolean" && value) {
-                    notAllowed.push(key.charAt(0).toUpperCase() + key.slice(1));
-                }
-            }
-        }
-        return notAllowed;
-    }
-
     const handleOpenModal = (content: ModalContentType, type: string) => {
         const modalData: IModalData = {
             content: content,
@@ -157,14 +142,15 @@ export default function PropertyDetails() {
                                         <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(propertyDetails?.house_rules.check_out.begin_time + " - " + propertyDetails?.house_rules.check_out.end_time, "Check Out")}><FaRegEdit className="text-accent" /></button>
                                     </div>
                                     <div className="relative pt-4">
-                                        <label htmlFor="text" className="text-accent">Not Allowed:</label>
-                                        <input id="text" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={checkNotAllowed().join(', ')} readOnly />
-                                        <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(checkNotAllowed().join(', '), "Not Allowed")}><FaRegEdit className="text-accent" /></button>
+                                        <label htmlFor="text" className="text-accent">Rest Time:</label>
+                                        <input id="text" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={`${propertyDetails?.house_rules.rest_time.begin_time} - ${propertyDetails?.house_rules.rest_time.end_time}`} readOnly />
+                                        <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(propertyDetails?.house_rules.rest_time.begin_time + " - " + propertyDetails?.house_rules.rest_time.end_time, "Rest Time")}><FaRegEdit className="text-accent" /></button>
                                     </div>
                                     <div className="relative pt-4">
-                                        <label htmlFor="text" className="text-accent">Allowed:</label>
-                                        <input id="text" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={checkAllowed().join(', ')}readOnly />
-                                        <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(checkAllowed().join(', '), "Allowed")}><FaRegEdit className="text-accent" /></button>
+                                        {Object.entries(getBooleanHouseRules()).map(([rule, bool_value], i) => (
+                                            <p key={i} className={`font-bold capitalize ${bool_value ? "text-green-500" : "text-red-500"}`}>{rule}: <span className="text-accent font-light">{bool_value ? "Allowed" : "Not Allowed"}</span></p>
+                                        ))}
+                                        <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(getBooleanHouseRules(), "House Rules")}><FaRegEdit className="text-accent" /></button>
                                     </div>
                                 </div>
                                 <div className="w-full md:w-3/4">
