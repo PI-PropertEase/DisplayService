@@ -69,8 +69,6 @@ export default function PropertyDetails() {
             type: type,
             isOpen: true
         }
-        console.log("MODALOPEN, content: ", content)
-        console.log("MODALOPEN, type: ", type)
         queryClient.setQueryData<IModalData>("modalData", modalData);
     }
 
@@ -228,9 +226,9 @@ export default function PropertyDetails() {
                                         <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(propertyDetails?.amenities.join(', '), "Amenities")}><FaRegEdit className="text-accent" /></button>
                                     </div>
                                     <div className="relative pt-4">
-                                        <label htmlFor="text" className="text-accent">Notes:</label>
-                                        <textarea id="notes" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails?.additional_info} readOnly />
-                                        <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(propertyDetails?.additional_info, "Notes")}><FaRegEdit className="text-accent" /></button>
+                                        <label htmlFor="text" className="text-accent">Additional Information:</label>
+                                        <textarea id="additional_info" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails?.additional_info} readOnly />
+                                        <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(propertyDetails?.additional_info, "Additional Info")}><FaRegEdit className="text-accent" /></button>
                                     </div>
                                     <div className="relative pt-4">
                                         <label htmlFor="text" className="text-accent">Cancellation Policy:</label>

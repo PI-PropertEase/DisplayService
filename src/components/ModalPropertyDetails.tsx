@@ -162,7 +162,7 @@ export default function ModalPropertyDetails() {
             case "Amenities":
                 updatedPropertyDetails.amenities = stringInput.current?.value.split(',').map(item => item.trim() as Amenity) ?? [];
                 break;
-            case "Notes":
+            case "Additional Info":
                 updatedPropertyDetails.additional_info = textareaInput.current?.value ?? '';
                 break;
             case "Cancellation Policy":
@@ -353,8 +353,6 @@ export default function ModalPropertyDetails() {
              
                 } else if (modalData?.type.includes("Contact")) {
                     const index = modalData.content?.index as number;
-                    console.log("test2", nameContactInput.current?.value)
-                    console.log("test3", phoneContactInput.current?.value)
                     if (index !== undefined && nameContactInput.current?.value && (phoneContactInput.current?.value)){
                         updatedPropertyDetails.contacts[index] = {
                             name: nameContactInput.current?.value,
@@ -398,8 +396,8 @@ export default function ModalPropertyDetails() {
                     <hr/>
                     <div className='felx flex-wrap mt-4'>
                         <div className=' '>
-                            {modalData.type === ("Description" || "Cancellation Policy" || "Notes") ? 
-                            <textarea  className="border border-smoke h-32 p-2 rounded-xl mt-2 w-full text-accent bg-base-100" ref={textareaInput} defaultValue={typeof modalData.content === "string"  ? modalData.content : ""} /> : 
+                            {["Description", "Cancellation Policy", "Additional Info"].includes(modalData.type) ? 
+                            <textarea className="border border-smoke h-32 p-2 rounded-xl mt-2 w-full text-accent bg-base-100" ref={textareaInput} defaultValue={typeof modalData.content === "string" ? modalData.content : ""} /> : 
                             modalData.type.includes("Bedroom") ?
                             <div className='flex flex-col'>
                                 {typeof modalData.content === 'object' && 'number_beds' in modalData.content && (
