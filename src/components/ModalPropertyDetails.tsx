@@ -2,9 +2,9 @@ import { useQuery } from 'react-query';
 import { IModalData } from '../routes/PropertyDetails';
 import { useQueryClient } from 'react-query';
 import { IoCloseOutline } from "react-icons/io5";
-import { useEffect, useRef, useState } from 'react';
-import { Amenity, IFetchProperty } from '../types/PropertyType';
-import { fetchAmenities, updateProperty } from '../services/Property.service';
+import React, { useEffect, useRef, useState } from 'react';
+import { Amenity, BathroomFixture, IFetchProperty } from '../types/PropertyType';
+import { fetchAmenities, fetchBathroomFixtures, updateProperty } from '../services/Property.service';
 import useAuthHeader from 'react-auth-kit/hooks/useAuthHeader';
 import { useParams } from 'react-router-dom';
 
@@ -26,23 +26,29 @@ export default function ModalPropertyDetails() {
     const queryClient = useQueryClient();
 
     const stringInput = useRef<HTMLInputElement>(null);
-    const beginTimeInput = useRef<HTMLInputElement>(null); // check-in/check-out
+
+    const beginTimeInput = useRef<HTMLInputElement>(null); // check-in/check-out/rest-time
     const endTimeInput = useRef<HTMLInputElement>(null);
+
     const textareaInput = useRef<HTMLTextAreaElement>(null);
     const numBedsInput = useRef<HTMLInputElement>(null);
     const typeBedsInput = useRef<HTMLInputElement>(null);
     const nameContactInput = useRef<HTMLInputElement>(null);
     const phoneContactInput = useRef<HTMLInputElement>(null);
-    const itemsInput = useRef<HTMLInputElement>(null);
     const updatedPropertyDetails: IFetchProperty = queryClient.getQueryData('property')!;
     const propertyId = useParams<{id: string}>().id;
 
+    // for house rules, example: { "smoking": false, "allow_pets": true}
     const [ruleCheckboxes, setRuleCheckboxes] = useState({});
 
-    const [amenitiesCheckboxes, setAmenitiesCheckboxes] = useState({});
+    const [selectedAmenities, setSelectedAmenities] = useState<Amenity[]>([]);
 
+    const [selectedFixtures, setSelectedFixtures] = useState<BathroomFixture[]>([]);
     
     const { data: availableAmenities } = useQuery("amenities", () => fetchAmenities(authHeader));
+
+    const { data: bathroomFixtures } = useQuery("bathroom_fixtures", () => fetchBathroomFixtures(authHeader));
+
 
     useEffect(() => {
         setRuleCheckboxes(modalData?.content)
@@ -50,14 +56,17 @@ export default function ModalPropertyDetails() {
 
     useEffect(() => {
         if (availableAmenities && modalData?.type === "Amenities")
-            // amenities checkboxes has this value: { "free_wifi": true, "parking_space": false, ...}
-            setAmenitiesCheckboxes(
-                availableAmenities.reduce((amenitiesObj, currAmenity) => {
-                    amenitiesObj[currAmenity] = (modalData?.content as Amenity[]).includes(currAmenity);
-                    return amenitiesObj;
-                }, {})
+            setSelectedAmenities(
+                availableAmenities.filter((amenity) => (modalData.content as Amenity[]).includes(amenity))
             )
     }, [availableAmenities, modalData])
+
+    useEffect(() => {
+        if (bathroomFixtures && modalData?.type.includes("Bathroom"))
+            setSelectedFixtures(
+                bathroomFixtures.filter((fixture) => (modalData.content as BathroomFixture[]).includes(fixture))
+            )
+    }, [bathroomFixtures, modalData])
 
     const isValidTimeslotRegex = (timeslot: string) => {
         return /^(2[0-3]|[01][0-9]):([0-5][0-9])$/.test(timeslot);
@@ -95,7 +104,7 @@ export default function ModalPropertyDetails() {
         });        
         queryClient.setQueryData<IModalData>('modalData', updatedModalData);
     };
-    
+
     const handleRuleCheckbox = (rule: string) => {
         setRuleCheckboxes(prevState => (
             {
@@ -105,22 +114,21 @@ export default function ModalPropertyDetails() {
         ))
     }
 
-    const handleAmenitiesCheckbox = (amenity: string) => {
-        setAmenitiesCheckboxes(prevState => (
-            {
-                ...prevState,
-                [amenity]: !prevState[amenity]
-            }
-        ))
+    const handleAmenitiesCheckbox = (event: React.ChangeEvent<HTMLInputElement>, amenity: Amenity) => {
+        if (event.target.checked)
+            setSelectedAmenities(prevState => [...prevState, amenity])
+        else 
+            setSelectedAmenities(prevState => prevState.filter((a) => a != amenity))
+    }
+
+    const handleFixturesCheckbox = (event: React.ChangeEvent<HTMLInputElement>, fixture: BathroomFixture) => {
+        if (event.target.checked)
+            setSelectedFixtures(prevState => [...prevState, fixture])
+        else 
+            setSelectedFixtures(prevState => prevState.filter((f) => f != fixture))
     }
 
     const handleSave = async () => {
-
-        let notAllowed: string[] = [];
-        const allNotAllowed: string[] = [];
-        let allowed: string[] = [];
-        const allAllowed: string[] = [];
-
         switch (modalData?.type) {
             case "Title":
                 if (stringInput.current?.value) {
@@ -228,8 +236,7 @@ export default function ModalPropertyDetails() {
                 }
                 break;
             case "Amenities": {
-                const selectedAmenities = Object.entries(amenitiesCheckboxes).filter(([, checked]) => checked === true).map(([amenity, ]) => amenity);
-                updatedPropertyDetails.amenities = selectedAmenities as Amenity[];
+                updatedPropertyDetails.amenities = selectedAmenities;
                 break;
             }
             case "Additional Info":
@@ -311,49 +318,13 @@ export default function ModalPropertyDetails() {
                 for (const rule in ruleCheckboxes)
                     updatedPropertyDetails.house_rules[rule] = ruleCheckboxes[rule];
                 break;
-            case "Not Allowed":
-                notAllowed = stringInput.current?.value.split(',').map(item => item.trim().toLowerCase()) ?? [];
-                for (const key in updatedPropertyDetails.house_rules) {
-                    if (typeof (updatedPropertyDetails.house_rules)[key] === 'boolean' && !(updatedPropertyDetails.house_rules)[key]) {
-                        allNotAllowed.push(key);
-                        if (notAllowed.includes(key)) {
-                            (updatedPropertyDetails.house_rules)[key] = false;
-                        } else {
-                            (updatedPropertyDetails.house_rules)[key] = true;
-                        }
-                    }
-                }
-
-                notAllowed.forEach(item => {
-                    if (!allNotAllowed.includes(item)) {
-                        updatedPropertyDetails.house_rules[item] = false;
-                    }
-                }
-                );
-                break;
-            case "Allowed":
-                allowed = stringInput.current?.value.split(',').map(item => item.trim().toLowerCase()) ?? [];
-                for (const key in updatedPropertyDetails.house_rules) {
-                    if (typeof (updatedPropertyDetails.house_rules)[key] === 'boolean' && (updatedPropertyDetails.house_rules)[key]) {
-                        allAllowed.push(key);
-                        if (allowed.includes(key)) {
-                            (updatedPropertyDetails.house_rules)[key] = true;
-                        } else {
-                            (updatedPropertyDetails.house_rules)[key] = false;
-                        }
-                    }
-                }
-
-                allowed.forEach(item => {
-                    if (!allAllowed.includes(item)) {
-                        updatedPropertyDetails.house_rules[item] = true;
-                    }
-                }
-                );
-                break;
             case "New Bathroom":
-                if (stringInput.current?.value && itemsInput.current?.value){
-                    updatedPropertyDetails.bathrooms.set(stringInput.current?.value, itemsInput.current?.value.split(',').map(item => item.trim()).filter(item => item !== null && item !== undefined && item !== ""));
+                if (stringInput.current?.value && selectedFixtures.length > 0) {
+                    const bathroomName = stringInput.current?.value;
+                    console.log("Bathroom Name:", bathroomName)
+                    updatedPropertyDetails.bathrooms[bathroomName] = {
+                        fixtures: selectedFixtures
+                    }
                     queryClient.setQueryData('alertData', {
                         type: 'New Bathroom',
                         message: '',
@@ -362,7 +333,7 @@ export default function ModalPropertyDetails() {
                 } else {
                     queryClient.setQueryData('alertData', {
                         type: 'New Bathroom',
-                        message: 'ID and Items cannot be empty',
+                        message: 'Bathroom name and fixtures cannot be empty',
                         active: true
                     });
                     return;
@@ -432,8 +403,9 @@ export default function ModalPropertyDetails() {
                     }
                 } else if (modalData?.type.includes("Bathroom")) {
                     const id = modalData?.type.substring(modalData?.type.split(' ')[0].length).trim();
-                    if (id && itemsInput.current?.value) {
-                        updatedPropertyDetails.bathrooms.set(id, itemsInput.current?.value.split(',').map(item => item.trim()).filter(item => item !== null && item !== undefined && item !== ""));
+                    console.log("id", id)
+                    if (id && selectedFixtures.length > 0) {
+                        updatedPropertyDetails.bathrooms[id].fixtures = selectedFixtures;
                         queryClient.setQueryData('alertData', {
                             type: 'Bathroom',
                             message: '',
@@ -442,7 +414,7 @@ export default function ModalPropertyDetails() {
                     } else {
                         queryClient.setQueryData('alertData', {
                             type: 'Bathroom',
-                            message: 'Items cannot be empty',
+                            message: 'Choose at least 1 fixture.',
                             active: true
                         });
                         return;
@@ -525,19 +497,31 @@ export default function ModalPropertyDetails() {
                             </div> :
                             modalData.type.includes("Bathroom") ?
                             <div className='flex flex-col'>
-                                {typeof modalData.content === 'string' && (
-                                    <div className=''>  
+                                    <div>  
                                         {modalData.type === "New Bathroom" && (
                                             <>
-                                             <p className='font-light'>ID: </p>
-                                             <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={stringInput}/>
+                                             <p className='font-light'>Bathroom Name: </p>
+                                             <input placeholder="An arbitrary name: Ground floor" className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={stringInput}/>
                                              </>
                                         )}
-                                       
-                                        <p className='font-light'>Items: </p>
-                                        <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={itemsInput} defaultValue={modalData.content}/>
+                                        <p className='font-light'>Bathroom Fixtures: </p>
+                                        <div className='flex flex-row gap-2'>
+                                            {bathroomFixtures?.map((fixture, index) => (
+                                                <div key={index}>
+                                                    <label className='label cursor-pointer'>
+                                                        <span className='label-text capitalize pr-1'>{fixture}</span>
+                                                        <input 
+                                                            className='checkbox'
+                                                            type="checkbox" 
+                                                            checked={selectedFixtures.includes(fixture)} 
+                                                            onChange={(event) => handleFixturesCheckbox(event, fixture)}
+                                                        />
+                                                    </label>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
-                                )}
+                                
                             </div> :
                             modalData.type === "House Rules" ?
                             <div>
@@ -560,15 +544,15 @@ export default function ModalPropertyDetails() {
                             modalData.type === "Amenities" ?
                             <div>
                                 {typeof modalData.content === "object" && typeof ruleCheckboxes === "object" && (
-                                    Object.entries(amenitiesCheckboxes).map(([amenity, checked], index) => (
+                                    availableAmenities?.map((amenity, index) => (
                                         <div key={index}>
                                             <label className='label cursor-pointer'>
                                                 <span className='label-text capitalize'>{amenity}</span>
                                                 <input 
                                                     className='checkbox'
                                                     type="checkbox" 
-                                                    checked={checked} 
-                                                    onChange={() => handleAmenitiesCheckbox(amenity)}
+                                                    checked={selectedAmenities.includes(amenity)} 
+                                                    onChange={(event) => handleAmenitiesCheckbox(event, amenity)}
                                                 />
                                             </label>
                                         </div>

@@ -9,9 +9,11 @@ import ModalDeletePropertyDetail from "../components/ModalDeletePropertyDetail";
 import ModalPropertyDetails from "../components/ModalPropertyDetails";
 import Navbar from "../components/Navbar";
 import { fetchProperty } from "../services/Property.service";
-import { IFetchProperty } from "../types/PropertyType";
+import { Amenity, BathroomFixture, IFetchProperty } from "../types/PropertyType";
 
-export type ModalContentType = string | number | { number_beds: number;type: string[]} | string[] | { name: string; phone_number: number; index: number; } | Record<string, boolean> | Amenity[] | undefined;
+export type ModalContentType = string | number | { number_beds: number;type: string[]} 
+                                | string[] | { name: string; phone_number: number; index: number; } 
+                                | Record<string, boolean> | Amenity[] | BathroomFixture[] | undefined;
 
 export interface IModalData {
     content: ModalContentType,
@@ -170,8 +172,8 @@ export default function PropertyDetails() {
                                                     {Object.entries(propertyDetails?.bathrooms ?? {}).map(([bathroomId, items]) => (                                                    
                                                     <tr key={bathroomId}>
                                                         <th>{bathroomId}</th>
-                                                        <td className="w-full">{(items.fixtures as string[] ).join(', ')}</td>
-                                                        <td className="text-end w-full"><button onClick={() => handleOpenModal((items.fixtures as string[] ).join(', '), "Bathroom " + bathroomId)}><FaRegEdit className="text-accent" /></button></td>
+                                                        <td className="w-full">{(items.fixtures as string[]).join(', ')}</td>
+                                                        <td className="text-end w-full"><button onClick={() => handleOpenModal(items.fixtures, "Bathroom " + bathroomId)}><FaRegEdit className="text-accent" /></button></td>
                                                         <td className="text-end"><button onClick={() => handleOpenDeleteModal("Bathroom " + bathroomId)}><IoTrashOutline className=" text-red-600" /></button></td>
                                                     </tr>
                                                     ))}
