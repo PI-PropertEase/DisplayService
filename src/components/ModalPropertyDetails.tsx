@@ -49,7 +49,7 @@ export default function ModalPropertyDetails() {
     }, [modalData]);
 
     useEffect(() => {
-        if (availableAmenities && modalData)
+        if (availableAmenities && modalData?.type === "Amenities")
             // amenities checkboxes has this value: { "free_wifi": true, "parking_space": false, ...}
             setAmenitiesCheckboxes(
                 availableAmenities.reduce((amenitiesObj, currAmenity) => {
@@ -300,7 +300,7 @@ export default function ModalPropertyDetails() {
                 else {
                     queryClient.setQueryData('alertData', {
                         type: 'Rest Time',
-                        message: 'Invalid time format, must be HH:MM - HH:MM and Begin Time must be before End Time. Example: 10:00 - 18:00',
+                        message: 'Invalid time format, must be HH:MM - HH:MM. Example: 22:00 - 08:00',
                         active: true
                     });
                     return;
