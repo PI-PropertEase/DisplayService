@@ -8,6 +8,7 @@ import { fetchAmenities, fetchBathroomFixtures, fetchBedTypes, updateProperty } 
 import useAuthHeader from 'react-auth-kit/hooks/useAuthHeader';
 import { useParams } from 'react-router-dom';
 import { BsPlusSquare } from 'react-icons/bs';
+import { isValidPhoneNumber } from 'libphonenumber-js';
 
 export interface IAlerts {
     type: string;
@@ -438,7 +439,7 @@ export default function ModalPropertyDetails() {
                 }
                 break;
             case "New Contact":
-                if (nameContactInput.current?.value && ( phoneContactInput.current?.value)){
+                if (nameContactInput.current?.value && phoneContactInput.current?.value && isValidPhoneNumber(phoneContactInput.current.value, "PT")){
                     updatedPropertyDetails.contacts.push({
                         name: nameContactInput.current?.value,
                         phone_number: phoneContactInput.current?.value,
@@ -452,7 +453,7 @@ export default function ModalPropertyDetails() {
                 } else {
                     queryClient.setQueryData('alertData', {
                         type: 'New Contact',
-                        message: 'Name and at least one contact information must be filled',
+                        message: 'Name and phone number information must be filled and be valid in Portugal. Example: +351 910 000 000',
                         active: true
                     });
                     return;
@@ -498,7 +499,7 @@ export default function ModalPropertyDetails() {
              
                 } else if (modalData?.type.includes("Contact")) {
                     const index = modalData.content?.index as number;
-                    if (index !== undefined && nameContactInput.current?.value && (phoneContactInput.current?.value)){
+                    if (index !== undefined && nameContactInput.current?.value && phoneContactInput.current?.value && isValidPhoneNumber(phoneContactInput.current.value, "PT")){
                         updatedPropertyDetails.contacts[index] = {
                             name: nameContactInput.current?.value,
                             phone_number: phoneContactInput.current?.value,
@@ -511,7 +512,7 @@ export default function ModalPropertyDetails() {
                     } else {
                         queryClient.setQueryData('alertData', {
                             type: 'Contact',
-                            message: 'Name and at least one contact information must be filled',
+                            message: 'Name and phone number information must be filled and be valid in Portugal. Example: +351 910 000 000',
                             active: true
                         });
                         return;
@@ -521,9 +522,9 @@ export default function ModalPropertyDetails() {
                 break;
             
         }
+        const updatedProperty: IFetchProperty = await updateProperty(propertyId ?? "", updatedPropertyDetails, authHeader);
         await queryClient.invalidateQueries('property')
-        queryClient.setQueryData('property', updatedPropertyDetails);
-        await updateProperty(propertyId ?? "", updatedPropertyDetails, authHeader);
+        queryClient.setQueryData('property', updatedProperty);
         handleModalClose();
     }
 
@@ -597,9 +598,18 @@ export default function ModalPropertyDetails() {
                                 {typeof modalData.content === 'object' && 'name' in modalData.content && (
                                     <div className=''>  
                                         <p className='font-light'>Name: </p>
-                                        <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={nameContactInput} defaultValue={modalData?.content.name}/>
-                                        <p className='font-light'>Number: </p>
-                                        <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={phoneContactInput} defaultValue={modalData?.content.phone_number}/>
+                                        <input 
+                                            className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' 
+                                            ref={nameContactInput} 
+                                            defaultValue={modalData?.content.name}
+                                            placeholder="Contact's name"
+                                        />
+                                        <p className='font-light'>Phone Number: </p>
+                                        <input 
+                                            className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' 
+                                            ref={phoneContactInput} 
+                                            placeholder='+351 910 000 000'
+                                        />
                                     </div>
                                 )}
                             </div> :
