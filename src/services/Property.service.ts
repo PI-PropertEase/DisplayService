@@ -1,5 +1,5 @@
 import axios from "axios"
-import { IFetchProperty, IUpdateProperty } from "../types/PropertyType"
+import { Amenity, BathroomFixture, BedType, IFetchProperty, IUpdateProperty } from "../types/PropertyType"
 
 const URL = "http://localhost/api"
 
@@ -30,4 +30,32 @@ export const updateProperty = async (propertyId: string, property: IUpdateProper
     })
 
     return res.data as IFetchProperty
+}
+
+export const fetchAmenities = async (authHeader: string) => {
+    const res = await axios.get(`${URL}/PropertyService/amenities`, {
+        headers: {
+            Authorization: authHeader,
+        },
+    })
+    return res.data as Amenity[];
+}
+
+export const fetchBathroomFixtures = async (authHeader: string) => {
+    const res = await axios.get(`${URL}/PropertyService/bathroom_fixtures`, {
+        headers: {
+            Authorization: authHeader,
+        },
+    })
+    return res.data as BathroomFixture[];
+}
+
+
+export const fetchBedTypes = async (authHeader: string) => {
+    const res = await axios.get(`${URL}/PropertyService/bed_types`, {
+        headers: {
+            Authorization: authHeader,
+        },
+    })
+    return res.data as BedType[];
 }

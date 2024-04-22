@@ -20,9 +20,15 @@ export interface Bedroom {
     beds: Bed[];
 }
 
+export enum BedType {
+    SINGLE = "single",
+    QUEEN = "queen",
+    KING = "king",
+}
+
 export interface Bed {
     number_beds: number;
-    type: string;
+    type: BedType;
 }
 
 export interface Bathroom {

@@ -9,16 +9,21 @@ import ModalDeletePropertyDetail from "../components/ModalDeletePropertyDetail";
 import ModalPropertyDetails from "../components/ModalPropertyDetails";
 import Navbar from "../components/Navbar";
 import { fetchProperty } from "../services/Property.service";
-import { IFetchProperty } from "../types/PropertyType";
+import { Amenity, BathroomFixture, Bed, IFetchProperty } from "../types/PropertyType";
+
+export type ModalContentType = string | number | Bed[] 
+                                | string[] | { name: string; phone_number: number; index: number; } 
+                                | Record<string, boolean> | Amenity[] | BathroomFixture[] | undefined;
 
 export interface IModalData {
-    content: string | number | { number_beds: number;type: string[]} | string[] | { name: string; phone_number: number; } |undefined ,
+    content: ModalContentType,
     type: string;
     isOpen: boolean;
 }
 
 export interface IModalDeleteData {
-    id: string ;
+    id: string;
+    index?: number;
     isOpen: boolean;
 }
 
@@ -32,48 +37,37 @@ export default function PropertyDetails() {
     
     
     if (!propertyDetails) {
-        return <div>Loading...</div>;
-    }
-    
-    function checkNotAllowed() {
-        const notAllowed = [];
-
-        
-        if (propertyDetails?.house_rules) {
-            for (const [key, value] of Object.entries(propertyDetails.house_rules)) {
-                if (typeof value === "boolean" && !value) {
-                    notAllowed.push(key.charAt(0).toUpperCase() + key.slice(1));
-                }
-            }
-        }
-        return notAllowed;
-    }
-    
-    const checkAllowed = () => {
-        const notAllowed = [];
-        if (propertyDetails?.house_rules) {
-            for (const [key, value] of Object.entries(propertyDetails.house_rules)) {
-                if (typeof value === "boolean" && value) {
-                    notAllowed.push(key.charAt(0).toUpperCase() + key.slice(1));
-                }
-            }
-        }
-        return notAllowed;
+        return (
+            <div className="flex justify-center">
+                <span className="loading loading-dots loading-lg"></span>
+            </div>
+        );
     }
 
-    const handleOpenModal = (content: string | number | { number_beds: number;type: string[]} | string[] | { name: string; phone_number: number; } | undefined, type: string) => {
+    function getBooleanHouseRules() {
+        const bool_rules: Record<string, boolean> = {};
+        if (propertyDetails?.house_rules)
+            for (const [rule, value] of Object.entries(propertyDetails?.house_rules)) {
+                if (typeof value === "boolean")
+                    bool_rules[rule] = value;
+            }
+
+        return bool_rules;
+    }
+    
+    const handleOpenModal = (content: ModalContentType, type: string) => {
         const modalData: IModalData = {
             content: content,
             type: type,
             isOpen: true
         }
-
         queryClient.setQueryData<IModalData>("modalData", modalData);
     }
 
-    const handleOpenDeleteModal = (id: string) => {
+    const handleOpenDeleteModal = (id: string, index?: number) => {
         const modalDeleteData: IModalDeleteData = {
             id: id,
+            index: index ?? undefined,
             isOpen: true
         }
 
@@ -156,14 +150,15 @@ export default function PropertyDetails() {
                                         <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(propertyDetails?.house_rules.check_out.begin_time + " - " + propertyDetails?.house_rules.check_out.end_time, "Check Out")}><FaRegEdit className="text-accent" /></button>
                                     </div>
                                     <div className="relative pt-4">
-                                        <label htmlFor="text" className="text-accent">Not Allowed:</label>
-                                        <input id="text" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={checkNotAllowed().join(', ')} readOnly />
-                                        <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(checkNotAllowed().join(', '), "Not Allowed")}><FaRegEdit className="text-accent" /></button>
+                                        <label htmlFor="text" className="text-accent">Rest Time:</label>
+                                        <input id="text" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={`${propertyDetails?.house_rules.rest_time.begin_time} - ${propertyDetails?.house_rules.rest_time.end_time}`} readOnly />
+                                        <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(propertyDetails?.house_rules.rest_time.begin_time + " - " + propertyDetails?.house_rules.rest_time.end_time, "Rest Time")}><FaRegEdit className="text-accent" /></button>
                                     </div>
                                     <div className="relative pt-4">
-                                        <label htmlFor="text" className="text-accent">Allowed:</label>
-                                        <input id="text" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={checkAllowed().join(', ')}readOnly />
-                                        <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(checkAllowed().join(', '), "Allowed")}><FaRegEdit className="text-accent" /></button>
+                                        {Object.entries(getBooleanHouseRules()).map(([rule, bool_value], i) => (
+                                            <p key={i} className={`font-bold capitalize ${bool_value ? "text-green-500" : "text-red-500"}`}>{rule}: <span className="text-accent font-light">{bool_value ? "Allowed" : "Not Allowed"}</span></p>
+                                        ))}
+                                        <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(getBooleanHouseRules(), "House Rules")}><FaRegEdit className="text-accent" /></button>
                                     </div>
                                 </div>
                                 <div className="w-full md:w-3/4">
@@ -183,8 +178,8 @@ export default function PropertyDetails() {
                                                     {Object.entries(propertyDetails?.bathrooms ?? {}).map(([bathroomId, items]) => (                                                    
                                                     <tr key={bathroomId}>
                                                         <th>{bathroomId}</th>
-                                                        <td className="w-full">{(items.fixtures as string[] ).join(', ')}</td>
-                                                        <td className="text-end w-full"><button onClick={() => handleOpenModal((items.fixtures as string[] ).join(', '), "Bathroom " + bathroomId)}><FaRegEdit className="text-accent" /></button></td>
+                                                        <td className="w-full">{(items.fixtures as string[]).join(', ')}</td>
+                                                        <td className="text-end w-full"><button onClick={() => handleOpenModal(items.fixtures, "Bathroom " + bathroomId)}><FaRegEdit className="text-accent" /></button></td>
                                                         <td className="text-end"><button onClick={() => handleOpenDeleteModal("Bathroom " + bathroomId)}><IoTrashOutline className=" text-red-600" /></button></td>
                                                     </tr>
                                                     ))}
@@ -210,24 +205,24 @@ export default function PropertyDetails() {
                                                     <tr key={bedroomId}>
                                                         <th>{bedroomId}</th>
                                                         <td className="w-full">{bedroomDetails.beds.map(bed => bed.type + ": " + bed.number_beds).join(", ")}</td>
-                                                        <td className="text-end w-full"><button onClick={() => handleOpenModal(bedroomDetails, "Bedroom " + bedroomId)}><FaRegEdit className="text-accent" /></button></td>
+                                                        <td className="text-end w-full"><button onClick={() => handleOpenModal(bedroomDetails.beds, "Bedroom " + bedroomId)}><FaRegEdit className="text-accent" /></button></td>
                                                         <td className="text-end"><button onClick={() => handleOpenDeleteModal("Bedroom " + bedroomId)}><IoTrashOutline className=" text-red-600" /></button></td>
                                                     </tr>
                                                     ))}
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <button className="absolute top-2 right-2 pt-6 text-xl" onClick={() => handleOpenModal({number_beds: 0, type: []}, "New Bedroom")}><BsPlusSquare className="text-accent" /></button>
+                                        <button className="absolute top-2 right-2 pt-6 text-xl" onClick={() => handleOpenModal([] as Bed[], "New Bedroom")}><BsPlusSquare className="text-accent" /></button>
                                     </div>
                                     <div className="relative pt-4">
                                         <label htmlFor="text" className="text-accent">Amenities:</label>
                                         <textarea id="amenties" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails?.amenities.join(', ')} readOnly />
-                                        <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(propertyDetails?.amenities.join(', '), "Amenities")}><FaRegEdit className="text-accent" /></button>
+                                        <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(propertyDetails?.amenities, "Amenities")}><FaRegEdit className="text-accent" /></button>
                                     </div>
                                     <div className="relative pt-4">
-                                        <label htmlFor="text" className="text-accent">Notes:</label>
-                                        <textarea id="notes" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails?.additional_info} readOnly />
-                                        <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(propertyDetails?.additional_info, "Notes")}><FaRegEdit className="text-accent" /></button>
+                                        <label htmlFor="text" className="text-accent">Additional Information:</label>
+                                        <textarea id="additional_info" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails?.additional_info} readOnly />
+                                        <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(propertyDetails?.additional_info, "Additional Info")}><FaRegEdit className="text-accent" /></button>
                                     </div>
                                     <div className="relative pt-4">
                                         <label htmlFor="text" className="text-accent">Cancellation Policy:</label>
@@ -248,12 +243,12 @@ export default function PropertyDetails() {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {propertyDetails?.contacts.map((contact) => (
+                                                    {propertyDetails?.contacts.map((contact, index) => (
                                                     <tr key={contact.phone_number}>
                                                         <th className=" whitespace-nowrap">{contact.name}</th>
                                                         <td>{contact.phone_number}</td>
-                                                        <td className="text-end" ><button onClick={() => handleOpenModal(contact, "Contact " + contact.name)}><FaRegEdit className="text-accent" /></button></td>
-                                                        <td className="text-end"><button onClick={() => handleOpenDeleteModal("Contact " + contact.name)}><IoTrashOutline className=" text-red-600" /></button></td>
+                                                        <td className="text-end" ><button onClick={() => handleOpenModal({index, ...contact}, "Contact " + contact.name)}><FaRegEdit className="text-accent" /></button></td>
+                                                        <td className="text-end"><button onClick={() => handleOpenDeleteModal("Contact " + contact.name, index)}><IoTrashOutline className=" text-red-600" /></button></td>
                                                     </tr>
                                                     ))}
                                                 </tbody>
