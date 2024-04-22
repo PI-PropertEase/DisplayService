@@ -203,7 +203,7 @@ export default function PropertyDetails() {
                                                     <tr key={bedroomId}>
                                                         <th>{bedroomId}</th>
                                                         <td className="w-full">{bedroomDetails.beds.map(bed => bed.type + ": " + bed.number_beds).join(", ")}</td>
-                                                        <td className="text-end w-full"><button onClick={() => handleOpenModal(bedroomDetails, "Bedroom " + bedroomId)}><FaRegEdit className="text-accent" /></button></td>
+                                                        <td className="text-end w-full"><button onClick={() => handleOpenModal(bedroomDetails.beds, "Bedroom " + bedroomId)}><FaRegEdit className="text-accent" /></button></td>
                                                         <td className="text-end"><button onClick={() => handleOpenDeleteModal("Bedroom " + bedroomId)}><IoTrashOutline className=" text-red-600" /></button></td>
                                                     </tr>
                                                     ))}

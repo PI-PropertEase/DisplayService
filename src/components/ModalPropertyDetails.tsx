@@ -1,12 +1,13 @@
 import { useQuery } from 'react-query';
 import { IModalData } from '../routes/PropertyDetails';
 import { useQueryClient } from 'react-query';
-import { IoCloseOutline } from "react-icons/io5";
+import { IoCloseOutline, IoTrashOutline } from "react-icons/io5";
 import React, { useEffect, useRef, useState } from 'react';
-import { Amenity, BathroomFixture, IFetchProperty } from '../types/PropertyType';
-import { fetchAmenities, fetchBathroomFixtures, updateProperty } from '../services/Property.service';
+import { Amenity, BathroomFixture, Bed, BedType, IFetchProperty } from '../types/PropertyType';
+import { fetchAmenities, fetchBathroomFixtures, fetchBedTypes, updateProperty } from '../services/Property.service';
 import useAuthHeader from 'react-auth-kit/hooks/useAuthHeader';
 import { useParams } from 'react-router-dom';
+import { BsPlusSquare } from 'react-icons/bs';
 
 export interface IAlerts {
     type: string;
@@ -31,27 +32,32 @@ export default function ModalPropertyDetails() {
     const endTimeInput = useRef<HTMLInputElement>(null);
 
     const textareaInput = useRef<HTMLTextAreaElement>(null);
-    const numBedsInput = useRef<HTMLInputElement>(null);
-    const typeBedsInput = useRef<HTMLInputElement>(null);
     const nameContactInput = useRef<HTMLInputElement>(null);
     const phoneContactInput = useRef<HTMLInputElement>(null);
     const updatedPropertyDetails: IFetchProperty = queryClient.getQueryData('property')!;
     const propertyId = useParams<{id: string}>().id;
 
     // for house rules, example: { "smoking": false, "allow_pets": true}
-    const [ruleCheckboxes, setRuleCheckboxes] = useState({});
+    const [ruleCheckboxes, setRuleCheckboxes] = useState<Record<string, boolean> | object>({});
 
     const [selectedAmenities, setSelectedAmenities] = useState<Amenity[]>([]);
 
     const [selectedFixtures, setSelectedFixtures] = useState<BathroomFixture[]>([]);
+
+    const [beds, setBeds] = useState<Bed[]>([]);
     
     const { data: availableAmenities } = useQuery("amenities", () => fetchAmenities(authHeader));
 
     const { data: bathroomFixtures } = useQuery("bathroom_fixtures", () => fetchBathroomFixtures(authHeader));
 
+    const { data: bedTypes } = useQuery("bed_types", () => fetchBedTypes(authHeader));
+
+
 
     useEffect(() => {
-        setRuleCheckboxes(modalData?.content)
+        if (modalData?.type === "House Rules")
+            setRuleCheckboxes(modalData.content as Record<string, boolean>)
+            
     }, [modalData]);
 
     useEffect(() => {
@@ -67,6 +73,13 @@ export default function ModalPropertyDetails() {
                 bathroomFixtures.filter((fixture) => (modalData.content as BathroomFixture[]).includes(fixture))
             )
     }, [bathroomFixtures, modalData])
+
+    useEffect(() => {
+        if (modalData?.type.includes("Bedroom")) {
+            console.log("beds:", modalData.content);
+            setBeds(modalData.content as Bed[]);
+        }
+    }, [modalData])
 
     const isValidTimeslotRegex = (timeslot: string) => {
         return /^(2[0-3]|[01][0-9]):([0-5][0-9])$/.test(timeslot);
@@ -88,6 +101,29 @@ export default function ModalPropertyDetails() {
         if (beginHour == endHour && beginMinute >= endMinute) return false;
 
         return true;
+    }
+
+    const isBedsValid = () => {
+        if (!beds || !bedTypes) return false;
+
+        if (beds.length == 0) return false;
+
+        if (hasDuplicateBedType())
+            return false;
+
+        if (beds.some((bed) => bed.number_beds == 0))
+            return false;
+
+        return true;
+    }
+
+    const hasDuplicateBedType = (): boolean => {
+        if (!bedTypes) return false;
+
+        return bedTypes.map((currType) => {
+            if (beds.filter((bed) => bed.type == currType).length > 1) return true;
+            return false;
+        }).some((v) => v == true);
     }
 
     const handleModalClose = () => {
@@ -127,6 +163,50 @@ export default function ModalPropertyDetails() {
         else 
             setSelectedFixtures(prevState => prevState.filter((f) => f != fixture))
     }
+
+    const handleChangeBedType = (event: React.ChangeEvent<HTMLSelectElement>, index: number) => {
+        setBeds(prevState => prevState.map((bed, i) => {
+            if (i === index)
+                return {
+                    ...bed,
+                    type: event.target.value as BedType
+                };
+            return bed;
+        }))
+    }
+
+    const handleChangeNumberBeds = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+        setBeds((prevState) => 
+            prevState.map((bed, idx) => {
+                if (idx === index) {
+                    const val: number = event.target.value !== "" ? Number(event.target.value) : 0;
+                    return {
+                        ...bed,
+                        number_beds: val
+                    }
+                }
+                    
+                    
+                return bed;
+            })
+        )
+    };
+
+    const addNewBed = () => {
+        setBeds((prevState) => {
+            const newState = [...prevState];
+            newState.push({
+                number_beds: 0,
+                type: BedType.SINGLE
+            })
+            return newState;
+        })
+    }
+
+    const removeBed = (index: number) => {
+        setBeds((prevState) => prevState.filter((_bed, i) => index !== i));
+    }
+    
 
     const handleSave = async () => {
         switch (modalData?.type) {
@@ -321,7 +401,6 @@ export default function ModalPropertyDetails() {
             case "New Bathroom":
                 if (stringInput.current?.value && selectedFixtures.length > 0) {
                     const bathroomName = stringInput.current?.value;
-                    console.log("Bathroom Name:", bathroomName)
                     updatedPropertyDetails.bathrooms[bathroomName] = {
                         fixtures: selectedFixtures
                     }
@@ -340,10 +419,9 @@ export default function ModalPropertyDetails() {
                 }
                 break;
             case "New Bedroom":
-                if (stringInput.current?.value && numBedsInput.current?.value && typeBedsInput.current?.value){
+                if (stringInput.current?.value && isBedsValid()){
                     updatedPropertyDetails.bedrooms[stringInput.current?.value] = {
-                        number_beds: Number(numBedsInput.current?.value),
-                        type: typeBedsInput.current?.value.split(',').map(item => item.trim()).filter(item => item !== null && item !== undefined && item !== "")
+                        beds: beds
                     };
                     queryClient.setQueryData('alertData', {
                         type: 'New Bedroom',
@@ -353,7 +431,7 @@ export default function ModalPropertyDetails() {
                 } else {
                     queryClient.setQueryData('alertData', {
                         type: 'New Bedroom',
-                        message: 'ID, Number of beds and Type cannot be empty',
+                        message: 'Bedroom name cannot be empty, number of beds must not be 0, and bed types cannot be duplicated',
                         active: true
                     });
                     return;
@@ -383,10 +461,9 @@ export default function ModalPropertyDetails() {
             default:
                 if (modalData?.type.includes("Bedroom")) {
                     const id = modalData?.type.substring(modalData?.type.split(' ')[0].length).trim();
-                    if (id && updatedPropertyDetails.bedrooms[id] && numBedsInput.current?.value && typeBedsInput.current?.value) {
+                    if (id && updatedPropertyDetails.bedrooms[id] && isBedsValid()) {
                         updatedPropertyDetails.bedrooms[id] = {
-                            number_beds: Number(numBedsInput.current?.value),
-                            type: typeBedsInput.current?.value.split(',').map(item => item.trim()).filter(item => item !== null && item !== undefined && item !== "")
+                            beds: beds
                         };
                         queryClient.setQueryData('alertData', {
                             type: 'Bedroom',
@@ -396,14 +473,13 @@ export default function ModalPropertyDetails() {
                     } else {
                         queryClient.setQueryData('alertData', {
                             type: 'Bedroom',
-                            message: 'Number of beds and Type cannot be empty',
+                            message: 'Number of beds must not be 0, and bed types cannot be duplicated',
                             active: true
                         });
                         return;
                     }
                 } else if (modalData?.type.includes("Bathroom")) {
                     const id = modalData?.type.substring(modalData?.type.split(' ')[0].length).trim();
-                    console.log("id", id)
                     if (id && selectedFixtures.length > 0) {
                         updatedPropertyDetails.bathrooms[id].fixtures = selectedFixtures;
                         queryClient.setQueryData('alertData', {
@@ -468,20 +544,52 @@ export default function ModalPropertyDetails() {
                             {["Description", "Cancellation Policy", "Additional Info"].includes(modalData.type) ? 
                             <textarea className="border border-smoke h-32 p-2 rounded-xl mt-2 w-full text-accent bg-base-100" ref={textareaInput} defaultValue={typeof modalData.content === "string" ? modalData.content : ""} /> : 
                             modalData.type.includes("Bedroom") ?
-                            <div className='flex flex-col'>
-                                {typeof modalData.content === 'object' && 'number_beds' in modalData.content && (
-                                    <div className=''>  
+                            <div className='flex flex-col gap-4'>
+                                {typeof modalData.content === 'object' && (
+                                    <>
                                         {modalData.type === "New Bedroom" && (
-                                            <>
-                                             <p className='font-light'>ID: </p>
-                                             <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={stringInput}/>
-                                            </>
+                                        <div>  
+                                            <p className='font-light'>Bedroom Name: </p>
+                                            <input placeholder="A description: Second floor bedroom" className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={stringInput}/>
+                                        </div>
                                         )}
-                                        <p className='font-light'>Number of beds: </p>
-                                        <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={numBedsInput} defaultValue={modalData.content.number_beds}/>
-                                        <p className='font-light'>Type: </p>
-                                        <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={typeBedsInput} defaultValue={modalData.content.type.join(', ')}/>
-                                    </div>
+                                        <div>
+                                            <div className='flex flex-row'>
+                                                <span className='font-light'>Beds: </span>
+                                                {beds.length < bedTypes?.length ? (
+                                                    <button className="ml-auto text-xl" onClick={() => addNewBed()}><BsPlusSquare className="text-accent" /></button>
+                                                ) : ""}
+                                            </div>
+                                            {beds.length == 0 ? (
+                                                <p className='font-bold'>Add beds to your bedroom</p>
+                                            ) : beds.map((bed, index) => ((
+                                                <div key={index} className='flex flex-row justify-center text-center gap-8 items-center'>
+                                                    <div className='flex flex-col'>
+                                                        <p className='font-light'>Number of beds: </p>
+                                                        <input 
+                                                            className='bg-base-200 p-2 rounded-xl w-40 mt-2 text-accent' 
+                                                            defaultValue={bed.number_beds}
+                                                            type='number'
+                                                            onChange={(event) => handleChangeNumberBeds(event, index)}
+                                                        />
+                                                    </div>
+                                                    <div className='flex flex-col'>
+                                                        <p className='font-light'>Type: </p>
+                                                        <select className="select select-bordered w-40 max-w-xs" onChange={(event) => handleChangeBedType(event, index)}>
+                                                            {bedTypes?.map((bedType, i) => (
+                                                                <option key={i} value={bedType} selected={bedType == bed.type}>{bedType}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                    <p className="text-end">
+                                                        <button onClick={() => removeBed(index)}>
+                                                            <IoTrashOutline className=" text-red-600" />
+                                                        </button>
+                                                    </p>
+                                                </div>
+                                            )))}
+                                        </div>
+                                    </>
                                 )}
                             </div> :
                             modalData.type.includes("Contact") ?
@@ -489,9 +597,9 @@ export default function ModalPropertyDetails() {
                                 {typeof modalData.content === 'object' && 'name' in modalData.content && (
                                     <div className=''>  
                                         <p className='font-light'>Name: </p>
-                                        <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={nameContactInput} defaultValue={modalData.content.name}/>
+                                        <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={nameContactInput} defaultValue={modalData?.content.name}/>
                                         <p className='font-light'>Number: </p>
-                                        <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={phoneContactInput} defaultValue={modalData.content.phone_number}/>
+                                        <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={phoneContactInput} defaultValue={modalData?.content.phone_number}/>
                                     </div>
                                 )}
                             </div> :
@@ -566,13 +674,13 @@ export default function ModalPropertyDetails() {
                                             <label>
                                                 Begin time:
                                             </label>
-                                            <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={beginTimeInput} defaultValue={modalData.content.split(" - ")[0]} placeholder='HH:MM'></input>
+                                            <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={beginTimeInput} defaultValue={(modalData.content as string).split(" - ")[0]} placeholder='HH:MM'></input>
                                         </div>
                                         <div className='flex justify-center'>
                                             <label>
                                                 End time:
                                             </label>
-                                            <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={endTimeInput} defaultValue={modalData.content.split(" - ")[1]} placeholder='HH:MM'></input>
+                                            <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' ref={endTimeInput} defaultValue={(modalData.content as string).split(" - ")[1]} placeholder='HH:MM'></input>
                                         </div>
                                         
                                     </div>
