@@ -5,5 +5,11 @@ export interface IUser {
 }
 
 interface IConnectedService {
-  title: string;
+  title: ServiceEnum;
+}
+
+export enum ServiceEnum {
+  ZOOKING = "zooking",
+  CLICKANDGO = "clickandgo",
+  EARTHSTAYIN = "earthstayin"
 }

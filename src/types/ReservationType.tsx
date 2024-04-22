@@ -1,16 +1,19 @@
+import { ServiceEnum } from "./UserType";
+
 export interface IReservation {
   id: number;
   property_id: number;
-  event_type: IReservationType;
-  service: string;
   status: "pending" | "confirm";
-  begin_time: Date;
-  end_time: Date;
+  begin_datetime: Date;
+  end_datetime: Date;
+  service: ServiceEnum;
+  cost: number;
+  client_phone: string;
+  client_name: string;
+  client_email: string;
 }
 
-// TODO: provavelmente nomes diferentes
-export enum IReservationType {
-  OCCUPATION = "occupation",
-  CLEANING = "cleaning",
-  MAINTENANCE = "maintenance",
+export enum ReservationStatus {
+  ONGOING = "OnGoing",
+  PENDING = "Pending"
 }
