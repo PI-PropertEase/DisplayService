@@ -9,9 +9,9 @@ import ModalDeletePropertyDetail from "../components/ModalDeletePropertyDetail";
 import ModalPropertyDetails from "../components/ModalPropertyDetails";
 import Navbar from "../components/Navbar";
 import { fetchProperty } from "../services/Property.service";
-import { Amenity, BathroomFixture, IFetchProperty } from "../types/PropertyType";
+import { Amenity, BathroomFixture, Bed, IFetchProperty } from "../types/PropertyType";
 
-export type ModalContentType = string | number | { number_beds: number;type: string[]} 
+export type ModalContentType = string | number | Bed[] 
                                 | string[] | { name: string; phone_number: number; index: number; } 
                                 | Record<string, boolean> | Amenity[] | BathroomFixture[] | undefined;
 
@@ -36,7 +36,11 @@ export default function PropertyDetails() {
     
     
     if (!propertyDetails) {
-        return <div>Loading...</div>;
+        return (
+            <div className="flex justify-center">
+                <span className="loading loading-dots loading-lg"></span>
+            </div>
+        );
     }
 
     function getBooleanHouseRules() {
@@ -206,7 +210,7 @@ export default function PropertyDetails() {
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <button className="absolute top-2 right-2 pt-6 text-xl" onClick={() => handleOpenModal({number_beds: 0, type: []}, "New Bedroom")}><BsPlusSquare className="text-accent" /></button>
+                                        <button className="absolute top-2 right-2 pt-6 text-xl" onClick={() => handleOpenModal([] as Bed[], "New Bedroom")}><BsPlusSquare className="text-accent" /></button>
                                     </div>
                                     <div className="relative pt-4">
                                         <label htmlFor="text" className="text-accent">Amenities:</label>
