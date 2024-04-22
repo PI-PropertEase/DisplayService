@@ -22,7 +22,8 @@ export interface IModalData {
 }
 
 export interface IModalDeleteData {
-    id: string ;
+    id: string;
+    index?: number;
     isOpen: boolean;
 }
 
@@ -63,9 +64,10 @@ export default function PropertyDetails() {
         queryClient.setQueryData<IModalData>("modalData", modalData);
     }
 
-    const handleOpenDeleteModal = (id: string) => {
+    const handleOpenDeleteModal = (id: string, index?: number) => {
         const modalDeleteData: IModalDeleteData = {
             id: id,
+            index: index ?? undefined,
             isOpen: true
         }
 
@@ -246,7 +248,7 @@ export default function PropertyDetails() {
                                                         <th className=" whitespace-nowrap">{contact.name}</th>
                                                         <td>{contact.phone_number}</td>
                                                         <td className="text-end" ><button onClick={() => handleOpenModal({index, ...contact}, "Contact " + contact.name)}><FaRegEdit className="text-accent" /></button></td>
-                                                        <td className="text-end"><button onClick={() => handleOpenDeleteModal("Contact " + contact.name)}><IoTrashOutline className=" text-red-600" /></button></td>
+                                                        <td className="text-end"><button onClick={() => handleOpenDeleteModal("Contact " + contact.name, index)}><IoTrashOutline className=" text-red-600" /></button></td>
                                                     </tr>
                                                     ))}
                                                 </tbody>

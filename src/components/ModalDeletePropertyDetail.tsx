@@ -1,9 +1,15 @@
 import { useQuery, useQueryClient } from 'react-query'
 import { IModalDeleteData } from '../routes/PropertyDetails'
-import { IPropertyDetails } from '../main'
 import { IoCloseOutline } from "react-icons/io5";
+import { IFetchProperty } from '../types/PropertyType';
+import { updateProperty } from '../services/Property.service';
+import { useParams } from 'react-router-dom';
+import useAuthHeader from 'react-auth-kit/hooks/useAuthHeader';
 
 export default function ModalDeletePropertyDetail() {
+    const propertyId = useParams<{id: string}>().id;
+
+    const authHeader = useAuthHeader() ?? "";
 
     const {data: modalDeleteData} = useQuery<IModalDeleteData>('modalDeleteData')
 
@@ -18,24 +24,23 @@ export default function ModalDeletePropertyDetail() {
         queryClient.setQueryData<IModalDeleteData>('modalDeleteData', updatedModalDeleteData);
     };
 
-    const handleDelete = () => {
-        const updatedPropertyDetails: IPropertyDetails = queryClient.getQueryData('propertyDetails')!;
+    const handleDelete = async () => {
+        const updatedPropertyDetails: IFetchProperty = queryClient.getQueryData('property')!;
         const id = modalDeleteData?.id.substring(modalDeleteData?.id.split(' ')[0].length).trim();
-    
+        console.log("index recebido", modalDeleteData?.index)
+        console.log("modalDeleteData.id:", modalDeleteData?.id)
         if (id){
             if (modalDeleteData?.id.includes('Bedroom')) {
                 delete updatedPropertyDetails.bedrooms[id];
             } else if (modalDeleteData?.id.includes('Bathroom')) {
-                updatedPropertyDetails.bathrooms.delete(id);
-            } else if (modalDeleteData?.id.includes('Contact')) {
-                // Encontrar o índice do contato a ser removido
-                const indexToRemove = updatedPropertyDetails.contact.findIndex(contact => contact.id === parseInt(id));
-                if (indexToRemove !== -1) {
-                    updatedPropertyDetails.contact.splice(indexToRemove, 1);
-                }
+                delete updatedPropertyDetails.bathrooms[id];
+            } else if (modalDeleteData?.id.includes('Contact') && modalDeleteData.index !== undefined) {
+                updatedPropertyDetails.contacts.splice(modalDeleteData.index, 1);
             }
         }
-        queryClient.setQueryData('propertyDetails', updatedPropertyDetails);
+        await queryClient.invalidateQueries('property')
+        queryClient.setQueryData('property', updatedPropertyDetails);
+        await updateProperty(propertyId ?? "", updatedPropertyDetails, authHeader);
         handleModalClose();
     }
     
