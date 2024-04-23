@@ -1,5 +1,5 @@
 export interface IFetchProperty {
-    _id?: string;
+    _id?: number;
     user_email: string;
     title: string;
     address: string;

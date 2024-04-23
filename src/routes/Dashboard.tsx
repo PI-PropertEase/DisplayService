@@ -1,21 +1,17 @@
-import Navbar from "../components/Navbar";
-import Drawer from "../components/Drawer";
-import PropertyListDashboard from "../components/PropertyListDashboard";
-import WeekCalendar from "../components/WeekCalendar";
-import { IUser } from "../types/UserType";
-import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
-import { useQuery } from "react-query";
-import { fetchUser } from "../services/Integrations.service";
+import Navbar from "../components/Navbar"
+import Drawer from "../components/Drawer"
+import PropertyListDashboard from "../components/PropertyListDashboard"
+import WeekCalendar from "../components/WeekCalendar"
+import { IUser } from "../types/UserType"
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader"
+import { useQuery } from "react-query"
+import { fetchUser } from "../services/Integrations.service"
 
 const Dashboard = () => {
-  const authHeader = useAuthHeader() ?? "";
-  const { data: user } = useQuery<IUser>(
-    "user",
-    () => fetchUser(authHeader).then((data) => data),
-    {
-      staleTime: Infinity,
-    }
-  );
+  const authHeader = useAuthHeader() ?? ""
+  const { data: user } = useQuery<IUser>("user", () => fetchUser(authHeader).then((data) => data), {
+    staleTime: Infinity,
+  })
 
   return (
     <>
@@ -45,7 +41,7 @@ const Dashboard = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard

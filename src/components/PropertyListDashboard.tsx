@@ -1,40 +1,77 @@
-import React, { useContext, useEffect, useState } from "react";
-import { RxPencil2 } from "react-icons/rx";
-import PropertyListBadge from "./PropertyListBadge";
-import { PropertyContext } from "../context/PropertyContext";
-import { IFetchProperty } from "../types/PropertyType";
+import React, { useContext, useEffect, useState } from "react"
+import { RxPencil2 } from "react-icons/rx"
+import PropertyListBadge from "./PropertyListBadge"
+import { PropertyContext } from "../context/PropertyContext"
+import { IFetchProperty } from "../types/PropertyType"
+import { ReservationContext } from "../context/ReservationContext"
+import {
+  unifyPropertyReservation,
+  unifyReservationProperty,
+} from "../utils/reservationpropertyunifier"
 
 export interface IProperty {
-  id: number;
-  name: string;
-  address: string;
-  status: "Occupied" | "Free" | "Check-in Soon" | "Check-out Soon";
-  arrival: Date; // TODO: arrival e departure provavelmente vêm noutro formato
-  departure: Date;
-  price: number;
+  id?: number
+  title: string
+  address: string
+  status: "Occupied" | "Free" | "Check-in Soon" | "Check-out Soon"
+  arrival: Date
+  departure: Date
+  price: number
 }
 
 const PropertyListDashboard = () => {
-  const {properties} = useContext(PropertyContext);
+  const { properties } = useContext(PropertyContext)
+
+  const { reservations: reservationData } = useContext(ReservationContext)
+
+  const propertyWithReservations = unifyReservationProperty(reservationData, properties)
+
+  const propertyList: IProperty[] = []
+
+  propertyWithReservations?.forEach((property) => {
+    property.reservations.forEach((reservation) => {
+      if (reservation.begin_datetime < new Date() && reservation.end_datetime > new Date()) {
+        propertyList.push({
+          id: property._id,
+          title: property.title,
+          address: property.address,
+          status: "Occupied",
+          arrival: reservation.begin_datetime,
+          departure: reservation.end_datetime,
+          price: property.price,
+        })
+        return;
+      }
+    })
+    if (!propertyList.find((p) => p.id === property._id)) {
+      propertyList.push({
+        id: property._id,
+        title: property.title,
+        address: property.address,
+        status: "Free",
+        arrival: new Date(),
+        departure: new Date(),
+        price: property.price,
+      })
+    }
+  })
 
   const [propertyListState, setPropertyListState] = useState<{
-    propertyList: IFetchProperty[];
-    activeTab: string;
+    propertyList: IProperty[]
+    activeTab: string
   }>({
-    propertyList: [...properties],
+    propertyList: [...propertyList],
     activeTab: "all_tab",
-  });
+  })
 
   useEffect(() => {
     setPropertyListState({
-      propertyList: [...properties],
+      propertyList: [...propertyList],
       activeTab: "all_tab",
-    });
-  }, [properties]);
+    })
+  }, [propertyList])
 
-  const handlePropertyTabSelection = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ): void => {
+  const handlePropertyTabSelection = (event: React.MouseEvent<HTMLButtonElement>): void => {
     /* const eventId = event.currentTarget.id;
     let filteredList: IProperty[] = [];
 
@@ -69,7 +106,7 @@ const PropertyListDashboard = () => {
       propertyList: filteredList,
       activeTab: eventId,
     }); */
-  };
+  }
 
   return (
     <div className="flex flex-col max-h-[32rem] pb-4">
@@ -112,21 +149,17 @@ const PropertyListDashboard = () => {
           <thead className="sticky top-0 bg-base-100 shadow-sm shadow-base-200">
             <tr>
               <th className="text-accent dark:text-slate-50 text-base">Name</th>
-              <th className="text-accent dark:text-slate-50 text-base">
-                Address
-              </th>
-              <th className="text-accent dark:text-slate-50 text-base">
-                Status
-              </th>
+              <th className="text-accent dark:text-slate-50 text-base">Address</th>
+              <th className="text-accent dark:text-slate-50 text-base">Status</th>
             </tr>
           </thead>
           <tbody>
             {propertyListState.propertyList.map((property) => (
-              <tr key={property._id}>
+              <tr key={property.id}>
                 <td>{property.title}</td>
                 <td>{property.address}</td>
                 <td>
-                  <PropertyListBadge text="Static" />
+                  <PropertyListBadge text={property.status} />
                 </td>
               </tr>
             ))}
@@ -134,7 +167,7 @@ const PropertyListDashboard = () => {
         </table>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PropertyListDashboard;
+export default PropertyListDashboard
