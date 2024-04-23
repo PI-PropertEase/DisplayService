@@ -36,7 +36,7 @@ export default function PropertyDetails() {
     const { data: propertyDetails } = useQuery<IFetchProperty>("property", () => fetchProperty(id, authHeader).then(data => data), { staleTime: Infinity });
     
     
-    if (propertyDetails) {
+    if (!propertyDetails) {
         return (
             <div className="flex justify-center items-center h-screen">
                 <span className="loading loading-dots loading-lg"></span>

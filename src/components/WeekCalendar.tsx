@@ -1,7 +1,54 @@
 import dayGridPlugin from "@fullcalendar/daygrid";
 import FullCalendar from "@fullcalendar/react";
+import { IReservation } from "../types/ReservationType";
+import { fetchReservations } from "../services/calendar.service";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { useQuery } from "react-query";
+
+// type that is displayed on the calendar of this page
+interface IWeekCalendarType {
+  title: string;
+  start: string;
+  end: string;
+}
 
 export default function WeekCalendar() {
+  const authHeader = useAuthHeader() ?? "";
+
+  const { data: reservationData, isLoading: loading } = useQuery<IReservation[]>(
+    "fetchReservations",
+    () => fetchReservations(authHeader).then((data) => data),
+    { staleTime: Infinity }
+  );
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <span className="loading loading-dots loading-lg"></span>
+      </div>
+    );
+  }
+
+  console.log("reservation data: ", reservationData);
+
+  const convertReservationData = (): IWeekCalendarType[] => {
+    if (reservationData === undefined)
+        return [];
+    const convertedReservations: IWeekCalendarType[] = [];
+    
+    reservationData.forEach((r) => {
+      console.log("RESERVATION R", r)
+      console.log("reservation begin date", r.begin_datetime, typeof r.begin_datetime)
+      convertedReservations.push({
+        title: "Static title :)",
+        start: r.begin_datetime.toISOString().split("T")[0],
+        end: r.end_datetime.toISOString().split("T")[0]
+      })
+    })
+
+    return convertedReservations;
+  }
+
   return (
     <FullCalendar
       plugins={[dayGridPlugin]}
@@ -13,43 +60,7 @@ export default function WeekCalendar() {
       height={"100%"}
       buttonIcons={{prev: 'chevron-left', next: 'chevron-right'}}
       events={
-        [
-          {
-            title: "Hotel 1 - Room 4",
-            start: "2024-03-14",
-            end: "2024-03-25"
-          },
-          {
-            title: "Alojamento Local 1",
-            start: "2024-03-13",
-            end: "2024-03-26"
-          },
-          {
-            title: "Alojamento Local 3",
-            start: "2024-03-12",
-            end: "2024-03-27"
-          },
-          {
-            title: "Hotel 2 - Room 2",
-            start: "2024-03-11",
-            end: "2024-03-22"
-          },
-          {
-            title: "Hotel 2 - Room 3",
-            start: "2024-03-17",
-            end: "2024-03-20"
-          },
-          {
-            title: "Hotel 2 - Room 4",
-            start: "2024-03-21",
-            end: "2024-03-23"
-          },
-          {
-            title: "Hotel 2 - Room 3",
-            start: "2024-03-21",
-            end: "2024-03-23"
-          },
-        ]
+        convertReservationData()
       }
       eventColor="#FD642395"
       eventBorderColor="#FD642395"
