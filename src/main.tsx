@@ -16,48 +16,6 @@ import createStore from "react-auth-kit/createStore";
 import RequireAuth from "@auth-kit/react-router/RequireAuth";
 import Integrations from "./routes/Integrations";
 
-export interface IPropertyDetails {
-  _id: string;
-  user_id: number;
-  property_id: number;
-  title: string;
-  address: string;
-  description: string;
-  number_guests: number;
-  square_meters: number;
-  price_per_night: number;
-  bedrooms: Record<
-    string,
-    {
-      number_beds: number;
-      type: string[];
-    }
-  >;
-  bathrooms: Map<string, string[]>;
-  amenities: string[];
-  house_rules: {
-    check_in: {
-      begin_time: string;
-      end_time: string;
-    };
-    check_out: {
-      begin_time: string;
-      end_time: string;
-    };
-    smoking: boolean;
-    parties: boolean;
-    pets: boolean;
-    [key: string]: boolean | { begin_time: string; end_time: string };
-  };
-  notes: string;
-  contact: {
-    id: number;
-    name: string;
-    phone: number;
-    email: string;
-  }[];
-  cancellation_policy: string;
-}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -95,7 +53,9 @@ const myRouter = createBrowserRouter([
     path: "/properties",
     element: (
       <RequireAuth fallbackPath="/">
-        <PropertyListPage />
+        <PropertyContextProvider>
+          <PropertyListPage />
+        </PropertyContextProvider>
       </RequireAuth>
     ),
   },

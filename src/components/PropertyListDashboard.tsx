@@ -2,8 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { RxPencil2 } from "react-icons/rx";
 import PropertyListBadge from "./PropertyListBadge";
 import { PropertyContext } from "../context/PropertyContext";
-import { IPropertyDetails } from "../main";
-import { useQueryClient } from "react-query";
 import { IFetchProperty } from "../types/PropertyType";
 
 export interface IProperty {
@@ -17,9 +15,7 @@ export interface IProperty {
 }
 
 const PropertyListDashboard = () => {
-  const queryClient = useQueryClient();
-
-  const properties = queryClient.getQueryData<IFetchProperty[]>("fetchProperties") ?? [];
+  const {properties} = useContext(PropertyContext);
 
   const [propertyListState, setPropertyListState] = useState<{
     propertyList: IFetchProperty[];

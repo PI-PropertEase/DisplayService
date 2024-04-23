@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import PropertyListBadge from "./PropertyListBadge";
 import { BsBoxArrowUpRight } from "react-icons/bs";
 import { FaArrowLeft, FaArrowRight, FaRegTrashAlt } from "react-icons/fa";
@@ -8,11 +8,11 @@ import {
   MdKeyboardDoubleArrowRight,
 } from "react-icons/md";
 import { IFetchProperty } from "../types/PropertyType";
-import { fetchProperties } from "../services/Property.service";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import { IUser } from "../types/UserType";
 import { fetchUser } from "../services/Integrations.service";
 import { Link } from "react-router-dom";
+import { PropertyContext } from "../context/PropertyContext";
 
 
 const PropertyTable = (
@@ -24,20 +24,7 @@ const PropertyTable = (
     staleTime: Infinity
   })
 
-
-  const fetchPropers = async () : Promise<IFetchProperty[]> => {
-    if (user) {
-      const userEmail = user.email;
-      const res = await fetchProperties(userEmail, authHeader);
-      return res;
-    }
-  };
-   
-   const { data: propertyList, } = useQuery({
-    queryKey: 'fetchProperties',
-    queryFn: fetchPropers,
-    refetchInterval: 1000, 
-   });
+  const {properties: propertyList} = useContext(PropertyContext);
 
 
   const [paginationNumber, setPaginationNumber] = useState<number>(1);
