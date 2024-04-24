@@ -45,7 +45,7 @@ export default function Navbar() {
             <a><b>{transformName(userData.name)}</b></a>
               <ul className="p-2">
                 <li><a>Settings</a></li>
-                <li><button onClick={() => {console.log("clicked logout"); signOut()}}>Logout</button></li>
+                <li><button onClick={() => signOut()}>Logout</button></li>
               </ul>
             </li>
           </ul>

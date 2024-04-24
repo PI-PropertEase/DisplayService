@@ -1,63 +1,21 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import "./index.css";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Home from "./routes/Home";
-import SignIn from "./routes/SignIn";
-import SignUp from "./routes/SignUp";
-import Dashboard from "./routes/Dashboard";
-import PropertyListPage from "./routes/PropertyListPage";
-import PropertyDetails from "./routes/PropertyDetails";
-import Calendar from "./routes/Calendar";
-import { PropertyContextProvider } from "./context/PropertyContext";
-import AuthProvider from "react-auth-kit";
-import createStore from "react-auth-kit/createStore";
-import RequireAuth from "@auth-kit/react-router/RequireAuth";
-import Integrations from "./routes/Integrations";
-
-export interface IPropertyDetails {
-  _id: string;
-  user_id: number;
-  property_id: number;
-  title: string;
-  address: string;
-  description: string;
-  number_guests: number;
-  square_meters: number;
-  price_per_night: number;
-  bedrooms: Record<
-    string,
-    {
-      number_beds: number;
-      type: string[];
-    }
-  >;
-  bathrooms: Map<string, string[]>;
-  amenities: string[];
-  house_rules: {
-    check_in: {
-      begin_time: string;
-      end_time: string;
-    };
-    check_out: {
-      begin_time: string;
-      end_time: string;
-    };
-    smoking: boolean;
-    parties: boolean;
-    pets: boolean;
-    [key: string]: boolean | { begin_time: string; end_time: string };
-  };
-  notes: string;
-  contact: {
-    id: number;
-    name: string;
-    phone: number;
-    email: string;
-  }[];
-  cancellation_policy: string;
-}
+import React from "react"
+import ReactDOM from "react-dom/client"
+import "./index.css"
+import { QueryClient, QueryClientProvider } from "react-query"
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import Home from "./routes/Home"
+import SignIn from "./routes/SignIn"
+import SignUp from "./routes/SignUp"
+import Dashboard from "./routes/Dashboard"
+import PropertyListPage from "./routes/PropertyListPage"
+import PropertyDetails from "./routes/PropertyDetails"
+import Calendar from "./routes/Calendar"
+import { PropertyContextProvider } from "./context/PropertyContext"
+import AuthProvider from "react-auth-kit"
+import createStore from "react-auth-kit/createStore"
+import RequireAuth from "@auth-kit/react-router/RequireAuth"
+import Integrations from "./routes/Integrations"
+import { ReservationContextProvider } from "./context/ReservationContext"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -65,8 +23,7 @@ const queryClient = new QueryClient({
       staleTime: 1000 * 10,
     },
   },
-});
-
+})
 
 const myRouter = createBrowserRouter([
   {
@@ -86,7 +43,9 @@ const myRouter = createBrowserRouter([
     element: (
       <RequireAuth fallbackPath="/">
         <PropertyContextProvider>
-          <Dashboard />
+          <ReservationContextProvider>
+            <Dashboard />
+          </ReservationContextProvider>
         </PropertyContextProvider>
       </RequireAuth>
     ),
@@ -95,7 +54,11 @@ const myRouter = createBrowserRouter([
     path: "/properties",
     element: (
       <RequireAuth fallbackPath="/">
-        <PropertyListPage />
+        <PropertyContextProvider>
+          <ReservationContextProvider>
+            <PropertyListPage />
+          </ReservationContextProvider>
+        </PropertyContextProvider>
       </RequireAuth>
     ),
   },
@@ -111,15 +74,19 @@ const myRouter = createBrowserRouter([
     path: "/calendar",
     element: (
       <RequireAuth fallbackPath="/">
-        <Calendar />
+        <ReservationContextProvider>
+          <PropertyContextProvider>
+            <Calendar />
+          </PropertyContextProvider>
+        </ReservationContextProvider>
       </RequireAuth>
     ),
   },
   {
     path: "/integrations",
     element: <Integrations />,
-  }
-]);
+  },
+])
 
 const store = createStore({
   authName: "_auth_propertease",
@@ -128,7 +95,7 @@ const store = createStore({
   cookieSecure: window.location.protocol === "https:",
   //refresh: refresh,
   debug: true,
-});
+})
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -138,4 +105,4 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       </QueryClientProvider>
     </AuthProvider>
   </React.StrictMode>
-);
+)

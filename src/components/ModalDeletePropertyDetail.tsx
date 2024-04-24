@@ -27,8 +27,6 @@ export default function ModalDeletePropertyDetail() {
     const handleDelete = async () => {
         const updatedPropertyDetails: IFetchProperty = queryClient.getQueryData('property')!;
         const id = modalDeleteData?.id.substring(modalDeleteData?.id.split(' ')[0].length).trim();
-        console.log("index recebido", modalDeleteData?.index)
-        console.log("modalDeleteData.id:", modalDeleteData?.id)
         if (id){
             if (modalDeleteData?.id.includes('Bedroom')) {
                 delete updatedPropertyDetails.bedrooms[id];

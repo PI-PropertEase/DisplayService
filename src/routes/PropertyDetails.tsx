@@ -33,12 +33,11 @@ export default function PropertyDetails() {
     const queryClient = useQueryClient();
     const id = useParams<{ id: string }>()?.id?.toString() ?? "";
 
-    const { data: propertyDetails } = useQuery<IFetchProperty>("property", () => fetchProperty(id, authHeader).then(data => data), { staleTime: Infinity });
-    
+    const { data: propertyDetails } = useQuery<IFetchProperty>(`property${id}`, () => fetchProperty(id, authHeader).then(data => data), { staleTime: Infinity });
     
     if (!propertyDetails) {
         return (
-            <div className="flex justify-center">
+            <div className="flex justify-center items-center h-screen">
                 <span className="loading loading-dots loading-lg"></span>
             </div>
         );

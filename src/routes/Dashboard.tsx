@@ -1,75 +1,17 @@
-import Navbar from "../components/Navbar";
-import Drawer from "../components/Drawer";
-import PropertyListDashboard, {
-  IProperty,
-} from "../components/PropertyListDashboard";
-import WeekCalendar from "../components/WeekCalendar";
-import { IReservation, IReservationType } from "../types/ReservationType";
-import { IUser } from "../types/UserType";
-import { fetchProperties } from "../services/Property.service";
-import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
-import { useQuery } from "react-query";
-import { IFetchProperty } from "../types/PropertyType";
-import { fetchUser } from "../services/Integrations.service";
+import Navbar from "../components/Navbar"
+import Drawer from "../components/Drawer"
+import PropertyListDashboard from "../components/PropertyListDashboard"
+import WeekCalendar from "../components/WeekCalendar"
+import { IUser } from "../types/UserType"
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader"
+import { useQuery } from "react-query"
+import { fetchUser } from "../services/Integrations.service"
 
 const Dashboard = () => {
-  const authHeader = useAuthHeader() ?? '';
-  const {data: user} = useQuery<IUser>("user", () => fetchUser(authHeader).then(data => data), {
-    staleTime: Infinity
+  const authHeader = useAuthHeader() ?? ""
+  const { data: user } = useQuery<IUser>("user", () => fetchUser(authHeader).then((data) => data), {
+    staleTime: Infinity,
   })
-
-  const mockReservations: IReservation[] = [
-    {
-      id: 1,
-      property_id: 1,
-      event_type: IReservationType.OCCUPATION,
-      begin_time: new Date("2024/04/07"),
-      end_time: new Date("2024/04/11"),
-      service: "Zooking",
-      status: "confirm",
-    },
-    {
-      id: 2,
-      property_id: 1,
-      event_type: IReservationType.CLEANING,
-      begin_time: new Date("2024/04/02"),
-      end_time: new Date("2024/04/03"),
-      service: "Zooking",
-      status: "confirm",
-    },
-    {
-      id: 3,
-      property_id: 1,
-      event_type: IReservationType.MAINTENANCE,
-      begin_time: new Date("2024/04/04"),
-      end_time: new Date("2024/04/05"),
-      service: "Zooking",
-      status: "confirm",
-    },
-    {
-      id: 4,
-      property_id: 2,
-      event_type: IReservationType.OCCUPATION,
-      begin_time: new Date("2024/04/07"),
-      end_time: new Date("2024/04/11"),
-      service: "Zooking",
-      status: "confirm",
-    },
-  ];
-
-  const fetchPropers = async () : Promise<IFetchProperty[]> => {
-    if (user) {
-      const userEmail = user.email;
-      const res = await fetchProperties(userEmail, authHeader);
-      return res;
-    }
-  };
-   
-   const { data: fetchPropertiesData, } = useQuery({
-    queryKey: 'fetchProperties',
-    queryFn: fetchPropers,
-    refetchInterval: 1000, 
-   });
 
   return (
     <>
@@ -99,7 +41,7 @@ const Dashboard = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard

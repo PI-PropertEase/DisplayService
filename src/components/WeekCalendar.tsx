@@ -1,60 +1,62 @@
-import dayGridPlugin from "@fullcalendar/daygrid";
-import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid"
+import FullCalendar from "@fullcalendar/react"
+import { useContext } from "react"
+import { ReservationContext } from "../context/ReservationContext"
+import { PropertyContext } from "../context/PropertyContext"
+import { insertPropertyInReservation } from "../utils/reservationpropertyunifier"
+
+// type that is displayed on the calendar of this page
+interface IWeekCalendarType {
+  title: string
+  start: string
+  end: string
+}
 
 export default function WeekCalendar() {
+  const { reservations: reservationData } = useContext(ReservationContext)
+  const { properties: propertyData } = useContext(PropertyContext)
+
+  const unifiedData = insertPropertyInReservation(propertyData, reservationData)
+
+  if (!reservationData) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <span className="loading loading-dots loading-lg"></span>
+      </div>
+    )
+  }
+
+
+  const convertReservationData = (): IWeekCalendarType[] => {
+    if (!unifiedData) return []
+    const convertedReservations: IWeekCalendarType[] = []
+
+
+    unifiedData.forEach((r) => {
+      convertedReservations.push({
+        title: r.property?.title ?? "No title",
+        start: r.begin_datetime.toISOString().split("T")[0],
+        end: r.end_datetime.toISOString().split("T")[0],
+      })
+    })
+
+    return convertedReservations
+  }
+
   return (
     <FullCalendar
       plugins={[dayGridPlugin]}
       initialView="dayGridWeek"
       headerToolbar={{
         left: "title",
-        end: "prev today next"
+        end: "prev today next",
       }}
       height={"100%"}
-      buttonIcons={{prev: 'chevron-left', next: 'chevron-right'}}
-      events={
-        [
-          {
-            title: "Hotel 1 - Room 4",
-            start: "2024-03-14",
-            end: "2024-03-25"
-          },
-          {
-            title: "Alojamento Local 1",
-            start: "2024-03-13",
-            end: "2024-03-26"
-          },
-          {
-            title: "Alojamento Local 3",
-            start: "2024-03-12",
-            end: "2024-03-27"
-          },
-          {
-            title: "Hotel 2 - Room 2",
-            start: "2024-03-11",
-            end: "2024-03-22"
-          },
-          {
-            title: "Hotel 2 - Room 3",
-            start: "2024-03-17",
-            end: "2024-03-20"
-          },
-          {
-            title: "Hotel 2 - Room 4",
-            start: "2024-03-21",
-            end: "2024-03-23"
-          },
-          {
-            title: "Hotel 2 - Room 3",
-            start: "2024-03-21",
-            end: "2024-03-23"
-          },
-        ]
-      }
+      buttonIcons={{ prev: "chevron-left", next: "chevron-right" }}
+      events={convertReservationData()}
       eventColor="#FD642395"
       eventBorderColor="#FD642395"
       eventTextColor="#000000"
-      
-     />
-  );
+    />
+  )
 }

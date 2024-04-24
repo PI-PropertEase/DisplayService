@@ -77,7 +77,6 @@ export default function ModalPropertyDetails() {
 
     useEffect(() => {
         if (modalData?.type.includes("Bedroom")) {
-            console.log("beds:", modalData.content);
             setBeds(modalData.content as Bed[]);
         }
     }, [modalData])

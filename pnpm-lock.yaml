@@ -38,6 +38,9 @@ dependencies:
   firebase:
     specifier: ^10.10.0
     version: 10.10.0
+  libphonenumber-js:
+    specifier: ^1.10.61
+    version: 1.10.61
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -3012,6 +3015,10 @@ packages:
       prelude-ls: 1.2.1
       type-check: 0.4.0
     dev: true
+
+  /libphonenumber-js@1.10.61:
+    resolution: {integrity: sha512-TsQsyzDttDvvzWNkbp/i0fVbzTGJIG0mUu/uNalIaRQEYeJxVQ/FPg+EJgSqfSXezREjM0V3RZ8cLVsKYhhw0Q==}
+    dev: false
 
   /lilconfig@2.1.0:
     resolution: {integrity: sha512-utWOt/GHzuUxnLKxB6dk81RoOeoNeHgbrXiuGk4yyF5qlRz+iIVWu56E2fqGHFrXz0QNUhLB/8nKqvRH66JKGQ==}

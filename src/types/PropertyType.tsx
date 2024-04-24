@@ -1,5 +1,5 @@
 export interface IFetchProperty {
-    _id?: string;
+    _id?: number;
     user_email: string;
     title: string;
     address: string;
@@ -84,4 +84,25 @@ export interface IUpdateProperty {
     additional_info?: string;
     cancellation_policy?: string;
     contacts?: Contact[];
+}
+
+
+
+// These are used inside of our frontend, for displaying data
+// from properties that requires reservation data (arrival, departure, status, ...)
+export interface IProperty {
+  id?: number;
+  title: string;
+  address: string;
+  status: PropertyStatus;
+  arrival?: Date;
+  departure?: Date;
+  price: number;
+}
+
+export enum PropertyStatus {
+  OCCUPIED = "Occupied",
+  FREE = "Free",
+  CHECK_IN_SOON = "Check-in Soon",
+  CHECK_OUT_SOON = "Check-out Soon"
 }
