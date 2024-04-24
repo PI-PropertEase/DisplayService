@@ -74,7 +74,11 @@ const myRouter = createBrowserRouter([
     path: "/calendar",
     element: (
       <RequireAuth fallbackPath="/">
-        <Calendar />
+        <ReservationContextProvider>
+          <PropertyContextProvider>
+            <Calendar />
+          </PropertyContextProvider>
+        </ReservationContextProvider>
       </RequireAuth>
     ),
   },

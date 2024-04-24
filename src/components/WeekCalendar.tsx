@@ -3,7 +3,7 @@ import FullCalendar from "@fullcalendar/react"
 import { useContext } from "react"
 import { ReservationContext } from "../context/ReservationContext"
 import { PropertyContext } from "../context/PropertyContext"
-import { unifyPropertyReservation } from "../utils/reservationpropertyunifier"
+import { insertPropertyInReservation } from "../utils/reservationpropertyunifier"
 
 // type that is displayed on the calendar of this page
 interface IWeekCalendarType {
@@ -16,7 +16,7 @@ export default function WeekCalendar() {
   const { reservations: reservationData } = useContext(ReservationContext)
   const { properties: propertyData } = useContext(PropertyContext)
 
-  const unifiedData = unifyPropertyReservation(propertyData, reservationData)
+  const unifiedData = insertPropertyInReservation(propertyData, reservationData)
 
   if (!reservationData) {
     return (

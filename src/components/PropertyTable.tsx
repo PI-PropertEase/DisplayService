@@ -7,7 +7,7 @@ import { Link } from "react-router-dom"
 import { PropertyContext } from "../context/PropertyContext"
 import { ReservationContext } from "../context/ReservationContext"
 import { getPropertiesForPropertyTable } from "../utils/reservationpropertyunifier"
-import { IProperty } from "./PropertyListDashboard"
+import { IProperty } from "./PropertyTypes"
 
 const PropertyTable = () => {
   const PAGE_SIZE = 10

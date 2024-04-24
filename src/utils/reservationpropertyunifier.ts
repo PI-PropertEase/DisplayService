@@ -1,11 +1,10 @@
-import { IProperty } from "../components/PropertyListDashboard"
-import { IFetchProperty } from "../types/PropertyType"
+import { IFetchProperty, IProperty, PropertyStatus } from "../types/PropertyType"
 import { IReservation } from "../types/ReservationType"
 
-export const unifyReservationProperty = (
+const insertReservationsInProperty = (
   reservationData: IReservation[],
   propertyData: IFetchProperty[]
-) => {
+): (IFetchProperty & { reservations: IReservation[] })[] | undefined => {
   if (!reservationData || !propertyData) {
     return undefined
   }
@@ -23,10 +22,10 @@ export const unifyReservationProperty = (
   return unifiedData
 }
 
-export const unifyPropertyReservation = (
+export const insertPropertyInReservation = (
   propertyData: IFetchProperty[],
   reservationData: IReservation[]
-) => {
+): (IReservation & { property: IFetchProperty | undefined })[] | undefined => {
   if (!reservationData || !propertyData) {
     return undefined
   }
@@ -47,7 +46,7 @@ export const getPropertiesForPropertyTable = (
   reservationData: IReservation[]
 ): IProperty[] => {
   // list of properties, with the respective reservations
-  const unifiedData = unifyReservationProperty(reservationData, propertyData) ?? [];
+  const unifiedData = insertReservationsInProperty(reservationData, propertyData) ?? []
 
   const propertyList: IProperty[] = []
 
@@ -60,40 +59,44 @@ export const getPropertiesForPropertyTable = (
         id: prop._id,
         title: prop.title,
         address: prop.address,
-        status: "Free",
+        status: PropertyStatus.FREE,
         arrival: undefined,
         departure: undefined,
         price: prop.price,
       })
 
-    const currTime = new Date();
-    let closestReservation: IReservation | undefined = undefined;
+    const currTime = new Date()
+    let closestReservation: IReservation | undefined = undefined
     prop.reservations.forEach((r) => {
       if (r.begin_datetime < new Date() && r.end_datetime > new Date()) {
         propertyList.push({
           id: prop._id,
           title: prop.title,
           address: prop.address,
-          status: "Occupied",
+          status: PropertyStatus.OCCUPIED,
           arrival: r.begin_datetime,
           departure: r.end_datetime,
           price: prop.price,
         })
         return
       }
-      if (!closestReservation && isReservationUpcoming(r))
-        closestReservation = r;
-      if (closestReservation && isReservationUpcoming(r) && r.begin_datetime.getTime() - currTime.getTime() < closestReservation.begin_datetime.getTime() - currTime.getTime())
-        closestReservation = r;
+      if (!closestReservation && isReservationUpcoming(r)) closestReservation = r
+      if (
+        closestReservation &&
+        isReservationUpcoming(r) &&
+        r.begin_datetime.getTime() - currTime.getTime() <
+          closestReservation.begin_datetime.getTime() - currTime.getTime()
+      )
+        closestReservation = r
     })
     // if the property is not occupied but has some reservations,
-    // add it as "Free", but with the closest reservation's dates as arrival and departure time 
+    // add it as "Free", but with the closest reservation's dates as arrival and departure time
     if (!propertyList.find((p) => p.id === prop._id)) {
       propertyList.push({
         id: prop._id,
         title: prop.title,
         address: prop.address,
-        status: "Free",
+        status: PropertyStatus.FREE,
         arrival: closestReservation !== undefined ? closestReservation.begin_datetime : undefined,
         departure: closestReservation !== undefined ? closestReservation.end_datetime : undefined,
         price: prop.price,
@@ -101,11 +104,10 @@ export const getPropertiesForPropertyTable = (
     }
   })
 
-  return propertyList;
+  return propertyList
 }
 
-
 const isReservationUpcoming = (reservation: IReservation): boolean => {
-  const currTime = new Date();
-  return reservation.begin_datetime.getTime() - currTime.getTime() > 0;
+  const currTime = new Date()
+  return reservation.begin_datetime.getTime() - currTime.getTime() > 0
 }

@@ -1,16 +1,16 @@
-import FullCalendar from "@fullcalendar/react";
-import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
+import FullCalendar from "@fullcalendar/react"
+import resourceTimelinePlugin from "@fullcalendar/resource-timeline"
+import { CalendarEventInterface } from "../types/CalendarTypes"
+import { ServiceEnum } from "../types/UserType"
 
-export interface CalendarEventInterface {
-  platform: string
-  resourceId: string
-  title: string
-  start: string
-  end: string
-}
+export function CalendarTimelineView({ properties }: { properties: CalendarEventInterface[] }) {
+  const uniqueProperties = [...new Set(properties.map((property) => property.resourceId)).values()]
 
-export function CalendarTimelineView({properties} : {properties: CalendarEventInterface[]}) {
-  const uniqueProperties = [...new Set(properties.map((property) => property.resourceId)).values()];
+  const platformColor = {
+    [ServiceEnum.ZOOKING]: "#1d447d95",
+    [ServiceEnum.CLICKANDGO]: "#ff5a5f95",
+    [ServiceEnum.EARTHSTAYIN]: "#33e0a195"
+  }
 
   return (
     <FullCalendar
@@ -28,13 +28,14 @@ export function CalendarTimelineView({properties} : {properties: CalendarEventIn
         right: "resourceTimelineDay,resourceTimelineWeek",
       }}
       resourceAreaWidth={"20%"}
-      resourceGroupField="id"
       resources={uniqueProperties.map((property) => ({ id: property }))}
-      events={properties}
-      eventColor="#FD642395"
+      events={properties.map((event) => ({
+        ...event,
+        color: platformColor[event.platform] ?? "#FD642395",
+      }))}
       eventBorderColor="#FD642395"
       eventTextColor="#000000"
       schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
     />
-  );
+  )
 }

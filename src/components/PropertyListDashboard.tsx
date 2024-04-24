@@ -4,23 +4,7 @@ import PropertyListBadge from "./PropertyListBadge"
 import { PropertyContext } from "../context/PropertyContext"
 import { ReservationContext } from "../context/ReservationContext"
 import { getPropertiesForPropertyTable } from "../utils/reservationpropertyunifier"
-
-export interface IProperty {
-  id?: number
-  title: string
-  address: string
-  status: PropertyStatus
-  arrival?: Date
-  departure?: Date
-  price: number
-}
-
-enum PropertyStatus {
-  OCCUPIED = "Occupied",
-  FREE = "Free",
-  CHECK_IN_SOON = "Check-in Soon",
-  CHECK_OUT_SOON = "Check-out Soon",
-}
+import { IProperty, PropertyStatus } from "../types/PropertyType"
 
 const PropertyListDashboard = () => {
   const { properties } = useContext(PropertyContext)
