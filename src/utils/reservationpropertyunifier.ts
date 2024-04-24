@@ -50,8 +50,6 @@ export const getPropertiesForPropertyTable = (
 
   const propertyList: IProperty[] = []
 
-  console.log("unified data", unifiedData)
-
   unifiedData?.forEach((prop) => {
     // if no reservations
     if (prop.reservations.length == 0)
