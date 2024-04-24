@@ -35,7 +35,10 @@ export const PropertyContextProvider: React.FC<{ children: React.ReactNode }> = 
 
   const { data: initialProperties } = useQuery<IFetchProperty[]>(
     "fetchProperties",
-    () => fetchProperties(auth?.email ?? "", authHeader ?? "")
+    () => fetchProperties(auth?.email ?? "", authHeader ?? ""),
+    {
+      staleTime: 10000,
+    }
   );
 
   useEffect(() => {

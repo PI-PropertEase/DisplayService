@@ -16,18 +16,24 @@ const defaultContextState: ReservationContextType = {
 
 export const ReservationContext = createContext<ReservationContextType>(defaultContextState)
 
-export const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [reservations, setReservations] = useState<IReservation[]>([])
 
   const authHeader = useAuthHeader() ?? ""
 
-  const { data: initialReservations } = useQuery<IReservation[]>("fetchReservations", () =>
-    fetchReservations(authHeader ?? "")
+  const { data: initialReservations } = useQuery<IReservation[]>(
+    "fetchReservations",
+    () => fetchReservations(authHeader ?? ""),
+    {
+      staleTime: 10000,
+    }
   )
 
   useEffect(() => {
     if (initialReservations) {
-       setReservations(initialReservations) 
+      setReservations(initialReservations)
     }
   }, [initialReservations])
 

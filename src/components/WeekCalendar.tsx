@@ -15,7 +15,7 @@ interface IWeekCalendarType {
 export default function WeekCalendar() {
   const { reservations: reservationData } = useContext(ReservationContext)
   const { properties: propertyData } = useContext(PropertyContext)
-  
+
   const unifiedData = unifyPropertyReservation(propertyData, reservationData)
 
   if (!reservationData) {
@@ -38,7 +38,6 @@ export default function WeekCalendar() {
         start: r.begin_datetime.toISOString().split("T")[0],
         end: r.end_datetime.toISOString().split("T")[0],
       })
-      console.log(r.begin_datetime)
     })
 
     return convertedReservations

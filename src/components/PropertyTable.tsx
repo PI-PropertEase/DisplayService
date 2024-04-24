@@ -1,47 +1,36 @@
-import { useContext, useState } from "react";
-import PropertyListBadge from "./PropertyListBadge";
-import { BsBoxArrowUpRight } from "react-icons/bs";
-import { FaArrowLeft, FaArrowRight, FaRegTrashAlt } from "react-icons/fa";
-import { useQuery } from "react-query";
-import {
-  MdKeyboardDoubleArrowLeft,
-  MdKeyboardDoubleArrowRight,
-} from "react-icons/md";
-import { IFetchProperty } from "../types/PropertyType";
-import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
-import { IUser } from "../types/UserType";
-import { fetchUser } from "../services/Integrations.service";
-import { Link } from "react-router-dom";
-import { PropertyContext } from "../context/PropertyContext";
+import { useContext, useState } from "react"
+import PropertyListBadge from "./PropertyListBadge"
+import { BsBoxArrowUpRight } from "react-icons/bs"
+import { FaArrowLeft, FaArrowRight, FaRegTrashAlt } from "react-icons/fa"
+import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md"
+import { Link } from "react-router-dom"
+import { PropertyContext } from "../context/PropertyContext"
+import { ReservationContext } from "../context/ReservationContext"
+import { getPropertiesForPropertyTable } from "../utils/reservationpropertyunifier"
+import { IProperty } from "./PropertyListDashboard"
 
+const PropertyTable = () => {
+  const PAGE_SIZE = 10
 
-const PropertyTable = (
-) => {
-  const PAGE_SIZE = 10;
+  const { properties: propertyData } = useContext(PropertyContext)
 
-  const authHeader = useAuthHeader() ?? '';
-  const {data: user} = useQuery<IUser>("user", () => fetchUser(authHeader).then(data => data), {
-    staleTime: Infinity
-  })
+  const { reservations: reservationData } = useContext(ReservationContext)
 
-  const {properties: propertyList} = useContext(PropertyContext);
+  const propertyList: IProperty[] = getPropertiesForPropertyTable(propertyData, reservationData);
 
+  const [paginationNumber, setPaginationNumber] = useState<number>(1)
 
-  const [paginationNumber, setPaginationNumber] = useState<number>(1);
+  const numberOfPages = Math.ceil((propertyList?.length ?? 0) / PAGE_SIZE)
 
-  const numberOfPages = Math.ceil((propertyList?.length ?? 0) / PAGE_SIZE);
-
-  let paginationArray: number[] = []; // [1,2, ..., n] where n = number of pages
+  let paginationArray: number[] = [] // [1,2, ..., n] where n = number of pages
 
   for (let i = 1; i <= numberOfPages; i++) {
-    paginationArray.push(i);
+    paginationArray.push(i)
   }
 
   // only show buttons for pages whose number is within 2 of current page
   // example: current page is 2 -> only show buttons for pages [1, 2, 3, 4]
-  paginationArray = paginationArray.filter(
-    (n) => !(Math.abs(paginationNumber - n) > 2)
-  );
+  paginationArray = paginationArray.filter((n) => !(Math.abs(paginationNumber - n) > 2))
 
   return (
     <div className="overflow-auto h-full">
@@ -62,8 +51,8 @@ const PropertyTable = (
             </th>
             <th>Name and Address</th>
             <th>Status</th>
-            <th className="text-center">Arrival</th>
-            <th className="text-center">Departure</th>
+            <th className="text-center">Arrival/Upcoming Arrival</th>
+            <th className="text-center">Departure/Upcoming Departure</th>
             <th className="text-center">Current Price</th>
             <th></th>
             <th></th>
@@ -72,14 +61,11 @@ const PropertyTable = (
         <tbody>
           {/* row 1 */}
           {(propertyList ?? [])
-            .slice(
-              PAGE_SIZE * (paginationNumber - 1),
-              PAGE_SIZE * paginationNumber
-            )
-            .map((property: IFetchProperty) => {
+            .slice(PAGE_SIZE * (paginationNumber - 1), PAGE_SIZE * paginationNumber)
+            .map((property: IProperty) => {
               return (
                 <tr
-                  key={property._id}
+                  key={property.id}
                   className="max-[760px]:block max-[760px]:border-[#eee] max-[760px]:dark:border-[#223] max-[760px]:border-t-8 max-[760px]:border-b-0 max-[760px]:mb-2 max-[760px]:p-2"
                 >
                   <th className="max-[760px]:clip-out">
@@ -94,9 +80,7 @@ const PropertyTable = (
                     <div className="lg:flex items-center gap-3">
                       <div>
                         <div className="font-bold">{property.title}</div>
-                        <div className="text-sm opacity-50">
-                          {property.address}
-                        </div>
+                        <div className="text-sm opacity-50">{property.address}</div>
                       </div>
                     </div>
                   </td>
@@ -104,19 +88,19 @@ const PropertyTable = (
                     className="max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
                     data-label="Status"
                   >
-                    <PropertyListBadge text="Static" />
+                    <PropertyListBadge text={property.status} />
                   </td>
                   <td
                     data-label="Arrival"
                     className="text-center max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
                   >
-                    {new Date("2024-04-16").toLocaleString()}
+                    {property.arrival?.toLocaleString() ?? "-"}
                   </td>
                   <td
                     data-label="Departure"
                     className="text-center max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
                   >
-                    {new Date("2022-04-25").toLocaleString()}
+                    {property.departure?.toLocaleString() ?? "-"}
                   </td>
                   <td
                     data-label="Price"
@@ -136,12 +120,12 @@ const PropertyTable = (
                     data-label="More Details"
                     className="text-center max-[760px]:flex max-[760px]:before:content-datalabel"
                   >
-                    <Link to={`../property/${property._id}`} className="max-[760px]:ml-auto">
+                    <Link to={`../property/${property.id}`} className="max-[760px]:ml-auto">
                       <BsBoxArrowUpRight />
                     </Link>
                   </td>
                 </tr>
-              );
+              )
             })}
         </tbody>
       </table>
@@ -151,8 +135,7 @@ const PropertyTable = (
           <button
             className="btn btn-outline flex-1"
             onClick={() => {
-              if (paginationNumber > 1)
-                setPaginationNumber(paginationNumber - 1);
+              if (paginationNumber > 1) setPaginationNumber(paginationNumber - 1)
             }}
           >
             <FaArrowLeft /> Previous
@@ -180,7 +163,7 @@ const PropertyTable = (
                 >
                   {num}
                 </button>
-              );
+              )
             })}
             <button
               className={`join-item btn bg-white dark:bg-transparent ${
@@ -194,8 +177,7 @@ const PropertyTable = (
           <button
             className="btn btn-outline flex-1"
             onClick={() => {
-              if (paginationNumber < numberOfPages)
-                setPaginationNumber(paginationNumber + 1);
+              if (paginationNumber < numberOfPages) setPaginationNumber(paginationNumber + 1)
             }}
           >
             Next <FaArrowRight />
@@ -203,7 +185,7 @@ const PropertyTable = (
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PropertyTable;
+export default PropertyTable

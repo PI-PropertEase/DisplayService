@@ -33,8 +33,7 @@ export default function PropertyDetails() {
     const queryClient = useQueryClient();
     const id = useParams<{ id: string }>()?.id?.toString() ?? "";
 
-    const { data: propertyDetails } = useQuery<IFetchProperty>("property", () => fetchProperty(id, authHeader).then(data => data), { staleTime: Infinity });
-    
+    const { data: propertyDetails } = useQuery<IFetchProperty>(`property${id}`, () => fetchProperty(id, authHeader).then(data => data), { staleTime: Infinity });
     
     if (!propertyDetails) {
         return (
