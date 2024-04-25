@@ -66,7 +66,11 @@ const myRouter = createBrowserRouter([
     path: "/property/:id",
     element: (
       <RequireAuth fallbackPath="/">
-        <PropertyDetails />
+        <PropertyContextProvider>
+          <ReservationContextProvider>
+            <PropertyDetails />
+          </ReservationContextProvider>
+        </PropertyContextProvider>
       </RequireAuth>
     ),
   },
