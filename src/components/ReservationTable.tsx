@@ -4,9 +4,13 @@ import { insertPropertyInReservation } from "../utils/reservationpropertyunifier
 import { PropertyContext } from "../context/PropertyContext";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md";
+import { IoMdAdd } from "react-icons/io";
+import CreateEventModal from "./CreateEventModal";
 
 const ReservationTable = () => {
     const {reservations: reservationData} = useContext(ReservationContext);
+
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
 
     const {properties} = useContext(PropertyContext);
 
@@ -31,11 +35,17 @@ const ReservationTable = () => {
 
     return (
         <div className="overflow-auto h-full">
-          <div className="table-cell h-[4rem] pl-6 align-middle text-xl">
+          <div className="table-cell h-[4rem] pl-6 align-middle text-xl w-[100vw]">
             Reservations
             <span className="ml-3 badge text-[0.75rem] bg-secondary text-[#FDA882] dark:bg-orange-900 dark:text-secondary border-none">
               {reservations?.length ?? 0} Reservations
             </span>
+            <button
+                onClick={() => setModalOpen(true)}
+                className="btn sm:btn-sm btn-xs btn-outline btn-success float-right mr-3"
+              >
+                <IoMdAdd/> Create event
+              </button>
           </div>
           <table className="table">
             {/* head */}
@@ -177,6 +187,7 @@ const ReservationTable = () => {
               </button>
             </div>
           </div>
+          <CreateEventModal isOpen={modalOpen} setOpen={setModalOpen}/>
         </div>
       )
 }
