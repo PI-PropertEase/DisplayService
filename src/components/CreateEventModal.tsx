@@ -1,8 +1,13 @@
 import { IoCloseOutline } from "react-icons/io5";
+import "flatpickr/dist/themes/airbnb.css";
+import Flatpickr from "react-flatpickr"
+import { useState } from "react";
 
 const CreateEventModal = ({isOpen, setOpen}: {isOpen: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
-    console.log("isOpen?", isOpen)
+    const [beginDate, setBeginDate] = useState<Date>(new Date())
+    const [endDate, setEndDate] = useState<Date>(new Date())
+
     return (
         <>
             {isOpen && (
@@ -15,7 +20,7 @@ const CreateEventModal = ({isOpen, setOpen}: {isOpen: boolean, setOpen: React.Di
                                 <IoCloseOutline className='text-2xl cursor-pointer' onClick={() => setOpen(false)}/>
                             </div>
                             <hr/>
-                            <div className="flex flex-col pt-5">
+                            <div className="flex flex-col pt-5 gap-2">
                                 <div className="flex flex-row">
                                     Event type:
                                     <div>
@@ -24,21 +29,34 @@ const CreateEventModal = ({isOpen, setOpen}: {isOpen: boolean, setOpen: React.Di
                                         </select>
                                     </div>
                                 </div>
-                                <div className='flex flex-row gap-5 pt-5'>
-                                    <div className='flex justify-center'>
-                                        <label>
-                                            Begin time:
-                                        </label>
-                                        <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' placeholder='HH:MM'></input>
-                                    </div>
-                                    <div className='flex justify-center'>
-                                        <label>
-                                            End time:
-                                        </label>
-                                        <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' placeholder='HH:MM'></input>
-                                    </div>
-                                </div>
-                                
+                                <label>
+                                    Begin time:
+                                </label>
+                                <Flatpickr
+                                    data-enable-time
+                                    value={beginDate}
+                                    onChange={([date]) => {
+                                        setBeginDate(date as Date)
+                                    }}
+                                    className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent"
+                                    options={{
+                                        minDate: new Date()
+                                    }}
+                                />
+                                <label>
+                                    End time:
+                                </label>
+                                <Flatpickr
+                                    data-enable-time
+                                    value={endDate}
+                                    onChange={([date]) => {
+                                        setEndDate(date as Date)
+                                    }}
+                                    className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent"
+                                    options={{
+                                        minDate: new Date()
+                                    }}
+                                />
                             </div>
                             <div className="modal-action flex flex-row items-center justify-center gap-2">
                                 <button className="btn btn-primary">Confirm</button>
