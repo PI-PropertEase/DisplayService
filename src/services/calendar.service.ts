@@ -3,10 +3,19 @@ import { IReservation } from "../types/ReservationType"
 
 const URL = "http://localhost/api/CalendarService"
 
-const parseISODateWithoutTimezoneOffset = (dateString: string) => {
+
+const parseISODateToUTCDate = (dateString: string) => {
   const date = new Date(dateString)
-  const timezoneOffset = date.getTimezoneOffset() * 60000
-  return new Date(date.getTime() - timezoneOffset)
+  return new Date(
+    Date.UTC(
+      date.getUTCFullYear(),
+      date.getUTCMonth(),
+      date.getUTCDate(),
+      date.getUTCHours(),
+      date.getUTCMinutes(),
+      date.getUTCSeconds()
+    )
+  )
 }
 
 export const fetchReservations = async (authHeader: string) => {
@@ -20,8 +29,8 @@ export const fetchReservations = async (authHeader: string) => {
   // Date strings are in the format "YYYY-MM-DDTHH:MM:SS" and need to be converted to Date objects with the correct time zone
   const reservations: IReservation[] = res.data.map((r: IReservation) => ({
     ...r,
-    begin_datetime: parseISODateWithoutTimezoneOffset(r.begin_datetime),
-    end_datetime: parseISODateWithoutTimezoneOffset(r.end_datetime),
+    begin_datetime: parseISODateToUTCDate(r.begin_datetime),
+    end_datetime: parseISODateToUTCDate(r.end_datetime),
   }))
 
   return reservations
