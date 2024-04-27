@@ -5,8 +5,22 @@ import { useState } from "react";
 
 const CreateEventModal = ({isOpen, setOpen}: {isOpen: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
+    const minDate = new Date();
+    minDate.setHours(0, 0, 0, 0);
+
+    const [showError, setShowError] = useState<boolean>(false);
+
     const [beginDate, setBeginDate] = useState<Date>(new Date())
     const [endDate, setEndDate] = useState<Date>(new Date())
+
+    const handleConfirm = () => {
+        if (beginDate >= endDate) {
+            setShowError(true)
+            return
+        }
+        setShowError(false)
+        console.log("valid dates, good job")
+    }
 
     return (
         <>
@@ -36,11 +50,11 @@ const CreateEventModal = ({isOpen, setOpen}: {isOpen: boolean, setOpen: React.Di
                                     data-enable-time
                                     value={beginDate}
                                     onChange={([date]) => {
-                                        setBeginDate(date as Date)
+                                        setBeginDate(date)
                                     }}
                                     className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent"
                                     options={{
-                                        minDate: new Date()
+                                        minDate
                                     }}
                                 />
                                 <label>
@@ -50,16 +64,23 @@ const CreateEventModal = ({isOpen, setOpen}: {isOpen: boolean, setOpen: React.Di
                                     data-enable-time
                                     value={endDate}
                                     onChange={([date]) => {
-                                        setEndDate(date as Date)
+                                        setEndDate(date)
                                     }}
                                     className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent"
                                     options={{
-                                        minDate: new Date()
+                                        minDate
                                     }}
                                 />
                             </div>
+                            {showError && (
+                                <div role="alert" className="alert alert-error mt-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    <span>Error! Invalid time interval. Begin time should be before end time.</span>
+                                    <button className="btn btn-sm btn-error" onClick={() => setShowError(false)}>X</button>
+                                </div>
+                            )}
                             <div className="modal-action flex flex-row items-center justify-center gap-2">
-                                <button className="btn btn-primary">Confirm</button>
+                                <button className="btn btn-primary" onClick={handleConfirm}>Confirm</button>
                                 <button className="btn btn-secondary" onClick={() => setOpen(false)}>Cancel</button>
                             </div>
                         </div>
