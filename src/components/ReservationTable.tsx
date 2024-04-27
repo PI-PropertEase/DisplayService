@@ -6,6 +6,7 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { IoMdAdd } from "react-icons/io";
 import CreateEventModal from "./CreateEventModal";
+import ReservationStatusBadge from "./ReservationStatusBadge";
 
 const ReservationTable = () => {
     const {reservations: reservationData} = useContext(ReservationContext);
@@ -49,7 +50,7 @@ const ReservationTable = () => {
           </div>
           <table className="table">
             {/* head */}
-            <thead className="bg-secondary dark:bg-[#1A0C01] text-black dark:text-white">
+            <thead className="bg-secondary dark:bg-[#242424] text-black dark:text-white">
               <tr className="max-[760px]:block max-[760px]:clip-out">
                 <th>
                   <label>
@@ -95,7 +96,7 @@ const ReservationTable = () => {
                         className="max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
                         data-label="Status"
                       >
-                        {/*<PropertyListBadge text={property.status} />*/}TODO
+                        <ReservationStatusBadge status={reservation.reservation_status} />
                       </td>
                       <td
                         data-label="Client's name"

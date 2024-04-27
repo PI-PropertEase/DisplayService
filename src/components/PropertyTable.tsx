@@ -42,7 +42,7 @@ const PropertyTable = () => {
       </div>
       <table className="table">
         {/* head */}
-        <thead className="bg-secondary dark:bg-[#1A0C01] text-black dark:text-white">
+        <thead className="bg-secondary dark:bg-[#242424] text-black dark:text-white">
           <tr className="max-[760px]:block max-[760px]:clip-out">
             <th>
               <label>
