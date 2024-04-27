@@ -5,7 +5,7 @@ import { useQuery } from "react-query";
 import { fetchProperties } from "../services/Property.service";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
-import { IUser } from "../types/UserType";
+import { IUserState } from "../types/UserType";
 
 interface PropertyContextType {
   properties: IFetchProperty[];
@@ -29,7 +29,7 @@ export const PropertyContextProvider: React.FC<{ children: React.ReactNode }> = 
   const [properties, setProperties] = useState<IFetchProperty[]>([]);
   const [reservations, setReservations] = useState<IReservation[]>([]);
   
-  const auth = useAuthUser<IUser>();
+  const auth = useAuthUser<IUserState>();
   const authHeader = useAuthHeader() ?? '';
 
 
