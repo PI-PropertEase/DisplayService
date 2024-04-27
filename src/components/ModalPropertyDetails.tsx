@@ -38,6 +38,8 @@ export default function ModalPropertyDetails() {
     const updatedPropertyDetails: IFetchProperty = queryClient.getQueryData('property')!;
     const propertyId = useParams<{id: string}>().id;
 
+    const [afterCommission, setAfterCommission] = useState<boolean>(false);
+
     // for house rules, example: { "smoking": false, "allow_pets": true}
     const [ruleCheckboxes, setRuleCheckboxes] = useState<Record<string, boolean> | object>({});
 
@@ -298,8 +300,12 @@ export default function ModalPropertyDetails() {
                     return;
                 }
                 break;
-            case "Price (per night €)":
-                if (stringInput.current?.value && Number(stringInput.current?.value) > 0){
+            case "Price (per night €)": {
+                const price = Number(stringInput.current?.value);
+                // TODO: no PUT request, vamos ter de passar se queremos incluir ou não a commission
+                // no calculo, falta representar isso no updatedPropertyDetails 
+                // o value está na variável "afterCommission"
+                if (stringInput.current?.value && price > 0) {
                     updatedPropertyDetails.price = Number(stringInput.current?.value);
                     queryClient.setQueryData('alertData', {
                         type: 'Price (per night €)',
@@ -309,12 +315,13 @@ export default function ModalPropertyDetails() {
                 } else {
                     queryClient.setQueryData('alertData', {
                         type: 'Price (per night €)',
-                        message: 'Price must be greater than 0',
+                        message: 'Price must be greater than 0€',
                         active: true
                     });
                     return;
                 }
                 break;
+            }
             case "Amenities": {
                 updatedPropertyDetails.amenities = selectedAmenities;
                 break;
@@ -639,6 +646,30 @@ export default function ModalPropertyDetails() {
                                         </div>
                                     </div>
                                 
+                            </div> :
+                            modalData.type === "Price (per night €)" ?
+                            <div className='flex flex-col'>
+                                    <div>  
+                                        <p>New price:</p>
+                                        {/* TODO: Meter aqui o recommended price real (no placeholder do input field) */}
+                                        <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' 
+                                            ref={stringInput} 
+                                            defaultValue={typeof modalData.content === "string" || typeof modalData.content === "number"? modalData.content : ""}
+                                            placeholder='Recommended price: 300€'
+                                        />
+                                            <label className="label cursor-pointer pt-2">
+                                                <div className='tooltip' data-tip="Updated value on each connected service will be higher to based on their commission rate.">
+                                                    <span className="label-text">After commission</span> 
+                                                </div>
+                                                <input 
+                                                    type="checkbox" 
+                                                    onChange={(e) => setAfterCommission(e.target.checked)}
+                                                    checked={afterCommission} 
+                                                    className="checkbox" 
+                                                />
+                                            </label>
+                                        
+                                    </div>
                             </div> :
                             modalData.type === "House Rules" ?
                             <div>
