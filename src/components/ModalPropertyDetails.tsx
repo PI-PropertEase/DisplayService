@@ -658,9 +658,7 @@ export default function ModalPropertyDetails() {
                                             placeholder='Recommended price: 300€'
                                         />
                                             <label className="label cursor-pointer pt-2">
-                                                <div className='tooltip' data-tip="Updated value on each connected service will be higher to based on their commission rate.">
-                                                    <span className="label-text">After commission</span> 
-                                                </div>
+                                                <span className="label-text">After commission</span> 
                                                 <input 
                                                     type="checkbox" 
                                                     onChange={(e) => setAfterCommission(e.target.checked)}
