@@ -18,8 +18,8 @@ export interface IAlerts {
 }
 
 export default function ModalPropertyDetails() {
-
     const authHeader = useAuthHeader() ?? "";
+    const id = useParams<{ id: string }>()?.id?.toString() ?? "";
 
     const {data: modalData} = useQuery<IModalData>('modalData')
 
@@ -35,10 +35,10 @@ export default function ModalPropertyDetails() {
     const textareaInput = useRef<HTMLTextAreaElement>(null);
     const nameContactInput = useRef<HTMLInputElement>(null);
     const phoneContactInput = useRef<HTMLInputElement>(null);
-    const updatedPropertyDetails: IFetchProperty = queryClient.getQueryData('property')!;
+    const updatedPropertyDetails: IFetchProperty = queryClient.getQueryData(`property${id}`)!;
     const propertyId = useParams<{id: string}>().id;
 
-    const [afterCommission, setAfterCommission] = useState<boolean>(false);
+    const [afterCommission, setAfterCommission] = useState<boolean>(modalData?.content?.after_commission ?? false);
 
     // for house rules, example: { "smoking": false, "allow_pets": true}
     const [ruleCheckboxes, setRuleCheckboxes] = useState<Record<string, boolean> | object>({});
@@ -60,6 +60,8 @@ export default function ModalPropertyDetails() {
     useEffect(() => {
         if (modalData?.type === "House Rules")
             setRuleCheckboxes(modalData.content as Record<string, boolean>)
+        if (modalData?.type === "Price (per night €)")
+            setAfterCommission((modalData.content as {price: number; after_commission: boolean;}).after_commission)
             
     }, [modalData]);
 
@@ -302,11 +304,9 @@ export default function ModalPropertyDetails() {
                 break;
             case "Price (per night €)": {
                 const price = Number(stringInput.current?.value);
-                // TODO: no PUT request, vamos ter de passar se queremos incluir ou não a commission
-                // no calculo, falta representar isso no updatedPropertyDetails 
-                // o value está na variável "afterCommission"
                 if (stringInput.current?.value && price > 0) {
                     updatedPropertyDetails.price = Number(stringInput.current?.value);
+                    updatedPropertyDetails.after_commission = afterCommission;
                     queryClient.setQueryData('alertData', {
                         type: 'Price (per night €)',
                         message: '',
@@ -529,8 +529,8 @@ export default function ModalPropertyDetails() {
             
         }
         const updatedProperty: IFetchProperty = await updateProperty(propertyId ?? "", updatedPropertyDetails, authHeader);
-        await queryClient.invalidateQueries('property')
-        queryClient.setQueryData('property', updatedProperty);
+        await queryClient.invalidateQueries(`property${id}`)
+        queryClient.setQueryData(`property${id}`, updatedProperty);
         handleModalClose();
     }
 
@@ -654,7 +654,7 @@ export default function ModalPropertyDetails() {
                                         {/* TODO: Meter aqui o recommended price real (no placeholder do input field) */}
                                         <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' 
                                             ref={stringInput} 
-                                            defaultValue={typeof modalData.content === "string" || typeof modalData.content === "number"? modalData.content : ""}
+                                            defaultValue={typeof modalData.content === "object" ? modalData.content.price : ""}
                                             placeholder='Recommended price: 300€'
                                         />
                                             <label className="label cursor-pointer pt-2">

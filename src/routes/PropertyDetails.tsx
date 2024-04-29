@@ -11,7 +11,7 @@ import Navbar from "../components/Navbar";
 import { fetchProperty } from "../services/Property.service";
 import { Amenity, BathroomFixture, Bed, IFetchProperty } from "../types/PropertyType";
 
-export type ModalContentType = string | number | Bed[] 
+export type ModalContentType = string | number | Bed[] | { price: number; after_commission: boolean; }
                                 | string[] | { name: string; phone_number: number; index: number; } 
                                 | Record<string, boolean> | Amenity[] | BathroomFixture[] | undefined;
 
@@ -34,7 +34,6 @@ export default function PropertyDetails() {
     const id = useParams<{ id: string }>()?.id?.toString() ?? "";
 
     const { data: propertyDetails } = useQuery<IFetchProperty>(`property${id}`, () => fetchProperty(id, authHeader).then(data => data), { staleTime: Infinity });
-    
     if (!propertyDetails) {
         return (
             <div className="flex justify-center items-center h-screen">
@@ -131,7 +130,7 @@ export default function PropertyDetails() {
                                     <div className="col-span-2 md:col-span-1 relative">
                                         <label htmlFor="price" className="text-accent">Price per night:</label>
                                         <input id="price" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={`${propertyDetails?.price}€`}  readOnly />
-                                        <button className="absolute top-2 right-2"  onClick={() => handleOpenModal(`${propertyDetails?.price}`, "Price (per night €)")}><FaRegEdit className="text-accent" /></button>
+                                        <button className="absolute top-2 right-2"  onClick={() => handleOpenModal({price: propertyDetails?.price, after_commission: propertyDetails.after_commission}, "Price (per night €)")}><FaRegEdit className="text-accent" /></button>
                                     </div>
                                 </div>
                             </div>
