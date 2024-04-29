@@ -91,6 +91,8 @@ export default function Home() {
               email: user_data.email,
               id: user_data.id,
               connected_services: user_data.connected_services,
+              name: result.user.displayName,
+              photoURL: result.user.photoURL
             },
           })
         ) {
