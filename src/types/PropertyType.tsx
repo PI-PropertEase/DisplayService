@@ -10,6 +10,7 @@ export interface IFetchProperty {
     bedrooms: Record<string, Bedroom>;
     bathrooms: Record<string, Bathroom>;
     amenities: Amenity[];
+    after_commission: boolean;
     house_rules: HouseRules;
     additional_info: string;
     cancellation_policy: string;
@@ -80,6 +81,7 @@ export interface IUpdateProperty {
     bedrooms?: Record<string, Bedroom>;
     bathrooms?: Record<string, Bathroom>;
     amenities?: Amenity[];
+    after_commission?: boolean;
     house_rules?: HouseRules;
     additional_info?: string;
     cancellation_policy?: string;
