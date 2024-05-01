@@ -15,6 +15,7 @@ export interface IFetchProperty {
     additional_info: string;
     cancellation_policy: string;
     contacts: Contact[];
+    recommended_price: number;
 }
 
 export interface Bedroom {

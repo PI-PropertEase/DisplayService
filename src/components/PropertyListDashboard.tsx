@@ -5,6 +5,7 @@ import { PropertyContext } from "../context/PropertyContext"
 import { ReservationContext } from "../context/ReservationContext"
 import { getPropertiesForPropertyTable } from "../utils/reservationpropertyunifier"
 import { IProperty, PropertyStatus } from "../types/PropertyType"
+import { Link } from "react-router-dom"
 
 const PropertyListDashboard = () => {
   const { properties } = useContext(PropertyContext)
@@ -14,6 +15,7 @@ const PropertyListDashboard = () => {
   const propertyList: IProperty[] = getPropertiesForPropertyTable(properties, reservationData)
 
   const [filterStatus, setFilterStatus] = useState<PropertyStatus | "all">("all")
+
 
   return (
     <div className="flex flex-col max-h-[32rem] pb-4">
@@ -63,7 +65,9 @@ const PropertyListDashboard = () => {
               if (filterStatus != property.status && filterStatus != "all") return <></>
               return (
                 <tr key={property.id}>
-                  <td>{property.title}</td>
+                  <Link to={`/property/${property.id}`}>
+                    <td>{property.title}</td>
+                  </Link>
                   <td>{property.address}</td>
                   <td>
                     <PropertyListBadge text={property.status} />

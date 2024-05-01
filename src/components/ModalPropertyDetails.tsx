@@ -38,7 +38,7 @@ export default function ModalPropertyDetails() {
     const updatedPropertyDetails: IFetchProperty = queryClient.getQueryData(`property${id}`)!;
     const propertyId = useParams<{id: string}>().id;
 
-    const [afterCommission, setAfterCommission] = useState<boolean>(modalData?.content?.after_commission ?? false);
+    const [afterCommission, setAfterCommission] = useState<boolean>( typeof modalData?.content === "object" && "after_commision" in modalData.content ?  modalData.content.after_commission : false);
 
     // for house rules, example: { "smoking": false, "allow_pets": true}
     const [ruleCheckboxes, setRuleCheckboxes] = useState<Record<string, boolean> | object>({});
@@ -99,9 +99,6 @@ export default function ModalPropertyDetails() {
         const beginMinute = Number(beginTimeslot.split(":")[1]);
         const endHour = Number(endTimeslot.split(":")[0]);
         const endMinute = Number(endTimeslot.split(":")[1]);
-
-        // check if beginTimeslot < endTimeslot
-        if (beginHour > endHour) return false;
         if (beginHour == endHour && beginMinute >= endMinute) return false;
 
         return true;
@@ -146,12 +143,10 @@ export default function ModalPropertyDetails() {
     };
 
     const handleRuleCheckbox = (rule: string) => {
-        setRuleCheckboxes(prevState => (
-            {
-                ...prevState,
-                [rule]: !prevState[rule] // toggle
-            }
-        ))
+        setRuleCheckboxes(prevState => ({
+            ...prevState,
+            [rule]: !(prevState as Record<string, boolean>)[rule] // toggle
+        }));
     }
 
     const handleAmenitiesCheckbox = (event: React.ChangeEvent<HTMLInputElement>, amenity: Amenity) => {
@@ -212,7 +207,7 @@ export default function ModalPropertyDetails() {
     }
     
 
-    const handleSave = async () => {
+    const handleSave = () => {
         switch (modalData?.type) {
             case "Title":
                 if (stringInput.current?.value) {
@@ -303,6 +298,7 @@ export default function ModalPropertyDetails() {
                 }
                 break;
             case "Price (per night €)": {
+                
                 const price = Number(stringInput.current?.value);
                 if (stringInput.current?.value && price > 0) {
                     updatedPropertyDetails.price = Number(stringInput.current?.value);
@@ -403,7 +399,7 @@ export default function ModalPropertyDetails() {
             case "House Rules":
                 // update all boolean rules with values from checkboxes
                 for (const rule in ruleCheckboxes)
-                    updatedPropertyDetails.house_rules[rule] = ruleCheckboxes[rule];
+                    updatedPropertyDetails.house_rules[rule] = ruleCheckboxes[rule]; 
                 break;
             case "New Bathroom":
                 if (stringInput.current?.value && selectedFixtures.length > 0) {
@@ -504,7 +500,7 @@ export default function ModalPropertyDetails() {
                     }
              
                 } else if (modalData?.type.includes("Contact")) {
-                    const index = modalData.content?.index as number;
+                    const index = typeof modalData.content === "object" && 'index' in modalData.content ? modalData.content.index as number : undefined;
                     if (index !== undefined && nameContactInput.current?.value && phoneContactInput.current?.value && isValidPhoneNumber(phoneContactInput.current.value, "PT")){
                         updatedPropertyDetails.contacts[index] = {
                             name: nameContactInput.current?.value,
@@ -528,10 +524,18 @@ export default function ModalPropertyDetails() {
                 break;
             
         }
-        const updatedProperty: IFetchProperty = await updateProperty(propertyId ?? "", updatedPropertyDetails, authHeader);
-        await queryClient.invalidateQueries(`property${id}`)
-        queryClient.setQueryData(`property${id}`, updatedProperty);
-        handleModalClose();
+        updateProperty(propertyId ?? "", updatedPropertyDetails, authHeader)
+        .then((updatedProperty) => {
+            queryClient.invalidateQueries(`property${id}`).then(() => {
+                queryClient.setQueryData(`property${id}`, updatedProperty);
+                handleModalClose();
+            }).catch((error) => {
+                console.error(error);
+            });
+        })
+        .catch((error) => {
+            console.error(error);
+        });
     }
 
     return (
@@ -563,7 +567,7 @@ export default function ModalPropertyDetails() {
                                         <div>
                                             <div className='flex flex-row'>
                                                 <span className='font-light'>Beds: </span>
-                                                {beds.length < bedTypes?.length ? (
+                                                {beds.length < (bedTypes?.length ?? 0) ? (
                                                     <button className="ml-auto text-xl" onClick={() => addNewBed()}><BsPlusSquare className="text-accent" /></button>
                                                 ) : ""}
                                             </div>
@@ -607,7 +611,7 @@ export default function ModalPropertyDetails() {
                                         <input 
                                             className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' 
                                             ref={nameContactInput} 
-                                            defaultValue={modalData?.content.name}
+                                            defaultValue={ typeof modalData.content === "object" && typeof modalData.content.name === "string" ? modalData.content.name : ""}
                                             placeholder="Contact's name"
                                         />
                                         <p className='font-light'>Phone Number: </p>
@@ -649,12 +653,14 @@ export default function ModalPropertyDetails() {
                             </div> :
                             modalData.type === "Price (per night €)" ?
                             <div className='flex flex-col'>
-                                    <div>  
+                                    <div>   
+                                        <div className="alert alert-success mb-8">
+                                        <span>Recommended price: {typeof modalData.content === "object" && 'price' in modalData.content ? `${Number.parseFloat(modalData.content.recommended_price).toFixed(2)} €` : "0"}</span>
+                                        </div>
                                         <p>New price:</p>
-                                        {/* TODO: Meter aqui o recommended price real (no placeholder do input field) */}
                                         <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' 
                                             ref={stringInput} 
-                                            defaultValue={typeof modalData.content === "object" ? modalData.content.price : ""}
+                                            defaultValue={(typeof modalData.content === "object" && 'price' in modalData.content && typeof modalData.content.price === "number") ? modalData.content.price : 0}
                                             placeholder='Recommended price: 300€'
                                         />
                                             <label className="label cursor-pointer pt-2">
@@ -679,7 +685,7 @@ export default function ModalPropertyDetails() {
                                                 <input 
                                                     className='checkbox'
                                                     type="checkbox" 
-                                                    checked={value} 
+                                                    checked={value as boolean} 
                                                     onChange={() => handleRuleCheckbox(rule)}
                                                 />
                                             </label>
