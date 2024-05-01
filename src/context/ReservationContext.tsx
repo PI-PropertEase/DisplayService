@@ -2,11 +2,11 @@ import React, { createContext, useEffect, useState } from "react"
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader"
 import { useQuery } from "react-query"
 import { fetchReservations } from "../services/calendar.service"
-import { IReservation } from "../types/ReservationType"
+import { IEvent } from "../types/ReservationType"
 
 interface ReservationContextType {
-  reservations: IReservation[]
-  setReservations: React.Dispatch<React.SetStateAction<IReservation[]>>
+  reservations: IEvent[]
+  setReservations: React.Dispatch<React.SetStateAction<IEvent[]>>
 }
 
 const defaultContextState: ReservationContextType = {
@@ -19,11 +19,11 @@ export const ReservationContext = createContext<ReservationContextType>(defaultC
 export const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [reservations, setReservations] = useState<IReservation[]>([])
+  const [reservations, setReservations] = useState<IEvent[]>([])
 
   const authHeader = useAuthHeader() ?? ""
 
-  const { data: initialReservations } = useQuery<IReservation[]>(
+  const { data: initialReservations } = useQuery<IEvent[]>(
     "fetchReservations",
     () => fetchReservations(authHeader ?? ""),
     {

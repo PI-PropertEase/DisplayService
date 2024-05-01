@@ -1,17 +1,15 @@
 import { ServiceEnum } from "./UserType"
 
-export interface IReservation {
+export interface IEvent {
   id: number
   property_id: number
-  reservation_status: ReservationStatus
+  owner_email: string
   begin_datetime: Date
   end_datetime: Date
-  service: ServiceEnum
-  cost: number
-  client_phone: string
-  client_name: string
-  client_email: string
+  type: string
+  service?: ServiceEnum
 }
+
 
 export enum ReservationStatus {
   CONFIRMED = "confirmed",

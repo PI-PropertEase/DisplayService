@@ -1,10 +1,10 @@
 import { CalendarEventInterface } from "../types/CalendarTypes"
 import { IFetchProperty } from "../types/PropertyType"
-import { IReservation } from "../types/ReservationType"
+import { IEvent } from "../types/ReservationType"
 import { insertPropertyInReservation } from "./reservationpropertyunifier"
 
 export const convertToCalendarInterface = (
-  reservations: IReservation[],
+  reservations: IEvent[],
   properties: IFetchProperty[]
 ): CalendarEventInterface[] => {
   if (!reservations || !properties) return []

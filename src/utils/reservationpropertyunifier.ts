@@ -1,10 +1,10 @@
 import { IFetchProperty, IProperty, PropertyStatus } from "../types/PropertyType"
-import { IReservation } from "../types/ReservationType"
+import { IEvent } from "../types/ReservationType"
 
 const insertReservationsInProperty = (
-  reservationData: IReservation[],
+  reservationData: IEvent[],
   propertyData: IFetchProperty[]
-): (IFetchProperty & { reservations: IReservation[] })[] | undefined => {
+): (IFetchProperty & { reservations: IEvent[] })[] | undefined => {
   if (!reservationData || !propertyData) {
     return undefined
   }
@@ -24,8 +24,8 @@ const insertReservationsInProperty = (
 
 export const insertPropertyInReservation = (
   propertyData: IFetchProperty[],
-  reservationData: IReservation[]
-): (IReservation & { property: IFetchProperty | undefined })[] | undefined => {
+  reservationData: IEvent[]
+): (IEvent & { property: IFetchProperty | undefined })[] | undefined => {
   if (!reservationData || !propertyData) {
     return undefined
   }
@@ -38,12 +38,14 @@ export const insertPropertyInReservation = (
     }
   })
 
+  console.log("RESULT FROM UNIFIED DATA:", unifiedData)
+  console.log("RESULT FROM UNIFIED sdgsadgasdgasgsa:", propertyData)
   return unifiedData
 }
 
 export const getPropertiesForPropertyTable = (
   propertyData: IFetchProperty[],
-  reservationData: IReservation[]
+  reservationData: IEvent[]
 ): IProperty[] => {
   // list of properties, with the respective reservations
   const unifiedData = insertReservationsInProperty(reservationData, propertyData) ?? []
@@ -64,7 +66,7 @@ export const getPropertiesForPropertyTable = (
       })
 
     const currTime = new Date()
-    let closestReservation: IReservation | undefined = undefined
+    let closestReservation: IEvent | undefined = undefined
     prop.reservations.forEach((r) => {
       if (r.begin_datetime < new Date() && r.end_datetime > new Date()) {
         propertyList.push({
@@ -105,7 +107,7 @@ export const getPropertiesForPropertyTable = (
   return propertyList
 }
 
-const isReservationUpcoming = (reservation: IReservation): boolean => {
+const isReservationUpcoming = (reservation: IEvent): boolean => {
   const currTime = new Date()
   return reservation.begin_datetime.getTime() - currTime.getTime() > 0
 }

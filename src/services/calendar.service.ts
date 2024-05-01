@@ -1,5 +1,5 @@
 import axios from "axios"
-import { IReservation } from "../types/ReservationType"
+import { IEvent } from "../types/ReservationType"
 
 const URL = "http://localhost/api/CalendarService"
 
@@ -19,7 +19,7 @@ const parseISODateToUTCDate = (dateString: string) => {
 }
 
 export const fetchReservations = async (authHeader: string) => {
-  const res = await axios.get<IReservation[]>(`${URL}/reservations`, {
+  const res = await axios.get<IEvent[]>(`${URL}/events`, {
     headers: {
       Authorization: authHeader,
     },
@@ -27,7 +27,7 @@ export const fetchReservations = async (authHeader: string) => {
 
   // serialize into right data types
   // Date strings are in the format "YYYY-MM-DDTHH:MM:SS" and need to be converted to Date objects with the correct time zone
-  const reservations: IReservation[] = res.data.map((r: IReservation) => ({
+  const reservations: IEvent[] = res.data.map((r: IEvent) => ({
     ...r,
     begin_datetime: parseISODateToUTCDate(r.begin_datetime),
     end_datetime: parseISODateToUTCDate(r.end_datetime),
