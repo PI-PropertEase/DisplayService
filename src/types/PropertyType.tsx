@@ -16,6 +16,7 @@ export interface IFetchProperty {
     cancellation_policy: string;
     contacts: Contact[];
     recommended_price: number;
+    update_price_automatically: boolean;
 }
 
 export interface Bedroom {

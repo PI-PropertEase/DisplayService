@@ -8,7 +8,7 @@ import Drawer from "../components/Drawer";
 import ModalDeletePropertyDetail from "../components/ModalDeletePropertyDetail";
 import ModalPropertyDetails from "../components/ModalPropertyDetails";
 import Navbar from "../components/Navbar";
-import { fetchProperty } from "../services/Property.service";
+import { fetchProperty, updateProperty } from "../services/Property.service";
 import { Amenity, BathroomFixture, Bed, IFetchProperty } from "../types/PropertyType";
 
 export type ModalContentType = string | number | Bed[] | { price: number; after_commission: boolean; recommended_price: number;}
@@ -74,6 +74,14 @@ export default function PropertyDetails() {
         queryClient.setQueryData<IModalDeleteData>("modalDeleteData", modalDeleteData);
     }
 
+    const handleUpdatePriceAutomatically = () => {
+        const updatedPropertyDetails = { ...propertyDetails, update_price_automatically: !propertyDetails.update_price_automatically };
+        if (updatedPropertyDetails.update_price_automatically) {
+            updatedPropertyDetails.price = updatedPropertyDetails.recommended_price;
+        }
+        updateProperty(id, updatedPropertyDetails, authHeader).then(() => queryClient.setQueryData(`property${id}`, updatedPropertyDetails)).catch(err => console.log(err));
+        
+    }
 
     return (
         <>
@@ -133,6 +141,12 @@ export default function PropertyDetails() {
                                         <label htmlFor="price" className="text-accent">Price per night:</label>
                                         <input id="price" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={`${propertyDetails.price}€`}  readOnly />
                                         <button className="absolute top-2 right-2"  onClick={() => handleOpenModal({price: propertyDetails.price, after_commission: propertyDetails.after_commission, recommended_price: propertyDetails.recommended_price}, "Price (per night €)")}><FaRegEdit className="text-accent" /></button>
+                                        <div className="form-control">
+                                            <label className="label cursor-pointer">
+                                                <span className="label-text">Updates automatically with the best price </span> 
+                                                <input type="checkbox" defaultChecked={propertyDetails.update_price_automatically} onClick={handleUpdatePriceAutomatically} className="checkbox" />
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
