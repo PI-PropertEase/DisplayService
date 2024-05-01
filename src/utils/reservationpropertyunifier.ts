@@ -1,10 +1,10 @@
 import { IFetchProperty, IProperty, PropertyStatus } from "../types/PropertyType"
-import { IEvent } from "../types/ReservationType"
+import { IEvent, IReservation } from "../types/ReservationType"
 
 const insertReservationsInProperty = (
-  reservationData: IEvent[],
+  reservationData: IReservation[],
   propertyData: IFetchProperty[]
-): (IFetchProperty & { reservations: IEvent[] })[] | undefined => {
+): (IFetchProperty & { reservations: IReservation[] })[] | undefined => {
   if (!reservationData || !propertyData) {
     return undefined
   }
@@ -24,8 +24,8 @@ const insertReservationsInProperty = (
 
 export const insertPropertyInReservation = (
   propertyData: IFetchProperty[],
-  reservationData: IEvent[]
-): (IEvent & { property: IFetchProperty | undefined })[] | undefined => {
+  reservationData: IReservation[]
+): (IReservation & { property: IFetchProperty | undefined })[] | undefined => {
   if (!reservationData || !propertyData) {
     return undefined
   }
@@ -38,14 +38,12 @@ export const insertPropertyInReservation = (
     }
   })
 
-  console.log("RESULT FROM UNIFIED DATA:", unifiedData)
-  console.log("RESULT FROM UNIFIED sdgsadgasdgasgsa:", propertyData)
   return unifiedData
 }
 
 export const getPropertiesForPropertyTable = (
   propertyData: IFetchProperty[],
-  reservationData: IEvent[]
+  reservationData: IReservation[]
 ): IProperty[] => {
   // list of properties, with the respective reservations
   const unifiedData = insertReservationsInProperty(reservationData, propertyData) ?? []
@@ -66,7 +64,7 @@ export const getPropertiesForPropertyTable = (
       })
 
     const currTime = new Date()
-    let closestReservation: IEvent | undefined = undefined
+    let closestReservation: IReservation | undefined = undefined
     prop.reservations.forEach((r) => {
       if (r.begin_datetime < new Date() && r.end_datetime > new Date()) {
         propertyList.push({
@@ -80,10 +78,10 @@ export const getPropertiesForPropertyTable = (
         })
         return
       }
-      if (!closestReservation && isReservationUpcoming(r)) closestReservation = r
+      if (!closestReservation && isEventUpcoming(r)) closestReservation = r
       if (
         closestReservation &&
-        isReservationUpcoming(r) &&
+        isEventUpcoming(r) &&
         r.begin_datetime.getTime() - currTime.getTime() <
           closestReservation.begin_datetime.getTime() - currTime.getTime()
       )
@@ -107,7 +105,7 @@ export const getPropertiesForPropertyTable = (
   return propertyList
 }
 
-const isReservationUpcoming = (reservation: IEvent): boolean => {
+const isEventUpcoming = (event: IEvent | IReservation): boolean => {
   const currTime = new Date()
-  return reservation.begin_datetime.getTime() - currTime.getTime() > 0
+  return event.begin_datetime.getTime() - currTime.getTime() > 0
 }

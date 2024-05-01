@@ -9,6 +9,7 @@ import EventModal from "./EventModal";
 import DeleteEventModal from "./DeleteEventModal";
 import { IEvent } from "../types/ReservationType";
 import { GrEdit } from "react-icons/gr";
+import ReservationStatusBadge from "./ReservationStatusBadge";
 
 const ReservationTable = () => {
     const {reservations: reservationData} = useContext(ReservationContext);
@@ -16,6 +17,7 @@ const ReservationTable = () => {
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [modalAction, setModalAction] = useState<"Edit" | "Create">("Create");
     const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
+    // selectedEvent is used to pass this data into the modal for editing/deleting a certain event
     const [selectedEvent, setSelectedEvent] = useState<IEvent | undefined>(undefined);
 
     const {properties} = useContext(PropertyContext);
@@ -106,7 +108,7 @@ const ReservationTable = () => {
                         className="max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
                         data-label="Status"
                       >
-                        {/* <ReservationStatusBadge status={reservation.reservation_status} /> */}
+                        <ReservationStatusBadge status={reservation.reservation_status} />
                       </td>
                       <td
                         data-label="Client's name"
@@ -153,11 +155,15 @@ const ReservationTable = () => {
                         data-label="More Details"
                         className="text-center max-[760px]:flex max-[760px]:before:content-datalabel"
                       >
-                        <button className="max-[760px]:ml-auto" onClick={() => {
+                        <button 
+                        className="max-[760px]:ml-auto" 
+                        onClick={() => {
                           setSelectedEvent(reservation)   // TODO: the type on this is messed up
                           setDeleteModalOpen(true)
-                        }}>
-                          <FaRegTrashAlt />
+                        }}
+                        disabled={reservation.type === 'reservation'}
+                        >
+                          <FaRegTrashAlt style={{color: reservation.type === 'reservation' ? 'gray' : ''}}/>
                         </button>
                       </td>
                     </tr>
