@@ -18,8 +18,8 @@ export interface IAlerts {
 }
 
 export default function ModalPropertyDetails() {
-
     const authHeader = useAuthHeader() ?? "";
+    const id = useParams<{ id: string }>()?.id?.toString() ?? "";
 
     const {data: modalData} = useQuery<IModalData>('modalData')
 
@@ -35,8 +35,10 @@ export default function ModalPropertyDetails() {
     const textareaInput = useRef<HTMLTextAreaElement>(null);
     const nameContactInput = useRef<HTMLInputElement>(null);
     const phoneContactInput = useRef<HTMLInputElement>(null);
-    const updatedPropertyDetails: IFetchProperty = queryClient.getQueryData('property')!;
+    const updatedPropertyDetails: IFetchProperty = queryClient.getQueryData(`property${id}`)!;
     const propertyId = useParams<{id: string}>().id;
+
+    const [afterCommission, setAfterCommission] = useState<boolean>(modalData?.content?.after_commission ?? false);
 
     // for house rules, example: { "smoking": false, "allow_pets": true}
     const [ruleCheckboxes, setRuleCheckboxes] = useState<Record<string, boolean> | object>({});
@@ -58,6 +60,8 @@ export default function ModalPropertyDetails() {
     useEffect(() => {
         if (modalData?.type === "House Rules")
             setRuleCheckboxes(modalData.content as Record<string, boolean>)
+        if (modalData?.type === "Price (per night €)")
+            setAfterCommission((modalData.content as {price: number; after_commission: boolean;}).after_commission)
             
     }, [modalData]);
 
@@ -298,9 +302,11 @@ export default function ModalPropertyDetails() {
                     return;
                 }
                 break;
-            case "Price (per night €)":
-                if (stringInput.current?.value && Number(stringInput.current?.value) > 0){
+            case "Price (per night €)": {
+                const price = Number(stringInput.current?.value);
+                if (stringInput.current?.value && price > 0) {
                     updatedPropertyDetails.price = Number(stringInput.current?.value);
+                    updatedPropertyDetails.after_commission = afterCommission;
                     queryClient.setQueryData('alertData', {
                         type: 'Price (per night €)',
                         message: '',
@@ -309,12 +315,13 @@ export default function ModalPropertyDetails() {
                 } else {
                     queryClient.setQueryData('alertData', {
                         type: 'Price (per night €)',
-                        message: 'Price must be greater than 0',
+                        message: 'Price must be greater than 0€',
                         active: true
                     });
                     return;
                 }
                 break;
+            }
             case "Amenities": {
                 updatedPropertyDetails.amenities = selectedAmenities;
                 break;
@@ -522,8 +529,8 @@ export default function ModalPropertyDetails() {
             
         }
         const updatedProperty: IFetchProperty = await updateProperty(propertyId ?? "", updatedPropertyDetails, authHeader);
-        await queryClient.invalidateQueries('property')
-        queryClient.setQueryData('property', updatedProperty);
+        await queryClient.invalidateQueries(`property${id}`)
+        queryClient.setQueryData(`property${id}`, updatedProperty);
         handleModalClose();
     }
 
@@ -639,6 +646,28 @@ export default function ModalPropertyDetails() {
                                         </div>
                                     </div>
                                 
+                            </div> :
+                            modalData.type === "Price (per night €)" ?
+                            <div className='flex flex-col'>
+                                    <div>  
+                                        <p>New price:</p>
+                                        {/* TODO: Meter aqui o recommended price real (no placeholder do input field) */}
+                                        <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' 
+                                            ref={stringInput} 
+                                            defaultValue={typeof modalData.content === "object" ? modalData.content.price : ""}
+                                            placeholder='Recommended price: 300€'
+                                        />
+                                            <label className="label cursor-pointer pt-2">
+                                                <span className="label-text">After commission</span> 
+                                                <input 
+                                                    type="checkbox" 
+                                                    onChange={(e) => setAfterCommission(e.target.checked)}
+                                                    checked={afterCommission} 
+                                                    className="checkbox" 
+                                                />
+                                            </label>
+                                        
+                                    </div>
                             </div> :
                             modalData.type === "House Rules" ?
                             <div>
