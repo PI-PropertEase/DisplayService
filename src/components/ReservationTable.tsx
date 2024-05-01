@@ -2,16 +2,21 @@ import { useContext, useState } from "react"
 import { ReservationContext } from "../context/ReservationContext"
 import { insertPropertyInReservation } from "../utils/reservationpropertyunifier";
 import { PropertyContext } from "../context/PropertyContext";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { FaArrowLeft, FaArrowRight, FaRegTrashAlt } from "react-icons/fa";
 import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { IoMdAdd } from "react-icons/io";
-import CreateEventModal from "./CreateEventModal";
-import ReservationStatusBadge from "./ReservationStatusBadge";
+import EventModal from "./EventModal";
+import DeleteEventModal from "./DeleteEventModal";
+import { IEvent } from "../types/ReservationType";
+import { GrEdit } from "react-icons/gr";
 
 const ReservationTable = () => {
     const {reservations: reservationData} = useContext(ReservationContext);
 
     const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const [modalAction, setModalAction] = useState<"Edit" | "Create">("Create");
+    const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
+    const [selectedEvent, setSelectedEvent] = useState<IEvent | undefined>(undefined);
 
     const {properties} = useContext(PropertyContext);
 
@@ -42,7 +47,10 @@ const ReservationTable = () => {
               {reservations?.length ?? 0} Reservations
             </span>
             <button
-                onClick={() => setModalOpen(true)}
+                onClick={() => {
+                  setModalAction("Create");
+                  setModalOpen(true)
+                }}
                 className="btn sm:btn-sm btn-xs btn-outline btn-success float-right mr-3"
               >
                 <IoMdAdd/> Create event
@@ -64,6 +72,8 @@ const ReservationTable = () => {
                 <th className="text-center">Arrival</th>
                 <th className="text-center">Departure</th>
                 <th className="text-center">Reservation Cost</th>
+                <th className="text-center">Edit</th>
+                <th className="text-center">Delete</th>
               </tr>
             </thead>
             <tbody>
@@ -96,7 +106,7 @@ const ReservationTable = () => {
                         className="max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
                         data-label="Status"
                       >
-                        <ReservationStatusBadge status={reservation.reservation_status} />
+                        {/* <ReservationStatusBadge status={reservation.reservation_status} /> */}
                       </td>
                       <td
                         data-label="Client's name"
@@ -127,6 +137,28 @@ const ReservationTable = () => {
                         className="text-center max-[760px]:flex max-[760px]:before:content-datalabel"
                       >
                         {reservation.cost}€
+                      </td>
+                      <td
+                        data-label="Delete"
+                        className="text-center max-[760px]:flex max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
+                      >
+                        <button className="max-[760px]:ml-auto" onClick={() => {
+                          setModalAction("Edit");
+                          setModalOpen(true);
+                        }}>
+                          <GrEdit />
+                        </button>
+                      </td>
+                      <td
+                        data-label="More Details"
+                        className="text-center max-[760px]:flex max-[760px]:before:content-datalabel"
+                      >
+                        <button className="max-[760px]:ml-auto" onClick={() => {
+                          setSelectedEvent(reservation)   // TODO: the type on this is messed up
+                          setDeleteModalOpen(true)
+                        }}>
+                          <FaRegTrashAlt />
+                        </button>
                       </td>
                     </tr>
                   )
@@ -188,7 +220,8 @@ const ReservationTable = () => {
               </button>
             </div>
           </div>
-          <CreateEventModal isOpen={modalOpen} setOpen={setModalOpen}/>
+          <EventModal action={modalAction} isOpen={modalOpen} setOpen={setModalOpen}/>
+          <DeleteEventModal isOpen={deleteModalOpen} setOpen={setDeleteModalOpen} />
         </div>
       )
 }

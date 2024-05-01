@@ -3,7 +3,7 @@ import "flatpickr/dist/themes/airbnb.css";
 import Flatpickr from "react-flatpickr"
 import { useState } from "react";
 
-const CreateEventModal = ({isOpen, setOpen}: {isOpen: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>
+const EventModal = ({isOpen, setOpen, action}: {isOpen: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>, action: "Edit" | "Create"
 }) => {
     const minDate = new Date();
     minDate.setHours(0, 0, 0, 0);
@@ -26,16 +26,17 @@ const CreateEventModal = ({isOpen, setOpen}: {isOpen: boolean, setOpen: React.Di
         <>
             {isOpen && (
                 <>
-                    <div className="fixed inset-0 bg-smoke z-50" onClick={() => {console.log("Hi")}}></div>
+                    <div className="fixed inset-0 bg-smoke z-50"></div>
                     <dialog id="my_modal_5" className="modal sm:modal-middle p-8" open>
                         <div className="modal-box">
                             <div className='flex flex-row items-center justify-between'>
-                                <h3 className=" font-medium text-2xl text-center py-2">Create event</h3>
+                                <h3 className=" font-medium text-2xl text-center py-2">{action} event</h3>
                                 <IoCloseOutline className='text-2xl cursor-pointer' onClick={() => setOpen(false)}/>
                             </div>
                             <hr/>
                             <div className="flex flex-col pt-5 gap-2">
-                                <div className="flex flex-row">
+                                {action === "Create" && (
+                                    <div className="flex flex-row">
                                     Event type:
                                     <div>
                                         <select className="select w-full max-w-xs">
@@ -43,6 +44,7 @@ const CreateEventModal = ({isOpen, setOpen}: {isOpen: boolean, setOpen: React.Di
                                         </select>
                                     </div>
                                 </div>
+                                )}
                                 <label>
                                     Begin time:
                                 </label>
@@ -93,4 +95,4 @@ const CreateEventModal = ({isOpen, setOpen}: {isOpen: boolean, setOpen: React.Di
 }
 
 
-export default CreateEventModal;
+export default EventModal;
