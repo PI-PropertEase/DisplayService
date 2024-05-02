@@ -56,7 +56,7 @@ export const fetchEvents = async (authHeader: string): Promise<IEvent[]> => {
 
 // returns ['cleaning', 'maintenance'] and other types that might be added in the future :)
 export const fetchManagementTypes = async (authHeader: string): Promise<string[]> => {
-  const res = await axios.get<string[]>(`${URL}/management/types`, {
+  const res = await axios.get<string[]>(`${URL}/events/management/types`, {
     headers: {
       Authorization: authHeader,
     },
@@ -66,7 +66,7 @@ export const fetchManagementTypes = async (authHeader: string): Promise<string[]
 }
 
 export const fetchCleaningEvents = async (authHeader: string): Promise<ICleaning[]> => {
-  const res = await axios.get<ICleaning[]>(`${URL}/management/cleaning`, {
+  const res = await axios.get<ICleaning[]>(`${URL}/events/management/cleaning`, {
     headers: {
       Authorization: authHeader,
     },
@@ -84,7 +84,7 @@ export const fetchCleaningEvents = async (authHeader: string): Promise<ICleaning
 }
 
 export const fetchMaintenanceEvents = async (authHeader: string): Promise<IMaintenance[]> => {
-  const res = await axios.get<IMaintenance[]>(`${URL}/management/cleaning`, {
+  const res = await axios.get<IMaintenance[]>(`${URL}/events/management/maintenance`, {
     headers: {
       Authorization: authHeader,
     },
@@ -103,7 +103,7 @@ export const fetchMaintenanceEvents = async (authHeader: string): Promise<IMaint
 
 // TODO: deal with error case
 export const createCleaningEvent = async (authHeader: string, cleaningEvent: ICleaning): Promise<ICleaning> => {
-  const res = await axios.post<ICleaning>(`${URL}/management/cleaning`, 
+  const res = await axios.post<ICleaning>(`${URL}/events/management/cleaning`, 
   cleaningEvent,
   {
     headers: {
@@ -116,7 +116,7 @@ export const createCleaningEvent = async (authHeader: string, cleaningEvent: ICl
 
 // TODO: deal with error case
 export const createMaintenanceEvent = async (authHeader: string, maintenanceEvent: IMaintenance): Promise<ICleaning> => {
-  const res = await axios.post<IMaintenance>(`${URL}/management/cleaning`, 
+  const res = await axios.post<IMaintenance>(`${URL}/events/management/maintenance`, 
   maintenanceEvent,
   {
     headers: {
@@ -130,7 +130,7 @@ export const createMaintenanceEvent = async (authHeader: string, maintenanceEven
 
 // TODO: deal with error case
 export const updateCleaningEvent = async (authHeader: string, cleaningEvent: ICleaning): Promise<ICleaning> => {
-  const res = await axios.put<ICleaning>(`${URL}/management/cleaning`, 
+  const res = await axios.put<ICleaning>(`${URL}/events/management/cleaning/${cleaningEvent.id}`, 
   cleaningEvent,
   {
     headers: {
@@ -144,7 +144,7 @@ export const updateCleaningEvent = async (authHeader: string, cleaningEvent: ICl
 
 // TODO: deal with error case
 export const updateMaintenanceEvent = async (authHeader: string, maintenanceEvent: IMaintenance): Promise<ICleaning> => {
-  const res = await axios.put<IMaintenance>(`${URL}/management/cleaning`, 
+  const res = await axios.put<IMaintenance>(`${URL}/events/management/maintenance/${maintenanceEvent.id}`, 
   maintenanceEvent,
   {
     headers: {
@@ -157,7 +157,7 @@ export const updateMaintenanceEvent = async (authHeader: string, maintenanceEven
 
 
 export const deleteCleaningEvent = async (authHeader: string, cleaningEvent: ICleaning): Promise<ICleaning> => {
-  const res = await axios.delete<ICleaning>(`${URL}/management/cleaning/${cleaningEvent.id}`, 
+  const res = await axios.delete<ICleaning>(`${URL}/events/management/cleaning/${cleaningEvent.id}`, 
   {
     headers: {
       Authorization: authHeader,
@@ -169,7 +169,7 @@ export const deleteCleaningEvent = async (authHeader: string, cleaningEvent: ICl
 
 
 export const deleteMaintenanceEvent = async (authHeader: string, maintenanceEvent: IMaintenance): Promise<ICleaning> => {
-  const res = await axios.delete<ICleaning>(`${URL}/management/cleaning/${maintenanceEvent.id}`, 
+  const res = await axios.delete<ICleaning>(`${URL}/events/management/maintenance/${maintenanceEvent.id}`, 
   {
     headers: {
       Authorization: authHeader,
