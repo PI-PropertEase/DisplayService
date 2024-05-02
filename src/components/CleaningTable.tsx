@@ -98,6 +98,7 @@ const CleaningTable = () => {
                     <button
                       className="max-[760px]:ml-auto"
                       onClick={() => {
+                        setSelectedEvent(cleaningEvent)
                         setModalAction("Edit")
                         setModalOpen(true)
                       }}

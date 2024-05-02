@@ -98,6 +98,7 @@ const MaintenanceTable = () => {
                     <button
                       className="max-[760px]:ml-auto"
                       onClick={() => {
+                        setSelectedEvent(maintenanceEvent)
                         setModalAction("Edit")
                         setModalOpen(true)
                       }}
@@ -112,7 +113,7 @@ const MaintenanceTable = () => {
                     <button
                       className="max-[760px]:ml-auto"
                       onClick={() => {
-                        setSelectedEvent(maintenanceEvent) // TODO: the type on this is messed up
+                        setSelectedEvent(maintenanceEvent)
                         setDeleteModalOpen(true)
                       }}
                       disabled={maintenanceEvent.type === IEventType.CLEANING}

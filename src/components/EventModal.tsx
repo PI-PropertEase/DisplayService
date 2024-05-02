@@ -1,9 +1,13 @@
+import { isAxiosError } from "axios"
 import "flatpickr/dist/themes/airbnb.css"
 import { useContext, useEffect, useState } from "react"
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader"
+import useAuthUser from "react-auth-kit/hooks/useAuthUser"
 import Flatpickr from "react-flatpickr"
 import { IoCloseOutline } from "react-icons/io5"
-import { useQuery } from "react-query"
+import { useQuery, useQueryClient } from "react-query"
+import { useParams } from "react-router-dom"
+import { EventModalContext } from "../context/EventModalContext"
 import {
   createCleaningEvent,
   createMaintenanceEvent,
@@ -11,31 +15,36 @@ import {
   updateCleaningEvent,
   updateMaintenanceEvent,
 } from "../services/calendar.service"
-import { Dropdown } from "./Dropdown"
-import { useParams } from "react-router-dom"
-import useAuthUser from "react-auth-kit/hooks/useAuthUser"
-import { ICleaning, IEventType, IMaintenance } from "../types/ReservationType"
+import {
+  ICleaning,
+  IEventType,
+  IMaintenance,
+  IUpdateCleaning,
+  IUpdateMaintenance,
+} from "../types/ReservationType"
 import { IUser } from "../types/UserType"
-import { EventModalContext } from "../context/EventModalContext"
+import { Dropdown } from "./Dropdown"
 
 const EventModal = () => {
-  const {modalOpen, setModalOpen, modalAction, selectedEvent} = useContext(EventModalContext);
+  const { modalOpen, setModalOpen, modalAction, selectedEvent } = useContext(EventModalContext)
   const minDate = new Date()
   minDate.setHours(0, 0, 0, 0)
-
-  console.log("selectedEvent", selectedEvent)
 
   const token = useAuthHeader() ?? ""
   const [showError, setShowError] = useState<boolean>(false)
 
-  const [beginDate, setBeginDate] = useState<Date>(new Date())
-  const [endDate, setEndDate] = useState<Date>(new Date())
+  const [beginDate, setBeginDate] = useState<Date>(selectedEvent?.begin_datetime ?? new Date())
+  const [endDate, setEndDate] = useState<Date>(selectedEvent?.end_datetime ?? new Date())
 
   const [managementType, setManagementType] = useState<string | null>("")
   const [managementTypes, setManagementTypes] = useState<string[]>([])
 
+  const [errorMessage, setErrorMessage] = useState<string>("")
+
   const propertyId = parseInt(useParams<{ id: string }>().id ?? "-1")
   const userEmail = useAuthUser<IUser>()?.email
+
+  const queryClient = useQueryClient()
 
   const { data: fetchedManagementTypes } = useQuery<string[]>(
     "fetchManagementTypes",
@@ -51,41 +60,73 @@ const EventModal = () => {
     }
   }, [fetchedManagementTypes])
 
+  useEffect(() => {
+    if (selectedEvent) {
+      setBeginDate(selectedEvent.begin_datetime)
+      setEndDate(selectedEvent.end_datetime)
+    }
+  }, [selectedEvent])
+
+  const showErrorMessage = (message: string) => {
+    setErrorMessage(message)
+    setShowError(true)
+  }
+
   const handleConfirm = async () => {
-    if (managementType !== "cleaning" && managementType !== "maintenance") return
     if (beginDate >= endDate) {
-      setShowError(true)
+      showErrorMessage("Error! Invalid time interval. Begin time should be before end time.")
       return
     }
     setShowError(false)
-    if (modalAction === "Create") {
-      const event = {
-        property_id: propertyId,
-        owner_email: userEmail ?? "",
-        begin_datetime: beginDate,
-        end_datetime: endDate,
-        type: managementType === "cleaning" ? IEventType.CLEANING : IEventType.MAINTENANCE,
+
+    try {
+      if (modalAction === "Create") {
+        if (managementType !== "cleaning" && managementType !== "maintenance") {
+          showErrorMessage("Error! Please select an event type.")
+          return
+        }
+
+        const event = {
+          property_id: propertyId,
+          owner_email: userEmail ?? "",
+          begin_datetime: beginDate,
+          end_datetime: endDate,
+          type: managementType === "cleaning" ? IEventType.CLEANING : IEventType.MAINTENANCE,
+        }
+
+        if (managementType === "cleaning") {
+          await createCleaningEvent(token, event as ICleaning)
+          await queryClient.invalidateQueries("fetchCleaningEvents")
+        } else if (managementType === "maintenance") {
+          await createMaintenanceEvent(token, event as IMaintenance)
+          await queryClient.invalidateQueries("fetchMaintenanceEvents")
+        }
+      } else if (modalAction === "Edit") {
+        const event = {
+          begin_datetime: beginDate,
+          end_datetime: endDate,
+        }
+
+        if (selectedEvent?.type === IEventType.CLEANING) {
+          await updateCleaningEvent(token, event as IUpdateCleaning, selectedEvent?.id ?? -1)
+          await queryClient.invalidateQueries("fetchCleaningEvents")
+        } else if (selectedEvent?.type === IEventType.MAINTENANCE) {
+          await updateMaintenanceEvent(token, event as IUpdateMaintenance, selectedEvent?.id ?? -1)
+          await queryClient.invalidateQueries("fetchMaintenanceEvents")
+        }
       }
-      if (managementType === "cleaning") {
-        await createCleaningEvent(token, event as ICleaning)
-      } else if (managementType === "maintenance") {
-        await createMaintenanceEvent(token, event as IMaintenance)
+    } catch (error) {
+      if (isAxiosError(error)) {
+        showErrorMessage(
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          (error.response?.data?.detail as string) ?? "An error occurred. Please try again."
+        )
+      } else {
+        showErrorMessage("An error occurred. Please try again.")
       }
-    } else if (modalAction === "Edit") {
-      const event = {
-        // TODO: do this using details from the table
-        property_id: propertyId,
-        owner_email: userEmail ?? "",
-        begin_datetime: beginDate,
-        end_datetime: endDate,
-        type: managementType === "cleaning" ? IEventType.CLEANING : IEventType.MAINTENANCE,
-      }
-      if (managementType === "cleaning") {
-        await updateCleaningEvent(token, event as ICleaning)
-      } else if (managementType === "maintenance") {
-        await updateMaintenanceEvent(token, event as IMaintenance)
-      }
+      return
     }
+
     setModalOpen(false)
   }
 
@@ -159,7 +200,7 @@ const EventModal = () => {
                       d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
-                  <span>Error! Invalid time interval. Begin time should be before end time.</span>
+                  <span>{errorMessage}</span>
                   <button className="btn btn-sm btn-error" onClick={() => setShowError(false)}>
                     X
                   </button>

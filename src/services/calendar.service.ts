@@ -1,5 +1,5 @@
 import axios from "axios"
-import { ICleaning, IEvent, IMaintenance, IReservation } from "../types/ReservationType"
+import { ICleaning, IEvent, IMaintenance, IReservation, IUpdateCleaning, IUpdateMaintenance } from "../types/ReservationType"
 
 const URL = "http://localhost/api/CalendarService"
 
@@ -28,8 +28,8 @@ export const fetchReservations = async (authHeader: string): Promise<IReservatio
   // Date strings are in the format "YYYY-MM-DDTHH:MM:SS" and need to be converted to Date objects with the correct time zone
   const reservations: IReservation[] = res.data.map((r: IReservation) => ({
     ...r,
-    begin_datetime: parseISODateToUTCDate(r.begin_datetime),
-    end_datetime: parseISODateToUTCDate(r.end_datetime),
+    begin_datetime: parseISODateToUTCDate(r.begin_datetime.toString()),
+    end_datetime: parseISODateToUTCDate(r.end_datetime.toString()),
   }))
 
   return reservations
@@ -47,8 +47,8 @@ export const fetchEvents = async (authHeader: string): Promise<IEvent[]> => {
   // Date strings are in the format "YYYY-MM-DDTHH:MM:SS" and need to be converted to Date objects with the correct time zone
   const events: IEvent[] = res.data.map((r: IEvent) => ({
     ...r,
-    begin_datetime: parseISODateToUTCDate(r.begin_datetime),
-    end_datetime: parseISODateToUTCDate(r.end_datetime),
+    begin_datetime: parseISODateToUTCDate(r.begin_datetime.toString()),
+    end_datetime: parseISODateToUTCDate(r.end_datetime.toString()),
   }))
 
   return events
@@ -76,8 +76,8 @@ export const fetchCleaningEvents = async (authHeader: string): Promise<ICleaning
   // Date strings are in the format "YYYY-MM-DDTHH:MM:SS" and need to be converted to Date objects with the correct time zone
   const cleaningEvents: ICleaning[] = res.data.map((r: ICleaning) => ({
     ...r,
-    begin_datetime: parseISODateToUTCDate(r.begin_datetime),
-    end_datetime: parseISODateToUTCDate(r.end_datetime),
+    begin_datetime: parseISODateToUTCDate(r.begin_datetime.toString()),
+    end_datetime: parseISODateToUTCDate(r.end_datetime.toString()),
   }))
 
   return cleaningEvents
@@ -94,8 +94,8 @@ export const fetchMaintenanceEvents = async (authHeader: string): Promise<IMaint
   // Date strings are in the format "YYYY-MM-DDTHH:MM:SS" and need to be converted to Date objects with the correct time zone
   const maintenanceEvents: IMaintenance[] = res.data.map((r: IMaintenance) => ({
     ...r,
-    begin_datetime: parseISODateToUTCDate(r.begin_datetime),
-    end_datetime: parseISODateToUTCDate(r.end_datetime),
+    begin_datetime: parseISODateToUTCDate(r.begin_datetime.toString()),
+    end_datetime: parseISODateToUTCDate(r.end_datetime.toString()),
   }))
 
   return maintenanceEvents
@@ -115,7 +115,7 @@ export const createCleaningEvent = async (authHeader: string, cleaningEvent: ICl
 }
 
 // TODO: deal with error case
-export const createMaintenanceEvent = async (authHeader: string, maintenanceEvent: IMaintenance): Promise<ICleaning> => {
+export const createMaintenanceEvent = async (authHeader: string, maintenanceEvent: IMaintenance): Promise<IMaintenance> => {
   const res = await axios.post<IMaintenance>(`${URL}/events/management/maintenance`, 
   maintenanceEvent,
   {
@@ -129,8 +129,8 @@ export const createMaintenanceEvent = async (authHeader: string, maintenanceEven
 
 
 // TODO: deal with error case
-export const updateCleaningEvent = async (authHeader: string, cleaningEvent: ICleaning): Promise<ICleaning> => {
-  const res = await axios.put<ICleaning>(`${URL}/events/management/cleaning/${cleaningEvent.id}`, 
+export const updateCleaningEvent = async (authHeader: string, cleaningEvent: IUpdateCleaning, id: number): Promise<IUpdateCleaning> => {
+  const res = await axios.put<IUpdateCleaning>(`${URL}/events/management/cleaning/${id}`, 
   cleaningEvent,
   {
     headers: {
@@ -143,8 +143,8 @@ export const updateCleaningEvent = async (authHeader: string, cleaningEvent: ICl
 
 
 // TODO: deal with error case
-export const updateMaintenanceEvent = async (authHeader: string, maintenanceEvent: IMaintenance): Promise<ICleaning> => {
-  const res = await axios.put<IMaintenance>(`${URL}/events/management/maintenance/${maintenanceEvent.id}`, 
+export const updateMaintenanceEvent = async (authHeader: string, maintenanceEvent: IUpdateMaintenance, id: number): Promise<IUpdateMaintenance> => {
+  const res = await axios.put<IUpdateMaintenance>(`${URL}/events/management/maintenance/${id}`, 
   maintenanceEvent,
   {
     headers: {

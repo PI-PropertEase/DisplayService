@@ -40,3 +40,13 @@ export interface ICleaning extends IEvent {
 export interface IMaintenance extends IEvent {
   
 }
+
+export interface IUpdateCleaning {
+  begin_datetime?: Date
+  end_datetime?: Date
+}
+
+export interface IUpdateMaintenance {
+  begin_datetime?: Date
+  end_datetime?: Date
+}
