@@ -25,7 +25,7 @@ export const ManagementContextProvider: React.FC<{ children: React.ReactNode }> 
   children,
 }) => {
   const [cleaningEvents, setCleaningEvents] = useState<ICleaning[]>([])
-  const [maintenaceEvents, setMaintenanceEvents] = useState<IMaintenance[]>([])
+  const [maintenanceEvents, setMaintenanceEvents] = useState<IMaintenance[]>([])
 
   const authHeader = useAuthHeader() ?? ""
 
@@ -57,7 +57,7 @@ export const ManagementContextProvider: React.FC<{ children: React.ReactNode }> 
       value={{
         cleaningEvents,
         setCleaningEvents,
-        maintenanceEvents: maintenaceEvents,
+        maintenanceEvents,
         setMaintenanceEvents,
       }}
     >
