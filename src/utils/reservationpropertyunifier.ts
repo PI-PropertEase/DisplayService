@@ -41,6 +41,25 @@ export const insertPropertyInReservation = (
   return unifiedData
 }
 
+export const insertPropertyInEvent = (
+  propertyData: IFetchProperty[],
+  eventData: IEvent[]
+): (IEvent & { property: IFetchProperty | undefined })[] | undefined => {
+  if (!eventData || !propertyData) {
+    return undefined
+  }
+
+  const unifiedData = eventData.map((event) => {
+    const property = propertyData.find((property) => property._id == event.property_id)
+    return {
+      ...event,
+      property,
+    }
+  })
+
+  return unifiedData
+}
+
 export const getPropertiesForPropertyTable = (
   propertyData: IFetchProperty[],
   reservationData: IReservation[]

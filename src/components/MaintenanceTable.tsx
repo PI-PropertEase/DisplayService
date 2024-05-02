@@ -1,21 +1,27 @@
 import { useContext, useState } from "react"
-import { ReservationContext } from "../context/ReservationContext"
-import { PropertyContext } from "../context/PropertyContext"
-import { insertPropertyInReservation } from "../utils/reservationpropertyunifier"
-import ReservationStatusBadge from "./ReservationStatusBadge"
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa"
-import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md"
+import { ManagementContext } from "../context/ManagementContext"
+import { IEventType } from "../types/ReservationType";
+import { FaArrowLeft, FaArrowRight, FaRegTrashAlt } from "react-icons/fa";
+import { GrEdit } from "react-icons/gr";
+import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md";
+import { insertPropertyInEvent } from "../utils/reservationpropertyunifier";
+import { PropertyContext } from "../context/PropertyContext";
+import { EventModalContext } from "../context/EventModalContext";
 
-const ReservationTable = () => {
-  const { reservations: reservationData } = useContext(ReservationContext)
+const MaintenanceTable = () => {
+
+  const { maintenanceEvents } = useContext(ManagementContext);  
   const { properties } = useContext(PropertyContext)
-  const reservations = insertPropertyInReservation(properties, reservationData)
+
+  const {setModalOpen, setModalAction, setDeleteModalOpen, setSelectedEvent} = useContext(EventModalContext);
+
+  const maintenanceEventsData = insertPropertyInEvent(properties, maintenanceEvents)
 
   const PAGE_SIZE = 10
 
   const [paginationNumber, setPaginationNumber] = useState<number>(1)
 
-  const numberOfPages = Math.ceil((reservations?.length ?? 0) / PAGE_SIZE)
+  const numberOfPages = Math.ceil((maintenanceEvents?.length ?? 0) / PAGE_SIZE)
 
   let paginationArray: number[] = [] // [1,2, ..., n] where n = number of pages
 
@@ -26,6 +32,7 @@ const ReservationTable = () => {
   // only show buttons for pages whose number is within 2 of current page
   // example: current page is 2 -> only show buttons for pages [1, 2, 3, 4]
   paginationArray = paginationArray.filter((n) => !(Math.abs(paginationNumber - n) > 2))
+
 
   return (
     <>
@@ -40,21 +47,20 @@ const ReservationTable = () => {
             </th>
             <th>Name and Address</th>
             <th>Status</th>
-            <th className="text-center">Client&apos;s Name</th>
-            <th className="text-center">Client&apos;s Phone</th>
             <th className="text-center">Arrival</th>
             <th className="text-center">Departure</th>
-            <th className="text-center">Reservation Cost</th>
+            <th className="text-center">Edit</th>
+            <th className="text-center">Delete</th>
           </tr>
         </thead>
         <tbody>
           {/* row 1 */}
-          {(reservations ?? [])
+          {(maintenanceEventsData ?? [])
             .slice(PAGE_SIZE * (paginationNumber - 1), PAGE_SIZE * paginationNumber)
-            .map((reservation) => {
+            .map((maintenanceEvent) => {
               return (
                 <tr
-                  key={reservation.id}
+                  key={maintenanceEvent.id}
                   className="max-[760px]:block max-[760px]:border-[#eee] max-[760px]:dark:border-[#223] max-[760px]:border-t-8 max-[760px]:border-b-0 max-[760px]:mb-2 max-[760px]:p-2"
                 >
                   <th className="max-[760px]:clip-out">
@@ -68,46 +74,53 @@ const ReservationTable = () => {
                   >
                     <div className="lg:flex items-center gap-3">
                       <div>
-                        <div className="font-bold">{reservation.property?.title}</div>
-                        <div className="text-sm opacity-50">{reservation.property?.address}</div>
+                        <div className="font-bold">{maintenanceEvent.property?.title}</div>
+                        <div className="text-sm opacity-50">{maintenanceEvent.property?.address}</div>
                       </div>
                     </div>
-                  </td>
-                  <td
-                    className="max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
-                    data-label="Status"
-                  >
-                    <ReservationStatusBadge status={reservation.reservation_status} />
-                  </td>
-                  <td
-                    data-label="Client's name"
-                    className="text-center max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
-                  >
-                    {reservation.client_name}
-                  </td>
-                  <td
-                    data-label="Client's phone"
-                    className="text-center max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
-                  >
-                    {reservation.client_phone}
                   </td>
                   <td
                     data-label="Arrival"
                     className="text-center max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
                   >
-                    {reservation.begin_datetime.toLocaleString()}
+                    {maintenanceEvent.begin_datetime.toLocaleString()}
                   </td>
                   <td
                     data-label="Departure"
                     className="text-center max-[760px]:flex max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
                   >
-                    {reservation.end_datetime.toLocaleString()}
+                    {maintenanceEvent.end_datetime.toLocaleString()}
                   </td>
                   <td
-                    data-label="Reservation Cost"
+                    data-label="Edit"
+                    className="text-center max-[760px]:flex max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
+                  >
+                    <button
+                      className="max-[760px]:ml-auto"
+                      onClick={() => {
+                        setModalAction("Edit")
+                        setModalOpen(true)
+                      }}
+                    >
+                      <GrEdit />
+                    </button>
+                  </td>
+                  <td
+                    data-label="Delete"
                     className="text-center max-[760px]:flex max-[760px]:before:content-datalabel"
                   >
-                    {reservation.cost}€
+                    <button
+                      className="max-[760px]:ml-auto"
+                      onClick={() => {
+                        setSelectedEvent(maintenanceEvent) // TODO: the type on this is messed up
+                        setDeleteModalOpen(true)
+                      }}
+                      disabled={maintenanceEvent.type === IEventType.CLEANING}
+                    >
+                      <FaRegTrashAlt
+                        style={{ color: maintenanceEvent.type === IEventType.RESERVATION ? "gray" : "" }}
+                      />
+                    </button>
                   </td>
                 </tr>
               )
@@ -173,4 +186,4 @@ const ReservationTable = () => {
   )
 }
 
-export default ReservationTable
+export default MaintenanceTable
