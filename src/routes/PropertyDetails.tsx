@@ -32,7 +32,7 @@ export interface IModalDeleteData {
 export default function PropertyDetails() {
     const authHeader = useAuthHeader() ?? '';
     const queryClient = useQueryClient();
-    const id = useParams<{ id: string }>()?.id?.toString() ?? "";
+    const id = useParams<{ id: string }>().id?.toString() ?? "";
 
     const { data: propertyDetails } = useQuery<IFetchProperty>(`property${id}`, () => fetchProperty(id, authHeader).then(data => data), { staleTime: Infinity });
     if (!propertyDetails) {
@@ -139,7 +139,7 @@ export default function PropertyDetails() {
                                     </div>
                                     <div className="col-span-2 md:col-span-1 relative">
                                         <label htmlFor="price" className="text-accent">Price per night:</label>
-                                        <input id="price" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={`${propertyDetails.price}€`}  readOnly />
+                                        <input id="price" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={`${Number.parseFloat(propertyDetails.price).toFixed(2)}€`}  readOnly />
                                         <button className="absolute top-2 right-2"  onClick={() => handleOpenModal({price: propertyDetails.price, after_commission: propertyDetails.after_commission, recommended_price: propertyDetails.recommended_price}, "Price (per night €)")}><FaRegEdit className="text-accent" /></button>
                                         <div className="form-control">
                                             <label className="label cursor-pointer">

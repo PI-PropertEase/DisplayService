@@ -525,13 +525,9 @@ export default function ModalPropertyDetails() {
             
         }
         updateProperty(propertyId ?? "", updatedPropertyDetails, authHeader)
-        .then((updatedProperty) => {
-            queryClient.invalidateQueries(`property${id}`).then(() => {
-                queryClient.setQueryData(`property${id}`, updatedProperty);
-                handleModalClose();
-            }).catch((error) => {
-                console.error(error);
-            });
+        .then(async () => {
+            await queryClient.invalidateQueries(`property${propertyId}`);
+            handleModalClose();
         })
         .catch((error) => {
             console.error(error);
