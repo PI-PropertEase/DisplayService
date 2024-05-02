@@ -1,20 +1,18 @@
 import { IoCloseOutline } from "react-icons/io5"
 import "flatpickr/dist/themes/airbnb.css"
+import { useContext } from "react"
+import { EventModalContext } from "../context/EventModalContext"
 
-const DeleteEventModal = ({
-  isOpen,
-  setOpen,
-}: {
-  isOpen: boolean
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
-}) => {
+const DeleteEventModal = () => {
+  const { deleteModalOpen, setDeleteModalOpen, selectedEvent } = useContext(EventModalContext)
+
   const handleDelete = () => {
     console.log("delete yes")
   }
 
   return (
     <>
-      {isOpen && (
+      {deleteModalOpen && (
         <>
           <>
             <div className="fixed inset-0 bg-smoke z-50"></div>
@@ -24,7 +22,7 @@ const DeleteEventModal = ({
                   <h3 className=" font-medium text-2xl text-center py-2">Delete TODO </h3>
                   <IoCloseOutline
                     className="text-2xl cursor-pointer"
-                    onClick={() => setOpen(false)}
+                    onClick={() => setDeleteModalOpen(false)}
                   />
                 </div>
                 <hr />
@@ -35,7 +33,7 @@ const DeleteEventModal = ({
                   <button className="btn btn-primary" onClick={handleDelete}>
                     Yes
                   </button>
-                  <button className="btn btn-secondary" onClick={() => setOpen(false)}>
+                  <button className="btn btn-secondary" onClick={() => setDeleteModalOpen(false)}>
                     No
                   </button>
                 </div>

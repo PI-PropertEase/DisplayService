@@ -16,6 +16,8 @@ import createStore from "react-auth-kit/createStore"
 import RequireAuth from "@auth-kit/react-router/RequireAuth"
 import Integrations from "./routes/Integrations"
 import { ReservationContextProvider } from "./context/ReservationContext"
+import { EventModalContextProvider } from "./context/EventModalContext"
+import { ManagementContextProvider } from "./context/ManagementContext"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -68,7 +70,11 @@ const myRouter = createBrowserRouter([
       <RequireAuth fallbackPath="/">
         <PropertyContextProvider>
           <ReservationContextProvider>
-            <PropertyDetails />
+            <EventModalContextProvider>
+              <ManagementContextProvider>
+                <PropertyDetails />
+              </ManagementContextProvider>
+            </EventModalContextProvider>
           </ReservationContextProvider>
         </PropertyContextProvider>
       </RequireAuth>
@@ -88,7 +94,11 @@ const myRouter = createBrowserRouter([
   },
   {
     path: "/integrations",
-    element: <Integrations />,
+    element: (
+      <RequireAuth fallbackPath="/">
+        <Integrations />
+      </RequireAuth>
+    ),
   },
 ])
 

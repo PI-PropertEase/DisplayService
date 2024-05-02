@@ -1,5 +1,5 @@
 import "flatpickr/dist/themes/airbnb.css"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader"
 import Flatpickr from "react-flatpickr"
 import { IoCloseOutline } from "react-icons/io5"
@@ -16,18 +16,14 @@ import { useParams } from "react-router-dom"
 import useAuthUser from "react-auth-kit/hooks/useAuthUser"
 import { ICleaning, IEventType, IMaintenance } from "../types/ReservationType"
 import { IUser } from "../types/UserType"
+import { EventModalContext } from "../context/EventModalContext"
 
-const EventModal = ({
-  isOpen,
-  setOpen,
-  action,
-}: {
-  isOpen: boolean
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
-  action: "Edit" | "Create"
-}) => {
+const EventModal = () => {
+  const {modalOpen, setModalOpen, modalAction, selectedEvent} = useContext(EventModalContext);
   const minDate = new Date()
   minDate.setHours(0, 0, 0, 0)
+
+  console.log("selectedEvent", selectedEvent)
 
   const token = useAuthHeader() ?? ""
   const [showError, setShowError] = useState<boolean>(false)
@@ -62,7 +58,7 @@ const EventModal = ({
       return
     }
     setShowError(false)
-    if (action === "Create") {
+    if (modalAction === "Create") {
       const event = {
         property_id: propertyId,
         owner_email: userEmail ?? "",
@@ -75,7 +71,7 @@ const EventModal = ({
       } else if (managementType === "maintenance") {
         await createMaintenanceEvent(token, event as IMaintenance)
       }
-    } else if (action === "Edit") {
+    } else if (modalAction === "Edit") {
       const event = {
         // TODO: do this using details from the table
         property_id: propertyId,
@@ -90,26 +86,26 @@ const EventModal = ({
         await updateMaintenanceEvent(token, event as IMaintenance)
       }
     }
-    setOpen(false)
+    setModalOpen(false)
   }
 
   return (
     <>
-      {isOpen && (
+      {modalOpen && (
         <>
           <div className="fixed inset-0 bg-smoke z-50"></div>
           <dialog id="my_modal_5" className="modal sm:modal-middle p-8" open>
             <div className="modal-box">
               <div className="flex flex-row items-center justify-between">
-                <h3 className=" font-medium text-2xl text-center py-2">{action} event</h3>
+                <h3 className=" font-medium text-2xl text-center py-2">{modalAction} event</h3>
                 <IoCloseOutline
                   className="text-2xl cursor-pointer"
-                  onClick={() => setOpen(false)}
+                  onClick={() => setModalOpen(false)}
                 />
               </div>
               <hr />
               <div className="flex flex-col pt-5 gap-2">
-                {action === "Create" && (
+                {modalAction === "Create" && (
                   <div className="flex flex-row items-center">
                     Event type:
                     <div className="mr-3">
@@ -128,7 +124,7 @@ const EventModal = ({
                   data-enable-time
                   value={beginDate}
                   onChange={([date]) => {
-                    setBeginDate(date as Date)
+                    setBeginDate(date)
                   }}
                   className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent"
                   options={{
@@ -140,7 +136,7 @@ const EventModal = ({
                   data-enable-time
                   value={endDate}
                   onChange={([date]) => {
-                    setEndDate(date as Date)
+                    setEndDate(date)
                   }}
                   className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent"
                   options={{
@@ -173,7 +169,7 @@ const EventModal = ({
                 <button className="btn btn-primary" onClick={handleConfirm as () => void}>
                   Confirm
                 </button>
-                <button className="btn btn-secondary" onClick={() => setOpen(false)}>
+                <button className="btn btn-secondary" onClick={() => setModalOpen(false)}>
                   Cancel
                 </button>
               </div>
