@@ -149,7 +149,7 @@ const EventModal = () => {
                 {modalAction === "Create" && (
                   <div className="flex flex-row items-center">
                     Event type:
-                    <div className="mr-3">
+                    <div className="ml-3 mr-3">
                       <Dropdown
                         options={managementTypes}
                         placeholder="Select event type"
