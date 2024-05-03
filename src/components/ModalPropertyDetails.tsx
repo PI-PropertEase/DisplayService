@@ -646,9 +646,11 @@ export default function ModalPropertyDetails() {
                             modalData.type === "Price (per night €)" ?
                             <div className='flex flex-col'>
                                     <div>   
-                                        <div className="alert alert-success mb-8">
-                                        <span>Recommended price: {typeof modalData.content === "object" && 'price' in modalData.content ? `${Number.parseFloat(modalData.content.recommended_price).toFixed(2)} €` : "0"}</span>
-                                        </div>
+                                        {typeof modalData.content === "object" && 'price' in modalData.content && modalData.content.recommended_price !== null &&
+                                            <div className="alert alert-success mb-8">
+                                                    <span>Recommended price: {`${Number.parseFloat(modalData.content.recommended_price).toFixed(2)} €`}</span>
+                                            </div>
+                                        }
                                         <p>New price:</p>
                                         <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' 
                                             ref={stringInput} 
