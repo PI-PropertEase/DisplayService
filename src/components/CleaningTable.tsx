@@ -46,7 +46,6 @@ const CleaningTable = () => {
               </label>
             </th>
             <th>Name and Address</th>
-            <th>Status</th>
             <th className="text-center">Arrival</th>
             <th className="text-center">Departure</th>
             <th className="text-center">Edit</th>
@@ -116,7 +115,6 @@ const CleaningTable = () => {
                         setSelectedEvent(cleaningEvent) // TODO: the type on this is messed up
                         setDeleteModalOpen(true)
                       }}
-                      disabled={cleaningEvent.type === IEventType.CLEANING}
                     >
                       <FaRegTrashAlt
                         style={{ color: cleaningEvent.type === IEventType.RESERVATION ? "gray" : "" }}

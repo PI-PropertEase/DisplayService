@@ -156,25 +156,21 @@ export const updateMaintenanceEvent = async (authHeader: string, maintenanceEven
 }
 
 
-export const deleteCleaningEvent = async (authHeader: string, cleaningEvent: ICleaning): Promise<ICleaning> => {
-  const res = await axios.delete<ICleaning>(`${URL}/events/management/cleaning/${cleaningEvent.id}`, 
+export const deleteCleaningEvent = async (authHeader: string, cleaningEvent: ICleaning) => {
+  await axios.delete(`${URL}/events/management/cleaning/${cleaningEvent.id}`, 
   {
     headers: {
       Authorization: authHeader,
     },
   })
-
-  return res.data
 }
 
 
-export const deleteMaintenanceEvent = async (authHeader: string, maintenanceEvent: IMaintenance): Promise<ICleaning> => {
-  const res = await axios.delete<ICleaning>(`${URL}/events/management/maintenance/${maintenanceEvent.id}`, 
+export const deleteMaintenanceEvent = async (authHeader: string, maintenanceEvent: IMaintenance) => {
+  await axios.delete(`${URL}/events/management/maintenance/${maintenanceEvent.id}`, 
   {
     headers: {
       Authorization: authHeader,
     },
   })
-
-  return res.data
 }

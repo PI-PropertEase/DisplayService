@@ -46,7 +46,6 @@ const MaintenanceTable = () => {
               </label>
             </th>
             <th>Name and Address</th>
-            <th>Status</th>
             <th className="text-center">Arrival</th>
             <th className="text-center">Departure</th>
             <th className="text-center">Edit</th>
@@ -116,7 +115,6 @@ const MaintenanceTable = () => {
                         setSelectedEvent(maintenanceEvent)
                         setDeleteModalOpen(true)
                       }}
-                      disabled={maintenanceEvent.type === IEventType.CLEANING}
                     >
                       <FaRegTrashAlt
                         style={{ color: maintenanceEvent.type === IEventType.RESERVATION ? "gray" : "" }}
