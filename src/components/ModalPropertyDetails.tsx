@@ -19,7 +19,7 @@ export interface IAlerts {
 
 export default function ModalPropertyDetails() {
     const authHeader = useAuthHeader() ?? "";
-    const id = useParams<{ id: string }>()?.id?.toString() ?? "";
+    const id = useParams<{ id: string }>().id?.toString() ?? "";
 
     const {data: modalData} = useQuery<IModalData>('modalData')
 
@@ -36,7 +36,6 @@ export default function ModalPropertyDetails() {
     const nameContactInput = useRef<HTMLInputElement>(null);
     const phoneContactInput = useRef<HTMLInputElement>(null);
     const updatedPropertyDetails: IFetchProperty = queryClient.getQueryData(`property${id}`)!;
-    const propertyId = useParams<{id: string}>().id;
 
     const [afterCommission, setAfterCommission] = useState<boolean>( typeof modalData?.content === "object" && "after_commision" in modalData.content ?  modalData.content.after_commission : false);
 
@@ -524,14 +523,11 @@ export default function ModalPropertyDetails() {
                 break;
             
         }
-        updateProperty(propertyId ?? "", updatedPropertyDetails, authHeader)
-        .then(async () => {
-            await queryClient.invalidateQueries(`property${propertyId}`);
+        updateProperty(id, updatedPropertyDetails, authHeader).then(async () => {
+            await queryClient.invalidateQueries(`property${id}`);
             handleModalClose();
-        })
-        .catch((error) => {
-            console.error(error);
-        });
+        }).catch(err => console.log(err));
+
     }
 
     return (

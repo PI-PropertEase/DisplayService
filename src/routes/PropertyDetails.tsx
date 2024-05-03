@@ -76,7 +76,7 @@ export default function PropertyDetails() {
 
     const handleUpdatePriceAutomatically = () => {
         const updatedPropertyDetails = { ...propertyDetails, update_price_automatically: !propertyDetails.update_price_automatically };
-        if (updatedPropertyDetails.update_price_automatically) {
+        if (updatedPropertyDetails.update_price_automatically && updatedPropertyDetails.recommended_price !== 0 && updatedPropertyDetails.recommended_price !== null) {
             updatedPropertyDetails.price = updatedPropertyDetails.recommended_price;
         }
         updateProperty(id, updatedPropertyDetails, authHeader).then(() => queryClient.setQueryData(`property${id}`, updatedPropertyDetails)).catch(err => console.log(err));
