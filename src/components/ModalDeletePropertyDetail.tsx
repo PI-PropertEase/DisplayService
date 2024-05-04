@@ -20,13 +20,15 @@ export default function ModalDeletePropertyDetail() {
             ...modalDeleteData, 
             isOpen: false, 
             id: modalDeleteData?.id ?? '',
+            prop_id: modalDeleteData?.prop_id ?? '',
         };
         queryClient.setQueryData<IModalDeleteData>('modalDeleteData', updatedModalDeleteData);
     };
 
     const handleDelete = async () => {
-        const updatedPropertyDetails: IFetchProperty = queryClient.getQueryData('property')!;
+        const updatedPropertyDetails: IFetchProperty = queryClient.getQueryData(`property${modalDeleteData?.prop_id}`)!;
         const id = modalDeleteData?.id.substring(modalDeleteData?.id.split(' ')[0].length).trim();
+        
         if (id){
             if (modalDeleteData?.id.includes('Bedroom')) {
                 delete updatedPropertyDetails.bedrooms[id];
@@ -36,14 +38,12 @@ export default function ModalDeletePropertyDetail() {
                 updatedPropertyDetails.contacts.splice(modalDeleteData.index, 1);
             }
         }
-        await queryClient.invalidateQueries('property')
-        queryClient.setQueryData('property', updatedPropertyDetails);
+        await queryClient.invalidateQueries(`property${modalDeleteData?.prop_id}`)
+        queryClient.setQueryData(`property${modalDeleteData?.prop_id}`, updatedPropertyDetails);
         await updateProperty(propertyId ?? "", updatedPropertyDetails, authHeader);
         handleModalClose();
+        return;
     }
-    
-
-
 
     return (
         <>
@@ -61,7 +61,7 @@ export default function ModalDeletePropertyDetail() {
                         <p>Are you sure you want to delete the {modalDeleteData.id }?</p>
                     </div>
                     <div className="modal-action flex flex-row items-center justify-center gap-2">
-                        <button className="btn btn-primary" onClick={handleDelete}>Yes</button>
+                    <button className="btn btn-primary" onClick={() => { void handleDelete(); }}>Yes</button>
                         <button className="btn btn-secondary" onClick={handleModalClose}>No</button>
                     </div>
                 </div>

@@ -8,11 +8,11 @@ import Drawer from "../components/Drawer";
 import ModalDeletePropertyDetail from "../components/ModalDeletePropertyDetail";
 import ModalPropertyDetails from "../components/ModalPropertyDetails";
 import Navbar from "../components/Navbar";
-import { fetchProperty } from "../services/Property.service";
+import { fetchProperty, updateProperty } from "../services/Property.service";
 import { Amenity, BathroomFixture, Bed, IFetchProperty } from "../types/PropertyType";
 
-export type ModalContentType = string | number | Bed[] | { price: number; after_commission: boolean; }
-                                | string[] | { name: string; phone_number: number; index: number; } 
+export type ModalContentType = string | number | Bed[] | { price: number; after_commission: boolean; recommended_price: number;}
+                                | string[] | { name: string; phone_number: number; index: number; } | { name: string; phone_number: number; }  
                                 | Record<string, boolean> | Amenity[] | BathroomFixture[] | undefined;
 
 export interface IModalData {
@@ -25,13 +25,14 @@ export interface IModalDeleteData {
     id: string;
     index?: number;
     isOpen: boolean;
+    prop_id: string;
 }
 
 
 export default function PropertyDetails() {
     const authHeader = useAuthHeader() ?? '';
     const queryClient = useQueryClient();
-    const id = useParams<{ id: string }>()?.id?.toString() ?? "";
+    const id = useParams<{ id: string }>().id?.toString() ?? "";
 
     const { data: propertyDetails } = useQuery<IFetchProperty>(`property${id}`, () => fetchProperty(id, authHeader).then(data => data), { staleTime: Infinity });
     if (!propertyDetails) {
@@ -62,16 +63,25 @@ export default function PropertyDetails() {
         queryClient.setQueryData<IModalData>("modalData", modalData);
     }
 
-    const handleOpenDeleteModal = (id: string, index?: number) => {
+    const handleOpenDeleteModal = (id_detail: string, index?: number) => {
         const modalDeleteData: IModalDeleteData = {
-            id: id,
+            id: id_detail,
             index: index ?? undefined,
-            isOpen: true
+            isOpen: true,
+            prop_id: id
         }
 
         queryClient.setQueryData<IModalDeleteData>("modalDeleteData", modalDeleteData);
     }
 
+    const handleUpdatePriceAutomatically = () => {
+        const updatedPropertyDetails = { ...propertyDetails, update_price_automatically: !propertyDetails.update_price_automatically };
+        if (updatedPropertyDetails.update_price_automatically && updatedPropertyDetails.recommended_price !== 0 && updatedPropertyDetails.recommended_price !== null) {
+            updatedPropertyDetails.price = updatedPropertyDetails.recommended_price;
+        }
+        updateProperty(id, updatedPropertyDetails, authHeader).then(() => queryClient.setQueryData(`property${id}`, updatedPropertyDetails)).catch(err => console.log(err));
+        
+    }
 
     return (
         <>
@@ -105,32 +115,38 @@ export default function PropertyDetails() {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="col-span-2 md:col-span-1 relative">
                                         <label htmlFor="title" className="text-accent">Title:</label>
-                                        <input id="title" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails?.title} readOnly />
+                                        <input id="title" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails.title} readOnly />
                                         <button className="absolute top-2 right-2" onClick={() => handleOpenModal(propertyDetails?.title, "Title")}><FaRegEdit className="text-accent" /></button>
                                     </div>
                                     <div className="col-span-2 md:col-span-1 relative">
                                         <label htmlFor="address" className="text-accent">Address:</label>
-                                        <input id="address" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails?.address} readOnly />
+                                        <input id="address" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails.address} readOnly />
                                         <button className="absolute top-2 right-2" onClick={() => handleOpenModal(propertyDetails?.address, "Address")}><FaRegEdit className="text-accent" /></button>                                    </div>
                                     <div className="col-span-2 relative">
                                         <label htmlFor="description" className="text-accent">Description:</label>
-                                        <textarea id="description" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails?.description} readOnly />
+                                        <textarea id="description" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails.description} readOnly />
                                         <button className="absolute top-2 right-2" onClick={() => handleOpenModal(propertyDetails?.description, "Description")}><FaRegEdit className="text-accent" /></button>
                                     </div>
                                     <div className="col-span-2 md:col-span-1 relative">
                                         <label htmlFor="guests" className="text-accent">Number of guests:</label>
-                                        <input id="guests" type="number" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails?.number_guests} readOnly />
+                                        <input id="guests" type="number" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails.number_guests} readOnly />
                                         <button className="absolute top-2 right-2" onClick={() => handleOpenModal(propertyDetails?.number_guests, "Number of guests")}><FaRegEdit className="text-accent" /></button>
                                     </div>
                                     <div className="col-span-2 md:col-span-1 relative">
                                         <label htmlFor="area" className="text-accent">Area:</label>
-                                        <input id="area" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={`${propertyDetails?.square_meters}m²`} readOnly />
+                                        <input id="area" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={`${propertyDetails.square_meters}m²`} readOnly />
                                         <button className="absolute top-2 right-2"  onClick={() => handleOpenModal(propertyDetails?.square_meters, "Area (m²)")} ><FaRegEdit className="text-accent" /></button>
                                     </div>
                                     <div className="col-span-2 md:col-span-1 relative">
                                         <label htmlFor="price" className="text-accent">Price per night:</label>
-                                        <input id="price" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={`${propertyDetails?.price}€`}  readOnly />
-                                        <button className="absolute top-2 right-2"  onClick={() => handleOpenModal({price: propertyDetails?.price, after_commission: propertyDetails.after_commission}, "Price (per night €)")}><FaRegEdit className="text-accent" /></button>
+                                        <input id="price" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={`${Number.parseFloat(propertyDetails.price).toFixed(2)}€`}  readOnly />
+                                        <button className="absolute top-2 right-2"  onClick={() => handleOpenModal({price: propertyDetails.price, after_commission: propertyDetails.after_commission, recommended_price: propertyDetails.recommended_price}, "Price (per night €)")}><FaRegEdit className="text-accent" /></button>
+                                        <div className="form-control">
+                                            <label className="label cursor-pointer">
+                                                <span className="label-text">Updates automatically with the best price </span> 
+                                                <input type="checkbox" defaultChecked={propertyDetails.update_price_automatically} onClick={handleUpdatePriceAutomatically} className="checkbox" />
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -242,10 +258,10 @@ export default function PropertyDetails() {
                                                 </thead>
                                                 <tbody>
                                                     {propertyDetails?.contacts.map((contact, index) => (
-                                                    <tr key={contact.phone_number}>
+                                                    <tr key={index}>
                                                         <th className=" whitespace-nowrap">{contact.name}</th>
                                                         <td>{contact.phone_number}</td>
-                                                        <td className="text-end" ><button onClick={() => handleOpenModal({index, ...contact}, "Contact " + contact.name)}><FaRegEdit className="text-accent" /></button></td>
+                                                        <td className="text-end" ><button onClick={() => handleOpenModal({name: contact.name, phone_number: Number.parseInt(contact.phone_number), index: index}, "Contact " + contact.name)}><FaRegEdit className="text-accent" /></button></td>
                                                         <td className="text-end"><button onClick={() => handleOpenDeleteModal("Contact " + contact.name, index)}><IoTrashOutline className=" text-red-600" /></button></td>
                                                     </tr>
                                                     ))}

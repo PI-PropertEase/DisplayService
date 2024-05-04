@@ -7,7 +7,7 @@ import { Link } from "react-router-dom"
 import { PropertyContext } from "../context/PropertyContext"
 import { ReservationContext } from "../context/ReservationContext"
 import { getPropertiesForPropertyTable } from "../utils/reservationpropertyunifier"
-import { IProperty } from "./PropertyTypes"
+import { IProperty } from "../types/PropertyType"
 
 const PropertyTable = () => {
   const PAGE_SIZE = 10
@@ -78,10 +78,12 @@ const PropertyTable = () => {
                     className="max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
                   >
                     <div className="lg:flex items-center gap-3">
-                      <div>
-                        <div className="font-bold">{property.title}</div>
-                        <div className="text-sm opacity-50">{property.address}</div>
-                      </div>
+                      <Link to={`../property/${property.id}`}>
+                        <div>
+                          <div className="font-bold">{property.title}</div>
+                          <div className="text-sm opacity-50">{property.address}</div>
+                        </div>
+                      </Link>
                     </div>
                   </td>
                   <td
