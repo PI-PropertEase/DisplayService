@@ -654,8 +654,9 @@ export default function ModalPropertyDetails() {
                                         <p>New price:</p>
                                         <input className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' 
                                             ref={stringInput} 
-                                            defaultValue={(typeof modalData.content === "object" && 'price' in modalData.content && typeof modalData.content.price === "number") ? modalData.content.price : 0}
-                                            placeholder='Recommended price: 300€'
+                                            defaultValue={(typeof modalData.content === "object" && 'price' in modalData.content && typeof modalData.content.price === "number") ? modalData.content.price : 0}                                            
+                                            placeholder='Set a new price. Example: 200'
+
                                         />
                                             <label className="label cursor-pointer pt-2">
                                                 <span className="label-text">After commission</span> 
