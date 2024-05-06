@@ -46,6 +46,7 @@ const MaintenanceTable = () => {
               </label>
             </th>
             <th>Name and Address</th>
+            <th className="text-center">Company Name</th>
             <th className="text-center">Arrival</th>
             <th className="text-center">Departure</th>
             <th className="text-center">Edit</th>
@@ -68,7 +69,7 @@ const MaintenanceTable = () => {
                     </label>
                   </th>
                   <td
-                    data-label="Address"
+                    data-label="Name and address"
                     className="max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
                   >
                     <div className="lg:flex items-center gap-3">
@@ -77,6 +78,12 @@ const MaintenanceTable = () => {
                         <div className="text-sm opacity-50">{maintenanceEvent.property?.address}</div>
                       </div>
                     </div>
+                  </td>
+                  <td
+                    data-label="Arrival"
+                    className="text-center max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
+                  >
+                    {maintenanceEvent.company_name}
                   </td>
                   <td
                     data-label="Arrival"

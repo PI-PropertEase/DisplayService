@@ -33,20 +33,24 @@ export enum ReservationStatus {
 
 // No attributes (for now)
 export interface ICleaning extends IEvent {
-
+  worker_name: string
 }
 
 // No attributes (for now)
 export interface IMaintenance extends IEvent {
-  
+  company_name: string
 }
 
-export interface IUpdateCleaning {
+export interface IUpdateEvent {
   begin_datetime?: Date
   end_datetime?: Date
+
 }
 
-export interface IUpdateMaintenance {
-  begin_datetime?: Date
-  end_datetime?: Date
+export interface IUpdateCleaning extends IUpdateEvent {
+  worker_name?: string
+}
+
+export interface IUpdateMaintenance extends IUpdateEvent {
+  company_name?: string
 }

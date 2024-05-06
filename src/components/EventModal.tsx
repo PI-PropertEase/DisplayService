@@ -20,6 +20,7 @@ import {
   IEventType,
   IMaintenance,
   IUpdateCleaning,
+  IUpdateEvent,
   IUpdateMaintenance,
 } from "../types/ReservationType"
 import { IUser } from "../types/UserType"
@@ -36,17 +37,18 @@ const EventModal = () => {
   const [beginDate, setBeginDate] = useState<Date>(selectedEvent?.begin_datetime ?? new Date())
   const [endDate, setEndDate] = useState<Date>(selectedEvent?.end_datetime ?? new Date())
 
-  const [managementType, setManagementType] = useState<string | null>("")
-  const [managementTypes, setManagementTypes] = useState<string[]>([])
+  const [managementType, setManagementType] = useState<IEventType | null>(null)
+  const [managementTypes, setManagementTypes] = useState<IEventType[]>([])
 
   const [errorMessage, setErrorMessage] = useState<string>("")
+  const [nameInput, setNameInput] = useState<string>("")
 
   const propertyId = parseInt(useParams<{ id: string }>().id ?? "-1")
   const userEmail = useAuthUser<IUser>()?.email
 
   const queryClient = useQueryClient()
 
-  const { data: fetchedManagementTypes } = useQuery<string[]>(
+  const { data: fetchedManagementTypes } = useQuery<IEventType[]>(
     "fetchManagementTypes",
     () => fetchManagementTypes(token),
     {
@@ -64,6 +66,14 @@ const EventModal = () => {
     if (selectedEvent) {
       setBeginDate(selectedEvent.begin_datetime)
       setEndDate(selectedEvent.end_datetime)
+      setManagementType(selectedEvent.type)
+      setNameInput(
+        selectedEvent.type === IEventType.CLEANING
+          ? (selectedEvent as ICleaning).worker_name
+          : selectedEvent.type === IEventType.MAINTENANCE
+          ? (selectedEvent as IMaintenance).company_name
+          : ""
+      )
     }
   }, [selectedEvent])
 
@@ -77,11 +87,15 @@ const EventModal = () => {
       showErrorMessage("Error! Invalid time interval. Begin time should be before end time.")
       return
     }
+    if (nameInput === "") {
+      showErrorMessage("Error! Please input name.")
+      return
+    }
     setShowError(false)
 
     try {
       if (modalAction === "Create") {
-        if (managementType !== "cleaning" && managementType !== "maintenance") {
+        if (managementType !== IEventType.CLEANING && managementType !== IEventType.MAINTENANCE) {
           showErrorMessage("Error! Please select an event type.")
           return
         }
@@ -91,26 +105,35 @@ const EventModal = () => {
           owner_email: userEmail ?? "",
           begin_datetime: beginDate,
           end_datetime: endDate,
-          type: managementType === "cleaning" ? IEventType.CLEANING : IEventType.MAINTENANCE,
+          type:
+            managementType === IEventType.CLEANING ? IEventType.CLEANING : IEventType.MAINTENANCE,
         }
 
-        if (managementType === "cleaning") {
+        if (managementType === IEventType.CLEANING) {
+          (event as ICleaning).worker_name = nameInput
           await createCleaningEvent(token, event as ICleaning)
           await queryClient.invalidateQueries("fetchCleaningEvents")
-        } else if (managementType === "maintenance") {
+        } else if (managementType === IEventType.MAINTENANCE) {
+          (event as IMaintenance).company_name = nameInput
           await createMaintenanceEvent(token, event as IMaintenance)
           await queryClient.invalidateQueries("fetchMaintenanceEvents")
         }
       } else if (modalAction === "Edit") {
-        const event = {
+        const event: IUpdateEvent = {
           begin_datetime: beginDate,
           end_datetime: endDate,
         }
 
         if (selectedEvent?.type === IEventType.CLEANING) {
+          if (nameInput !== (selectedEvent as ICleaning).worker_name) {
+            (event as IUpdateCleaning).worker_name = nameInput; 
+          }
           await updateCleaningEvent(token, event as IUpdateCleaning, selectedEvent?.id ?? -1)
           await queryClient.invalidateQueries("fetchCleaningEvents")
         } else if (selectedEvent?.type === IEventType.MAINTENANCE) {
+          if (nameInput !== (selectedEvent as IMaintenance).company_name) {
+            (event as IUpdateMaintenance).company_name = nameInput; 
+          }
           await updateMaintenanceEvent(token, event as IUpdateMaintenance, selectedEvent?.id ?? -1)
           await queryClient.invalidateQueries("fetchMaintenanceEvents")
         }
@@ -119,11 +142,12 @@ const EventModal = () => {
       if (isAxiosError(error)) {
         showErrorMessage(
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          (error.response?.data?.detail as string) ?? "An error occurred. Please try again."
+          (error.response?.data?.detail as string) ?? "An error occurred. Try again."
         )
       } else {
         showErrorMessage("An error occurred. Please try again.")
       }
+      console.log("error em questao", error)
       return
     }
 
@@ -154,13 +178,29 @@ const EventModal = () => {
                         options={managementTypes}
                         placeholder="Select event type"
                         onSelect={(option) => {
-                          setManagementType(option)
+                          setManagementType(option as IEventType)
                         }}
                       />
                     </div>
                   </div>
                 )}
-                <label>Begin time:</label>
+                {managementType !== null && (
+                  <>
+                    <label>
+                      {managementType === IEventType.CLEANING
+                        ? "Worker Name:"
+                        : managementType === IEventType.MAINTENANCE
+                        ? "Company Name:"
+                        : ""}
+                    </label>
+                    <input
+                      className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent"
+                      value={nameInput}
+                      onChange={(e) => setNameInput(e.target.value)}
+                    />
+                    <label>Begin time:</label>
+                  </>
+                )}
                 <Flatpickr
                   data-enable-time
                   value={beginDate}
