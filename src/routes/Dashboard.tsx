@@ -32,9 +32,7 @@ const Dashboard = () => {
                 <div className="w-full">
                   <PropertyListDashboard />
                 </div>
-                <div className="w-full">
-                  <h1>Chat</h1>
-                </div>
+                
               </div>
             </div>
           )}
