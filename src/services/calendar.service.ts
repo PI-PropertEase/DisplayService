@@ -1,5 +1,5 @@
 import axios from "axios"
-import { ICleaning, IEvent, IMaintenance, IReservation, IUpdateCleaning, IUpdateMaintenance } from "../types/ReservationType"
+import { ICleaning, IEvent, IEventType, IMaintenance, IReservation, IUpdateCleaning, IUpdateEvent, IUpdateMaintenance } from "../types/ReservationType"
 
 const URL = "http://localhost/api/CalendarService"
 
@@ -55,8 +55,8 @@ export const fetchEvents = async (authHeader: string): Promise<IEvent[]> => {
 }
 
 // returns ['cleaning', 'maintenance'] and other types that might be added in the future :)
-export const fetchManagementTypes = async (authHeader: string): Promise<string[]> => {
-  const res = await axios.get<string[]>(`${URL}/events/management/types`, {
+export const fetchManagementTypes = async (authHeader: string): Promise<IEventType[]> => {
+  const res = await axios.get<IEventType[]>(`${URL}/events/management/types`, {
     headers: {
       Authorization: authHeader,
     },
@@ -104,7 +104,7 @@ export const fetchMaintenanceEvents = async (authHeader: string): Promise<IMaint
 // TODO: deal with error case
 export const createCleaningEvent = async (authHeader: string, cleaningEvent: ICleaning): Promise<ICleaning> => {
   const res = await axios.post<ICleaning>(`${URL}/events/management/cleaning`, 
-  cleaningEvent,
+  serializeEvent(cleaningEvent),
   {
     headers: {
       Authorization: authHeader,
@@ -117,7 +117,7 @@ export const createCleaningEvent = async (authHeader: string, cleaningEvent: ICl
 // TODO: deal with error case
 export const createMaintenanceEvent = async (authHeader: string, maintenanceEvent: IMaintenance): Promise<IMaintenance> => {
   const res = await axios.post<IMaintenance>(`${URL}/events/management/maintenance`, 
-  maintenanceEvent,
+  serializeEvent(maintenanceEvent),
   {
     headers: {
       Authorization: authHeader,
@@ -131,7 +131,7 @@ export const createMaintenanceEvent = async (authHeader: string, maintenanceEven
 // TODO: deal with error case
 export const updateCleaningEvent = async (authHeader: string, cleaningEvent: IUpdateCleaning, id: number): Promise<IUpdateCleaning> => {
   const res = await axios.put<IUpdateCleaning>(`${URL}/events/management/cleaning/${id}`, 
-  cleaningEvent,
+  serializeUpdateEvent(cleaningEvent),
   {
     headers: {
       Authorization: authHeader,
@@ -145,7 +145,7 @@ export const updateCleaningEvent = async (authHeader: string, cleaningEvent: IUp
 // TODO: deal with error case
 export const updateMaintenanceEvent = async (authHeader: string, maintenanceEvent: IUpdateMaintenance, id: number): Promise<IUpdateMaintenance> => {
   const res = await axios.put<IUpdateMaintenance>(`${URL}/events/management/maintenance/${id}`, 
-  maintenanceEvent,
+  serializeUpdateEvent(maintenanceEvent),
   {
     headers: {
       Authorization: authHeader,
@@ -173,4 +173,23 @@ export const deleteMaintenanceEvent = async (authHeader: string, maintenanceEven
       Authorization: authHeader,
     },
   })
+}
+
+
+// removes timezone information, trust me
+const serializeEvent = (event: IEvent): IEvent => {
+  return {
+    ...event,
+    begin_datetime: event.begin_datetime ? event.begin_datetime.toISOString().split('Z')[0] : "",
+    end_datetime: event.end_datetime ? event.end_datetime.toISOString().split('Z')[0] : "",
+  }
+}
+
+// removes timezone information, trust me
+const serializeUpdateEvent = (event: IUpdateEvent): IUpdateEvent => {
+  return {
+    ...event,
+    begin_datetime: event.begin_datetime ? new Date(event.begin_datetime?.getTime() - event.begin_datetime?.getTimezoneOffset() * 60 * 1000).toISOString().split('Z')[0] : "",
+    end_datetime: event.end_datetime ? new Date(event.end_datetime?.getTime() - event.end_datetime?.getTimezoneOffset() * 60 * 1000).toISOString().split('Z')[0] : "",
+  }
 }
