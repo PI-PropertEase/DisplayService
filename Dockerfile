@@ -7,9 +7,7 @@ COPY pnpm-lock.yaml ./
 
 RUN npm install -g pnpm
 
-RUN pnpm install --frozen-lockfile
-
-COPY . .
+RUN pnpm install 
 
 EXPOSE 8080
 

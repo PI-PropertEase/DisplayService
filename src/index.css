@@ -1,15 +1,19 @@
+@import '@fontsource/outfit';
+@import '@fontsource/outfit/700.css';
+@import '@fontsource/outfit/500.css';
+@import '@fontsource/outfit/600.css';
+@import '@fontsource/outfit/300.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  --fc-button-text-color: #000000; 
+  --fc-button-bg-color: #FFFFFE; 
+  --fc-button-border-color: #FFFFFE; 
+  --fc-button-hover-bg-color: #FEEBE2; 
+  --fc-button-hover-border-color: #FFFFFE; 
+  --fc-button-active-bg-color: #FEEBE2; 
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -17,56 +21,84 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+.fc-daygrid-event-harness {
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
-a:hover {
-  color: #535bf2;
-}
+  
+
+
+[data-theme="dark"] {
+  --fc-button-text-color: #ffffff; 
+  --fc-button-bg-color: #191919; 
+  --fc-button-border-color: #191919; 
+  --fc-button-hover-bg-color: #E2CBC0; 
+  --fc-button-hover-border-color: #191919; 
+  --fc-button-active-bg-color: #E2CBC0; 
+ }
 
 body {
   margin: 0;
-  display: flex;
   place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  place-content: center;
+  min-height: 100dvh;
+  @apply bg-base-100;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.btn-primary{
+  @apply text-white;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.btn-outline.btn-primary {
+  @apply text-primary;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+.btn-outline.btn-primary:hover {
+  @apply text-white;
+}
+
+.fc-daygrid-block-event {
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  min-height: 2.5rem;
+  font-size: 16px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  margin-top: 10px;
+}
+
+.fc-scrollgrid-liquid {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+@layer utilities {
+  .content-datalabel {
+    content: attr(data-label);
+    float: left;
+    font-weight: bold;
+    text-transform: uppercase;
   }
-  a:hover {
-    color: #747bff;
+
+  .clip-out {
+    border: none;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
   }
-  button {
-    background-color: #f9f9f9;
-  }
+}
+
+.fc.fc-media-screen.fc-direction-ltr.fc-theme-standard.fc-liquid-hack {
+  margin: 12px;
+}
+
+.calendar-filter {
+  background: #F6F6F6;
 }
