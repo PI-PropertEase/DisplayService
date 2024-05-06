@@ -35,7 +35,7 @@ export default function Navbar() {
             <a><b>{userData?.name}</b></a>
               <ul className="p-2">
                 <li><a>Settings</a></li>
-                <li><button onClick={() => signOut()}>Logout</button></li>
+                <li><button onClick={() => handleSignOut()}>Logout</button></li>
               </ul>
             </li>
           </ul>

@@ -1,26 +1,21 @@
 import { useContext, useState } from "react"
-import PropertyListBadge from "./PropertyListBadge"
-import { BsBoxArrowUpRight } from "react-icons/bs"
-import { FaArrowLeft, FaArrowRight, FaRegTrashAlt } from "react-icons/fa"
-import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md"
-import { Link } from "react-router-dom"
-import { PropertyContext } from "../context/PropertyContext"
 import { ReservationContext } from "../context/ReservationContext"
-import { getPropertiesForPropertyTable } from "../utils/reservationpropertyunifier"
-import { IProperty } from "../types/PropertyType"
+import { PropertyContext } from "../context/PropertyContext"
+import { insertPropertyInReservation } from "../utils/reservationpropertyunifier"
+import ReservationStatusBadge from "./ReservationStatusBadge"
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa"
+import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md"
 
-const PropertyTable = () => {
-  const PAGE_SIZE = 10
-
-  const { properties: propertyData } = useContext(PropertyContext)
-
+const ReservationTable = () => {
   const { reservations: reservationData } = useContext(ReservationContext)
+  const { properties } = useContext(PropertyContext)
+  const reservations = insertPropertyInReservation(properties, reservationData)
 
-  const propertyList: IProperty[] = getPropertiesForPropertyTable(propertyData, reservationData);
+  const PAGE_SIZE = 10
 
   const [paginationNumber, setPaginationNumber] = useState<number>(1)
 
-  const numberOfPages = Math.ceil((propertyList?.length ?? 0) / PAGE_SIZE)
+  const numberOfPages = Math.ceil((reservations?.length ?? 0) / PAGE_SIZE)
 
   let paginationArray: number[] = [] // [1,2, ..., n] where n = number of pages
 
@@ -33,13 +28,7 @@ const PropertyTable = () => {
   paginationArray = paginationArray.filter((n) => !(Math.abs(paginationNumber - n) > 2))
 
   return (
-    <div className="overflow-auto h-full">
-      <div className="table-cell h-[4rem] pl-6 align-middle text-xl">
-        Properties
-        <span className="ml-3 badge text-[0.75rem] bg-secondary text-[#FDA882] dark:bg-orange-900 dark:text-secondary border-none">
-          {propertyList?.length ?? 0} Properties
-        </span>
-      </div>
+    <>
       <table className="table">
         {/* head */}
         <thead className="bg-secondary dark:bg-[#242424] text-black dark:text-white">
@@ -51,21 +40,21 @@ const PropertyTable = () => {
             </th>
             <th>Name and Address</th>
             <th>Status</th>
-            <th className="text-center">Arrival/Upcoming Arrival</th>
-            <th className="text-center">Departure/Upcoming Departure</th>
-            <th className="text-center">Current Price</th>
-            <th></th>
-            <th></th>
+            <th className="text-center">Client&apos;s Name</th>
+            <th className="text-center">Client&apos;s Phone</th>
+            <th className="text-center">Arrival</th>
+            <th className="text-center">Departure</th>
+            <th className="text-center">Reservation Cost</th>
           </tr>
         </thead>
         <tbody>
           {/* row 1 */}
-          {(propertyList ?? [])
+          {(reservations ?? [])
             .slice(PAGE_SIZE * (paginationNumber - 1), PAGE_SIZE * paginationNumber)
-            .map((property: IProperty) => {
+            .map((reservation) => {
               return (
                 <tr
-                  key={property.id}
+                  key={reservation.id}
                   className="max-[760px]:block max-[760px]:border-[#eee] max-[760px]:dark:border-[#223] max-[760px]:border-t-8 max-[760px]:border-b-0 max-[760px]:mb-2 max-[760px]:p-2"
                 >
                   <th className="max-[760px]:clip-out">
@@ -78,53 +67,47 @@ const PropertyTable = () => {
                     className="max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
                   >
                     <div className="lg:flex items-center gap-3">
-                      <Link to={`../property/${property.id}`}>
-                        <div>
-                          <div className="font-bold">{property.title}</div>
-                          <div className="text-sm opacity-50">{property.address}</div>
-                        </div>
-                      </Link>
+                      <div>
+                        <div className="font-bold">{reservation.property?.title}</div>
+                        <div className="text-sm opacity-50">{reservation.property?.address}</div>
+                      </div>
                     </div>
                   </td>
                   <td
                     className="max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
                     data-label="Status"
                   >
-                    <PropertyListBadge text={property.status} />
+                    <ReservationStatusBadge status={reservation.reservation_status} />
+                  </td>
+                  <td
+                    data-label="Client's name"
+                    className="text-center max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
+                  >
+                    {reservation.client_name}
+                  </td>
+                  <td
+                    data-label="Client's phone"
+                    className="text-center max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
+                  >
+                    {reservation.client_phone}
                   </td>
                   <td
                     data-label="Arrival"
                     className="text-center max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
                   >
-                    {property.arrival?.toLocaleString() ?? "-"}
+                    {reservation.begin_datetime.toLocaleString()}
                   </td>
                   <td
                     data-label="Departure"
-                    className="text-center max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
-                  >
-                    {property.departure?.toLocaleString() ?? "-"}
-                  </td>
-                  <td
-                    data-label="Price"
-                    className="text-center max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
-                  >
-                    {property.price}€
-                  </td>
-                  <td
-                    data-label="Delete"
                     className="text-center max-[760px]:flex max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"
                   >
-                    <a className="max-[760px]:ml-auto">
-                      <FaRegTrashAlt />
-                    </a>
+                    {reservation.end_datetime.toLocaleString()}
                   </td>
                   <td
-                    data-label="More Details"
+                    data-label="Reservation Cost"
                     className="text-center max-[760px]:flex max-[760px]:before:content-datalabel"
                   >
-                    <Link to={`../property/${property.id}`} className="max-[760px]:ml-auto">
-                      <BsBoxArrowUpRight />
-                    </Link>
+                    {reservation.cost}€
                   </td>
                 </tr>
               )
@@ -186,8 +169,8 @@ const PropertyTable = () => {
           </button>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
-export default PropertyTable
+export default ReservationTable

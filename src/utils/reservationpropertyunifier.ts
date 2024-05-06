@@ -1,5 +1,5 @@
 import { IFetchProperty, IProperty, PropertyStatus } from "../types/PropertyType"
-import { IReservation } from "../types/ReservationType"
+import { IEvent, IReservation } from "../types/ReservationType"
 
 const insertReservationsInProperty = (
   reservationData: IReservation[],
@@ -34,6 +34,25 @@ export const insertPropertyInReservation = (
     const property = propertyData.find((property) => property._id == reservation.property_id)
     return {
       ...reservation,
+      property,
+    }
+  })
+
+  return unifiedData
+}
+
+export const insertPropertyInEvent = (
+  propertyData: IFetchProperty[],
+  eventData: IEvent[]
+): (IEvent & { property: IFetchProperty | undefined })[] | undefined => {
+  if (!eventData || !propertyData) {
+    return undefined
+  }
+
+  const unifiedData = eventData.map((event) => {
+    const property = propertyData.find((property) => property._id == event.property_id)
+    return {
+      ...event,
       property,
     }
   })
@@ -78,10 +97,10 @@ export const getPropertiesForPropertyTable = (
         })
         return
       }
-      if (!closestReservation && isReservationUpcoming(r)) closestReservation = r
+      if (!closestReservation && isEventUpcoming(r)) closestReservation = r
       if (
         closestReservation &&
-        isReservationUpcoming(r) &&
+        isEventUpcoming(r) &&
         r.begin_datetime.getTime() - currTime.getTime() <
           closestReservation.begin_datetime.getTime() - currTime.getTime()
       )
@@ -105,7 +124,7 @@ export const getPropertiesForPropertyTable = (
   return propertyList
 }
 
-const isReservationUpcoming = (reservation: IReservation): boolean => {
+const isEventUpcoming = (event: IEvent | IReservation): boolean => {
   const currTime = new Date()
-  return reservation.begin_datetime.getTime() - currTime.getTime() > 0
+  return event.begin_datetime.getTime() - currTime.getTime() > 0
 }

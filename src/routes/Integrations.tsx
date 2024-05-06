@@ -29,7 +29,7 @@ export default function Integrations() {
             setUserConnectedServices(await fetchUserConnectedServices(authHeader ? authHeader : ""))
         }
 
-        getIntegrations()
+        getIntegrations().catch(console.error)
     }, []);
 
     function isUserIntegration(integration: IIntegration) {
@@ -41,13 +41,13 @@ export default function Integrations() {
     const {data: alerts} = useQuery<IIntegrationAlert>('alertsIntegrations');
 
     function handleConnectService(integration: IIntegration) {
-        if (userConnectedServices.includes(integration)) {
+        if (isUserIntegration(integration)) {
             updateAlertState("info", "Integration already connected!");
             return;
         }
     
         connectUserToService(authHeader ? authHeader : "", integration)
-            .then((data: IUser | null) => {
+            .then(async (data: IUser | null) => {
                 if (!data) {
                     updateAlertState("error", "Integration failed!");
                     return;
@@ -56,9 +56,11 @@ export default function Integrations() {
                 updateAlertState("success", "Integration successful!");
     
                 setUserConnectedServices(data.connected_services);
-                queryClient.invalidateQueries("user");
+                await queryClient.invalidateQueries("user")
+                await queryClient.invalidateQueries('fetchProperties')
+                await queryClient.invalidateQueries('fetchReservations')
             })
-            .catch((error: undefined) => {
+            .catch((error) => {
                 console.error("Error connecting to service:", error);
                 updateAlertState("error", "An error occurred while connecting!");
             });

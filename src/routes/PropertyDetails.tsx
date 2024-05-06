@@ -10,6 +10,7 @@ import ModalPropertyDetails from "../components/ModalPropertyDetails";
 import Navbar from "../components/Navbar";
 import { fetchProperty, updateProperty } from "../services/Property.service";
 import { Amenity, BathroomFixture, Bed, IFetchProperty } from "../types/PropertyType";
+import PropertyDetailsAllTables from "../components/PropertyDetailsAllTables";
 
 export type ModalContentType = string | number | Bed[] | { price: number; after_commission: boolean; recommended_price: number;}
                                 | string[] | { name: string; phone_number: number; index: number; } | { name: string; phone_number: number; }  
@@ -274,6 +275,7 @@ export default function PropertyDetails() {
                             </div>
                         </div>
                     </div>
+                    <PropertyDetailsAllTables/>
                 </div>
             </div>
             <ModalPropertyDetails />
