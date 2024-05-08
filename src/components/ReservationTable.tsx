@@ -5,11 +5,16 @@ import { insertPropertyInReservation } from "../utils/reservationpropertyunifier
 import ReservationStatusBadge from "./ReservationStatusBadge"
 import { FaArrowLeft, FaArrowRight, FaKey } from "react-icons/fa"
 import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md"
+import GenerateKeyModal from "./GenerateKeyModal"
+import { IReservation } from "../types/ReservationType"
 
 const ReservationTable = () => {
   const { reservationsByPropertyId: reservationData } = useContext(ReservationContext)
   const { properties } = useContext(PropertyContext)
   const reservations = insertPropertyInReservation(properties, reservationData)
+  const [keyModalOpen, setKeyModalOpen] = useState<boolean>(true);
+  // selectedReservation is for sending this data into the GenerateKeyModal
+  const [selectedReservation, setSelectedReservation] = useState<IReservation | undefined>(undefined);
 
   const PAGE_SIZE = 10
 
@@ -117,7 +122,8 @@ const ReservationTable = () => {
                     <button
                       className="max-[760px]:ml-auto"
                       onClick={() => {
-                        console.log("doing key stuff :)")
+                        setKeyModalOpen(true);
+                        setSelectedReservation(reservation)
                       }}
                     >
                       <FaKey /> 
@@ -183,6 +189,7 @@ const ReservationTable = () => {
           </button>
         </div>
       </div>
+      <GenerateKeyModal isOpen={keyModalOpen} setOpen={setKeyModalOpen} event={selectedReservation}/>
     </>
   )
 }
