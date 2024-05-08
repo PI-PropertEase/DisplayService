@@ -3,10 +3,11 @@ import { ReservationContext } from "../context/ReservationContext"
 import { PropertyContext } from "../context/PropertyContext"
 import { insertPropertyInReservation } from "../utils/reservationpropertyunifier"
 import ReservationStatusBadge from "./ReservationStatusBadge"
-import { FaArrowLeft, FaArrowRight, FaKey } from "react-icons/fa"
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa"
 import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md"
 import GenerateKeyModal from "./GenerateKeyModal"
 import { IReservation } from "../types/ReservationType"
+import { RiMailSendLine } from "react-icons/ri";
 
 const ReservationTable = () => {
   const { reservationsByPropertyId: reservationData } = useContext(ReservationContext)
@@ -126,7 +127,7 @@ const ReservationTable = () => {
                         setSelectedReservation(reservation)
                       }}
                     >
-                      <FaKey /> 
+                      <RiMailSendLine size={20} /> 
                     </button>
                   </td>
                 </tr>

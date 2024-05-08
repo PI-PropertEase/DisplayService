@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
-import { GiPerspectiveDiceSixFacesRandom } from "react-icons/gi";
+import { IoDiceOutline } from "react-icons/io5";
 import { IReservation } from "../types/ReservationType";
 
 interface GenerateKeyModalProps {
@@ -48,7 +48,7 @@ const GenerateKeyModal = ({event, isOpen, setOpen}: GenerateKeyModalProps) => {
                                 />
                                 <div className="tooltip" data-tip="Randomize">
                                 <button className="ml-2">
-                                    <GiPerspectiveDiceSixFacesRandom />
+                                    <IoDiceOutline size={30} />
                                 </button>
                                 </div>
                             </div>
