@@ -3,11 +3,11 @@ import { ReservationContext } from "../context/ReservationContext"
 import { PropertyContext } from "../context/PropertyContext"
 import { insertPropertyInReservation } from "../utils/reservationpropertyunifier"
 import ReservationStatusBadge from "./ReservationStatusBadge"
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa"
+import { FaArrowLeft, FaArrowRight, FaKey } from "react-icons/fa"
 import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md"
 
 const ReservationTable = () => {
-  const { reservations: reservationData } = useContext(ReservationContext)
+  const { reservationsByPropertyId: reservationData } = useContext(ReservationContext)
   const { properties } = useContext(PropertyContext)
   const reservations = insertPropertyInReservation(properties, reservationData)
 
@@ -45,6 +45,7 @@ const ReservationTable = () => {
             <th className="text-center">Arrival</th>
             <th className="text-center">Departure</th>
             <th className="text-center">Reservation Cost</th>
+            <th className="text-center">Send key</th>
           </tr>
         </thead>
         <tbody>
@@ -108,6 +109,19 @@ const ReservationTable = () => {
                     className="text-center max-[760px]:flex max-[760px]:before:content-datalabel"
                   >
                     {reservation.cost}€
+                  </td>
+                  <td
+                    data-label="Send key"
+                    className="text-center max-[760px]:flex max-[760px]:before:content-datalabel"
+                  >
+                    <button
+                      className="max-[760px]:ml-auto"
+                      onClick={() => {
+                        console.log("doing key stuff :)")
+                      }}
+                    >
+                      <FaKey /> 
+                    </button>
                   </td>
                 </tr>
               )

@@ -2,8 +2,9 @@
 import React, { createContext, useEffect, useState } from "react"
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader"
 import { useQuery } from "react-query"
-import { fetchCleaningEvents, fetchMaintenanceEvents } from "../services/calendar.service"
+import { fetchCleaningEventsByPropertyId, fetchMaintenanceEventsByPropertyId } from "../services/calendar.service"
 import { ICleaning, IMaintenance } from "../types/ReservationType"
+import { useParams } from "react-router-dom"
 
 interface ManagementContextType {
   cleaningEvents: ICleaning[]
@@ -26,12 +27,14 @@ export const ManagementContextProvider: React.FC<{ children: React.ReactNode }> 
 }) => {
   const [cleaningEvents, setCleaningEvents] = useState<ICleaning[]>([])
   const [maintenanceEvents, setMaintenanceEvents] = useState<IMaintenance[]>([])
+  const id = useParams<{ id: string }>().id?.toString() ?? "";
+
 
   const authHeader = useAuthHeader() ?? ""
 
   const { data: initialCleaningEvents } = useQuery<ICleaning[]>(
     "fetchCleaningEvents",
-    () => fetchCleaningEvents(authHeader ?? ""),
+    () => fetchCleaningEventsByPropertyId(authHeader ?? "", parseInt(id)),
     {
       staleTime: 10000,
     }
@@ -39,7 +42,7 @@ export const ManagementContextProvider: React.FC<{ children: React.ReactNode }> 
 
   const { data: initialMaintenanceEvents } = useQuery<IMaintenance[]>(
     "fetchMaintenanceEvents",
-    () => fetchMaintenanceEvents(authHeader ?? ""),
+    () => fetchMaintenanceEventsByPropertyId(authHeader ?? "", parseInt(id)),
     {
       staleTime: 10000,
     }
