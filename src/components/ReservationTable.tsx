@@ -13,7 +13,7 @@ const ReservationTable = () => {
   const { reservationsByPropertyId: reservationData } = useContext(ReservationContext)
   const { properties } = useContext(PropertyContext)
   const reservations = insertPropertyInReservation(properties, reservationData)
-  const [keyModalOpen, setKeyModalOpen] = useState<boolean>(true);
+  const [keyModalOpen, setKeyModalOpen] = useState<boolean>(false);
   // selectedReservation is for sending this data into the GenerateKeyModal
   const [selectedReservation, setSelectedReservation] = useState<IReservation | undefined>(undefined);
 
@@ -190,7 +190,7 @@ const ReservationTable = () => {
           </button>
         </div>
       </div>
-      <GenerateKeyModal isOpen={keyModalOpen} setOpen={setKeyModalOpen} event={selectedReservation}/>
+      <GenerateKeyModal isOpen={keyModalOpen} setOpen={setKeyModalOpen} reservation={selectedReservation}/>
     </>
   )
 }

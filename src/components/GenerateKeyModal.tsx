@@ -2,21 +2,56 @@ import { useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
 import { IoDiceOutline } from "react-icons/io5";
 import { IReservation } from "../types/ReservationType";
+import { sendKeyEmail } from "../services/calendar.service";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 interface GenerateKeyModalProps {
-    isOpen: boolean;
-    setOpen: (value: boolean) => void;
-    event: IReservation | undefined;
+    isOpen: boolean
+    setOpen: (value: boolean) => void
+    reservation: IReservation | undefined
 }
 
-const GenerateKeyModal = ({event, isOpen, setOpen}: GenerateKeyModalProps) => {
-    const [showError, setShowError] = useState<boolean>(false);
-    const [errorMessage, setErrorMessage] = useState<string>("");
+const GenerateKeyModal = ({reservation, isOpen, setOpen}: GenerateKeyModalProps) => {
+    const authHeader = useAuthHeader() ?? ''
+    const [showError, setShowError] = useState<boolean>(false)
+    const [errorMessage, setErrorMessage] = useState<string>("")
     const [keycodeInput, setKeycodeInput] = useState<string>("")
+    const [confirmation, setConfirmation] = useState<boolean>(false)
 
     const handleConfirm = () => {
-        console.log("hi")
+        if (keycodeInput == "") {
+            setErrorMessage("Include a keycode to be sent to the client.")
+            setShowError(true)
+            return
+        }
+        if (!confirmation) {
+            setErrorMessage("You must confirm to send an email to the client with the keycode.")
+            setShowError(true)
+            return
+        }
+        if (!reservation) return;
+        setShowError(false)
+        sendKeyEmail(authHeader, keycodeInput, reservation).then().catch((_reason) => {
+            setErrorMessage("Failed to send email.")
+            setShowError(true)
+        }).finally(() => {
+            handleClose()
+        })
     }
+
+    const handleClose = () => {
+        setOpen(false)
+        setShowError(false)
+        setErrorMessage("")
+        setKeycodeInput("")
+        setConfirmation(false)
+    }
+
+    const randomizeKeyCode = () => {
+        // generates string between '000000' and '999999'
+        setKeycodeInput(Math.floor(Math.random() * 999999).toString().padStart(6, '0'))
+    }
+
     return (
         
             <>
@@ -30,8 +65,7 @@ const GenerateKeyModal = ({event, isOpen, setOpen}: GenerateKeyModalProps) => {
                             <IoCloseOutline
                                 className="text-2xl cursor-pointer"
                                 onClick={() => {
-                                    setOpen(false)
-                                    console.log("clicked me")
+                                    handleClose()
                                 }}
                             />
                         </div>
@@ -47,7 +81,7 @@ const GenerateKeyModal = ({event, isOpen, setOpen}: GenerateKeyModalProps) => {
                                     onChange={(e) => setKeycodeInput(e.target.value)}
                                 />
                                 <div className="tooltip" data-tip="Randomize">
-                                <button className="ml-2">
+                                <button className="ml-2" onClick={() => randomizeKeyCode()}>
                                     <IoDiceOutline size={30} />
                                 </button>
                                 </div>
@@ -56,11 +90,11 @@ const GenerateKeyModal = ({event, isOpen, setOpen}: GenerateKeyModalProps) => {
                         <div className="pt-5">
                             <span className="text-warning font-bold">WARNING:{"  "}</span>
                             this will send an e-mail with the provided key code for opening the door to the following client:
-                            <span className="font-bold">{"  "}{event?.client_email}</span>
+                            <span className="font-bold">{"  "}{reservation?.client_email}</span>
                         </div>
                         <div className="flex gap-2 items-center pt-2">
                             <span className="label-text font-bold">Are you sure?</span> 
-                            <input type="checkbox" defaultChecked={false} onClick={() => console.log("hello")} className="checkbox" />
+                            <input type="checkbox" checked={confirmation} onChange={() => setConfirmation(!confirmation)} className="checkbox" />
                         </div>
 
                         {showError && (
@@ -78,7 +112,7 @@ const GenerateKeyModal = ({event, isOpen, setOpen}: GenerateKeyModalProps) => {
                                 d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
                                 />
                             </svg>
-                            <span>{errorMessage}</span>
+                            <span>Error: {errorMessage}</span>
                             <button className="btn btn-sm btn-error" onClick={() => setShowError(false)}>
                                 X
                             </button>
@@ -88,7 +122,7 @@ const GenerateKeyModal = ({event, isOpen, setOpen}: GenerateKeyModalProps) => {
                             <button className="btn btn-primary" onClick={handleConfirm as () => void}>
                             Confirm
                             </button>
-                            <button className="btn btn-secondary" onClick={() => setOpen(false)}>
+                            <button className="btn btn-secondary" onClick={() => handleClose()}>
                             Cancel
                             </button>
                         </div>
