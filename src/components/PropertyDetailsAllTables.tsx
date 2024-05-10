@@ -24,7 +24,6 @@ const PropertyDetailsAllTables = () => {
     <div className="flex justify-end">
       <button
           onClick={() => {
-            console.log("clicked here hehe")
             setModalAction("Create")
             setModalOpen(true)
           }}
