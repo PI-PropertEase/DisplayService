@@ -29,13 +29,11 @@ const GenerateKeyModal = ({reservation, isOpen, setOpen}: GenerateKeyModalProps)
             setShowError(true)
             return
         }
-        if (!reservation) return;
+        if (!reservation) return
         setShowError(false)
-        sendKeyEmail(authHeader, keycodeInput, reservation).then().catch((_reason) => {
+        sendKeyEmail(authHeader, keycodeInput, reservation).then(() => handleClose()).catch((_reason) => {
             setErrorMessage("Failed to send email.")
             setShowError(true)
-        }).finally(() => {
-            handleClose()
         })
     }
 
