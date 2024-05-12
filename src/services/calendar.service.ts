@@ -249,3 +249,15 @@ const serializeUpdateEvent = (event: IUpdateEvent): IUpdateEvent => {
     end_datetime: event.end_datetime ? new Date(event.end_datetime?.getTime() - event.end_datetime?.getTimezoneOffset() * 60 * 1000).toISOString().split('Z')[0] : "",
   }
 }
+
+export const sendKeyEmail = async (authHeader: string, key: string, reservation: IReservation) : Promise<void> => {
+  await axios.post(`${URL}/events/reservation/${reservation.id}/email_key`, 
+  {
+    "key": key,
+  },
+  {
+    headers: {
+      Authorization: authHeader,
+    },
+  })
+}

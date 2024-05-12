@@ -3,13 +3,19 @@ import { ReservationContext } from "../context/ReservationContext"
 import { PropertyContext } from "../context/PropertyContext"
 import { insertPropertyInReservation } from "../utils/reservationpropertyunifier"
 import ReservationStatusBadge from "./ReservationStatusBadge"
-import { FaArrowLeft, FaArrowRight, FaKey } from "react-icons/fa"
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa"
 import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md"
+import GenerateKeyModal from "./GenerateKeyModal"
+import { IReservation } from "../types/ReservationType"
+import { RiMailSendLine } from "react-icons/ri";
 
 const ReservationTable = () => {
   const { reservationsByPropertyId: reservationData } = useContext(ReservationContext)
   const { properties } = useContext(PropertyContext)
   const reservations = insertPropertyInReservation(properties, reservationData)
+  const [keyModalOpen, setKeyModalOpen] = useState<boolean>(false);
+  // selectedReservation is for sending this data into the GenerateKeyModal
+  const [selectedReservation, setSelectedReservation] = useState<IReservation | undefined>(undefined);
 
   const PAGE_SIZE = 10
 
@@ -117,10 +123,11 @@ const ReservationTable = () => {
                     <button
                       className="max-[760px]:ml-auto"
                       onClick={() => {
-                        console.log("doing key stuff :)")
+                        setKeyModalOpen(true);
+                        setSelectedReservation(reservation)
                       }}
                     >
-                      <FaKey /> 
+                      <RiMailSendLine size={20} /> 
                     </button>
                   </td>
                 </tr>
@@ -183,6 +190,7 @@ const ReservationTable = () => {
           </button>
         </div>
       </div>
+      <GenerateKeyModal isOpen={keyModalOpen} setOpen={setKeyModalOpen} reservation={selectedReservation}/>
     </>
   )
 }

@@ -103,8 +103,8 @@ const EventModal = () => {
         const event = {
           property_id: propertyId,
           owner_email: userEmail ?? "",
-          begin_datetime: beginDate,
-          end_datetime: endDate,
+          begin_datetime: new Date(beginDate?.getTime() - beginDate?.getTimezoneOffset() * 60 * 1000),
+          end_datetime: new Date(endDate?.getTime() - endDate?.getTimezoneOffset() * 60 * 1000),
           type:
             managementType === IEventType.CLEANING ? IEventType.CLEANING : IEventType.MAINTENANCE,
         }
