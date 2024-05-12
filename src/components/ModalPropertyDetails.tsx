@@ -497,10 +497,9 @@ export default function ModalPropertyDetails() {
                         });
                         return;
                     }
-             
                 } else if (modalData?.type.includes("Contact")) {
                     const index = typeof modalData.content === "object" && 'index' in modalData.content ? modalData.content.index as number : undefined;
-                    if (index !== undefined && nameContactInput.current?.value && phoneContactInput.current?.value && isValidPhoneNumber(phoneContactInput.current.value, "PT")){
+                    if (index !== undefined && nameContactInput.current?.value && phoneContactInput.current?.value && phoneContactInput.current.value.startsWith("+") && isValidPhoneNumber(phoneContactInput.current.value, "PT")){
                         updatedPropertyDetails.contacts[index] = {
                             name: nameContactInput.current?.value,
                             phone_number: phoneContactInput.current?.value,
@@ -609,7 +608,8 @@ export default function ModalPropertyDetails() {
                                         <p className='font-light'>Phone Number: </p>
                                         <input 
                                             className='bg-base-200 p-2 rounded-xl mt-2 w-full text-accent' 
-                                            ref={phoneContactInput} 
+                                            ref={phoneContactInput}
+                                            defaultValue={ typeof modalData.content === "object" && typeof modalData.content.phone_number === "number" ? "+" + modalData.content.phone_number : ""}
                                             placeholder='+351 910 000 000'
                                         />
                                     </div>
