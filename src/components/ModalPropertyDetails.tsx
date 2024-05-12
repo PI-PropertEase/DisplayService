@@ -440,7 +440,7 @@ export default function ModalPropertyDetails() {
                 }
                 break;
             case "New Contact":
-                if (nameContactInput.current?.value && phoneContactInput.current?.value && isValidPhoneNumber(phoneContactInput.current.value, "PT")){
+                if (nameContactInput.current?.value && phoneContactInput.current?.value && phoneContactInput.current.value.startsWith("+") && isValidPhoneNumber(phoneContactInput.current.value, "PT")){
                     updatedPropertyDetails.contacts.push({
                         name: nameContactInput.current?.value,
                         phone_number: phoneContactInput.current?.value,

@@ -147,7 +147,6 @@ const EventModal = () => {
       } else {
         showErrorMessage("An error occurred. Please try again.")
       }
-      console.log("error em questao", error)
       return
     }
 
