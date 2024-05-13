@@ -62,8 +62,6 @@ export const fetchEvents = async (authHeader: string): Promise<IEvent[]> => {
     },
   })
 
-  console.log("res", res.data)
-
   // serialize into right data types
   // Date strings are in the format "YYYY-MM-DDTHH:MM:SS" and need to be converted to Date objects with the correct time zone
   const events: IEvent[] = res.data.map((r: IEvent) => ({
