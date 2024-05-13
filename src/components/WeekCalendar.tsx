@@ -1,9 +1,9 @@
 import dayGridPlugin from "@fullcalendar/daygrid"
 import FullCalendar from "@fullcalendar/react"
 import { useContext } from "react"
-import { ReservationContext } from "../context/ReservationContext"
+import { EventContext } from "../context/EventContext"
 import { PropertyContext } from "../context/PropertyContext"
-import { insertPropertyInReservation } from "../utils/reservationpropertyunifier"
+import { insertPropertyInEvent } from "../utils/reservationpropertyunifier"
 
 // type that is displayed on the calendar of this page
 interface IWeekCalendarType {
@@ -13,12 +13,10 @@ interface IWeekCalendarType {
 }
 
 export default function WeekCalendar() {
-  const { reservations: reservationData } = useContext(ReservationContext)
+  const { events } = useContext(EventContext)
   const { properties: propertyData } = useContext(PropertyContext)
 
-  const unifiedData = insertPropertyInReservation(propertyData, reservationData)
-
-  if (!reservationData) {
+  if (!events || !propertyData) {
     return (
       <div className="flex justify-center items-center h-screen">
         <span className="loading loading-dots loading-lg"></span>
@@ -26,21 +24,24 @@ export default function WeekCalendar() {
     )
   }
 
+  console.log(events)
+  console.log(propertyData)
 
-  const convertReservationData = (): IWeekCalendarType[] => {
+  const unifiedData = insertPropertyInEvent(propertyData, events)
+
+  const convertEventData = (): IWeekCalendarType[] => {
     if (!unifiedData) return []
-    const convertedReservations: IWeekCalendarType[] = []
+    const convertedEvents: IWeekCalendarType[] = []
 
-
-    unifiedData.forEach((r) => {
-      convertedReservations.push({
-        title: r.property?.title ?? "No title",
-        start: r.begin_datetime.toISOString().split("T")[0],
-        end: r.end_datetime.toISOString().split("T")[0],
+    unifiedData.forEach((e) => {
+      convertedEvents.push({
+        title: e.property?.title ?? "No title",
+        start: e.begin_datetime.toISOString().split("T")[0],
+        end: e.end_datetime.toISOString().split("T")[0],
       })
     })
 
-    return convertedReservations
+    return convertedEvents
   }
 
   return (
@@ -53,7 +54,7 @@ export default function WeekCalendar() {
       }}
       height={"100%"}
       buttonIcons={{ prev: "chevron-left", next: "chevron-right" }}
-      events={convertReservationData()}
+      events={convertEventData()}
       eventColor="#FD642395"
       eventBorderColor="#FD642395"
       eventTextColor="#000000"

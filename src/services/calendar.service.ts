@@ -56,11 +56,13 @@ export const fetchReservationsByPropertyId = async (authHeader: string, property
 
 
 export const fetchEvents = async (authHeader: string): Promise<IEvent[]> => {
-  const res = await axios.get<IEvent[]>(`${URL}/events`, {
+  const res = await axios.get<IEvent[]>(`${URL}/events?reservation_status=confirmed`, {
     headers: {
       Authorization: authHeader,
     },
   })
+
+  console.log("res", res.data)
 
   // serialize into right data types
   // Date strings are in the format "YYYY-MM-DDTHH:MM:SS" and need to be converted to Date objects with the correct time zone
