@@ -18,6 +18,7 @@ import Integrations from "./routes/Integrations"
 import { ReservationContextProvider } from "./context/ReservationContext"
 import { EventModalContextProvider } from "./context/EventModalContext"
 import { ManagementContextProvider } from "./context/ManagementContext"
+import { EventContextProvider } from "./context/EventContext"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -46,7 +47,9 @@ const myRouter = createBrowserRouter([
       <RequireAuth fallbackPath="/">
         <PropertyContextProvider>
           <ReservationContextProvider>
-            <Dashboard />
+            <EventContextProvider>
+              <Dashboard />
+            </EventContextProvider>
           </ReservationContextProvider>
         </PropertyContextProvider>
       </RequireAuth>
@@ -85,9 +88,11 @@ const myRouter = createBrowserRouter([
     element: (
       <RequireAuth fallbackPath="/">
         <ReservationContextProvider>
-          <PropertyContextProvider>
-            <Calendar />
-          </PropertyContextProvider>
+          <EventContextProvider>
+            <PropertyContextProvider>
+              <Calendar />
+            </PropertyContextProvider>
+          </EventContextProvider>
         </ReservationContextProvider>
       </RequireAuth>
     ),

@@ -56,7 +56,7 @@ export const fetchReservationsByPropertyId = async (authHeader: string, property
 
 
 export const fetchEvents = async (authHeader: string): Promise<IEvent[]> => {
-  const res = await axios.get<IEvent[]>(`${URL}/events`, {
+  const res = await axios.get<IEvent[]>(`${URL}/events?reservation_status=confirmed`, {
     headers: {
       Authorization: authHeader,
     },
