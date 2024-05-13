@@ -70,8 +70,8 @@ export const getPropertiesForPropertyTable = (
   const propertyList: IProperty[] = []
 
   unifiedData?.forEach((prop) => {
-    // if no reservations
-    if (prop.reservations.length == 0)
+    // if no reservations, set property status as free and return
+    if (prop.reservations.length == 0) {
       propertyList.push({
         id: prop._id,
         title: prop.title,
@@ -81,7 +81,10 @@ export const getPropertiesForPropertyTable = (
         departure: undefined,
         price: prop.price,
       })
+      return;
+    }
 
+    // if there are reservations, get the closest one 
     const currTime = new Date()
     let closestReservation: IReservation | undefined = undefined
     prop.reservations.forEach((r) => {
@@ -127,4 +130,12 @@ export const getPropertiesForPropertyTable = (
 const isEventUpcoming = (event: IEvent | IReservation): boolean => {
   const currTime = new Date()
   return event.begin_datetime.getTime() - currTime.getTime() > 0
+}
+
+const isEventInTheNextDay = (event: IEvent): boolean => {
+  const currTime = new Date();
+  const millisecondsFromEventBeginTime = event.begin_datetime.getTime() - currTime.getTime();
+  // returns true if event begin_time is within 1 day worth of milliseconds (86400 * 1000)
+  // from starting
+  return millisecondsFromEventBeginTime < 86400 * 1000 && millisecondsFromEventBeginTime > 0;
 }
