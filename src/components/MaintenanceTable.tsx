@@ -40,11 +40,6 @@ const MaintenanceTable = () => {
         {/* head */}
         <thead className="bg-secondary dark:bg-[#242424] text-black dark:text-white">
           <tr className="max-[760px]:block max-[760px]:clip-out">
-            <th>
-              <label>
-                <input type="checkbox" className="checkbox" />
-              </label>
-            </th>
             <th>Name and Address</th>
             <th className="text-center">Company Name</th>
             <th className="text-center">Arrival</th>
@@ -63,11 +58,6 @@ const MaintenanceTable = () => {
                   key={maintenanceEvent.id}
                   className="max-[760px]:block max-[760px]:border-[#eee] max-[760px]:dark:border-[#223] max-[760px]:border-t-8 max-[760px]:border-b-0 max-[760px]:mb-2 max-[760px]:p-2"
                 >
-                  <th className="max-[760px]:clip-out">
-                    <label>
-                      <input type="checkbox" className="checkbox" />
-                    </label>
-                  </th>
                   <td
                     data-label="Name and address"
                     className="max-[760px]:block max-[760px]:text-right max-[760px]:before:content-datalabel max-[760px]:border-b-[1px] max-[760px]:border-[#eee] max-[760px]:dark:border-[#223]"

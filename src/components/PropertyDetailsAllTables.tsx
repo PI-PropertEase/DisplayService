@@ -6,8 +6,10 @@ import MaintenanceTable from "./MaintenanceTable"
 import EventModal from "./EventModal"
 import DeleteEventModal from "./DeleteEventModal"
 import { EventModalContext } from "../context/EventModalContext"
+import { DetailsInfo } from "./DetailsInfo"
 
 enum TableTabs {
+  DETAILS = "details",
   RESERVATIONS = "reservation events",
   CLEANING = "cleaning events",
   MAINTENANCE = "maintenance events",
@@ -15,31 +17,34 @@ enum TableTabs {
 
 const PropertyDetailsAllTables = () => {
   // selectedEvent is used to pass this data into the modal for editing/deleting a certain event
-  const [selectedTab, setSelectedTab] = useState<TableTabs>(TableTabs.RESERVATIONS)
+  const [selectedTab, setSelectedTab] = useState<TableTabs>(TableTabs.DETAILS)
 
   const { setModalOpen, setModalAction } = useContext(EventModalContext)
 
   return (
     <>
     <div className="flex justify-end">
-      <button
-          onClick={() => {
-            setModalAction("Create")
-            setModalOpen(true)
-          }}
-          className="btn sm:btn-sm btn-xs btn-outline btn-success"
-        >
-          <IoMdAdd /> Create event
-        </button>
+      {(selectedTab ===  TableTabs.CLEANING || selectedTab ===  TableTabs.MAINTENANCE )&& (
+              <button
+              onClick={() => {
+                setModalAction("Create")
+                setModalOpen(true)
+              }}
+              className="btn sm:btn-sm btn-xs btn-outline btn-success"
+            >
+              <IoMdAdd /> Create event
+            </button>
+        )}
     </div>
-      <div className="overflow-auto h-full">
+      <div className="">
         <div className="table-cell h-[4rem] align-middle text-xl w-[100vw]">
           <div
             role="tablist"
             className=" flex flex-row flex-wrap h-12 mt-4 sm:flex-col md:flex-row lg:flex-row xl:flex-row"
           >
             {[
-              { id: TableTabs.RESERVATIONS, label: "Reservation Events" },
+              { id : TableTabs.DETAILS, label: "Details"},
+              { id: TableTabs.RESERVATIONS, label: "Reservations" },
               { id: TableTabs.CLEANING, label: "Cleaning Events" },
               { id: TableTabs.MAINTENANCE, label: "Maintenance Events" },
             ].map((tab) => (
@@ -47,7 +52,7 @@ const PropertyDetailsAllTables = () => {
                 key={tab.id}
                 id={tab.id}
                 role="tab"
-                className={`tab flex-grow justify-center content-center border-b-2 rounded-tr-md rounded-tl-md ${
+                className={`tab flex-grow justify-center content-center border-b-2 rounded-tr-md rounded-tl-md text-lg font-light ${
                   tab.id === selectedTab ? "bg-secondary border-b-2 border-primary text-black" : ""
                 }`}
                 onClick={() => setSelectedTab(tab.id)}
@@ -61,9 +66,12 @@ const PropertyDetailsAllTables = () => {
           </div>
         </div>
         {/* close your eyes to code below */}
-        {selectedTab === TableTabs.RESERVATIONS ? (
+        {selectedTab === TableTabs.DETAILS ? (
+          <DetailsInfo />
+        ) : selectedTab === TableTabs.RESERVATIONS ? (
           <ReservationTable />
-        ) : selectedTab === TableTabs.CLEANING ? (
+        )
+        : selectedTab === TableTabs.CLEANING ? (
           <CleaningTable />
         ) : selectedTab === TableTabs.MAINTENANCE ? (
           <MaintenanceTable />

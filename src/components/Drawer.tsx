@@ -3,7 +3,6 @@ import { LuLayoutDashboard } from "react-icons/lu";
 import { CiBoxList } from "react-icons/ci";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { GrIntegration } from "react-icons/gr";
-import { LuBarChart } from "react-icons/lu";
 import { Link } from "react-router-dom";
 
 export default function Drawer() {
@@ -65,15 +64,6 @@ export default function Drawer() {
             </p>
           </li>
           </Link>
-          <li
-            className="text-2xl font-light rounded-md lg:hidden"
-            
-          >
-            <p>
-              <LuBarChart />
-              {showText && <span className="ml-2">Statistics</span>}
-            </p>
-          </li>
 
           {/* Ícones e textos visíveis em telas maiores */}
           <Link to="/dashboard">
@@ -104,11 +94,6 @@ export default function Drawer() {
             </p>
           </li>
           </Link>
-          <li className="text-2xl font-light rounded-md hidden lg:flex">
-            <p>
-              <LuBarChart /> Statistics
-            </p>
-          </li>
         </ul>
       </div>
     </div>
