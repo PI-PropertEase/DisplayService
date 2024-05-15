@@ -102,72 +102,93 @@ export function DetailsInfo() {
                     </div>
                 </div>
                 <div className="w-full md:w-3/4 p-2">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="col-span-2 md:col-span-1 relative">
-                            <label htmlFor="title" className="text-accent">Title:</label>
-                            <input id="title" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails.title} readOnly />
-                            <button className="absolute top-2 right-2" onClick={() => handleOpenModal(propertyDetails?.title, "Title")}><FaRegEdit className="text-accent" /></button>
+                    <h1 className="text-xl font-semibold text-accent">General Information</h1>
+                    <hr className="mb-8"/>
+                    <div className="grid grid-cols-2 gap-12">
+                        <div className="col-span-2 md:col-span-1 flex">
+                            <label htmlFor="title" className="text-accent mr-2 font-medium">Title:</label>
+                            <input id="title" type="text" className="text-accent font-light w-full bg-base-100" value={propertyDetails.title} readOnly />
+                            <button onClick={() => handleOpenModal(propertyDetails?.title, "Title")}> <FaRegEdit className="text-accent" /></button>
                         </div>
-                        <div className="col-span-2 md:col-span-1 relative">
-                            <label htmlFor="address" className="text-accent">Address:</label>
-                            <input id="address" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails.address} readOnly />
-                            <button className="absolute top-2 right-2" onClick={() => handleOpenModal(propertyDetails?.address, "Address")}><FaRegEdit className="text-accent" /></button>                                    </div>
-                        <div className="col-span-2 relative">
-                            <label htmlFor="description" className="text-accent">Description:</label>
-                            <textarea id="description" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails.description} readOnly />
-                            <button className="absolute top-2 right-2" onClick={() => handleOpenModal(propertyDetails?.description, "Description")}><FaRegEdit className="text-accent" /></button>
+                        <div className="col-span-2 md:col-span-1 flex">
+                            <label htmlFor="address" className="text-accent mr-2 font-medium">Address:</label>
+                            <input id="address" type="text" className="text-accent font-light w-full bg-base-100" value={propertyDetails.address} readOnly />
+                            <button onClick={() => handleOpenModal(propertyDetails?.address, "Address")}><FaRegEdit className="text-accent" /></button>                                    </div>
+                        <div className="col-span-2 md:col-span-1 flex">
+                            <label htmlFor="description" className="text-accent mr-2 font-medium">Description:</label>
+                            <textarea id="description" className="text-accent font-light w-full bg-base-100" value={propertyDetails.description} readOnly />
+                            <button onClick={() => handleOpenModal(propertyDetails?.description, "Description")}><FaRegEdit className="text-accent" /></button>
                         </div>
-                        <div className="col-span-2 md:col-span-1 relative">
-                            <label htmlFor="guests" className="text-accent">Number of guests:</label>
-                            <input id="guests" type="number" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails.number_guests} readOnly />
-                            <button className="absolute top-2 right-2" onClick={() => handleOpenModal(propertyDetails?.number_guests, "Number of guests")}><FaRegEdit className="text-accent" /></button>
+                        <div className="col-span-2 md:col-span-1 flex ">
+                            <label htmlFor="guests" className="text-accent mr-2 font-medium w-1/3">Number of guests:</label>
+                            <input id="guests" type="number" className="text-accent font-light bg-base-100 h-fit w-full" value={propertyDetails.number_guests} readOnly />
+                            <button onClick={() => handleOpenModal(propertyDetails?.number_guests, "Number of guests")}><FaRegEdit className="text-accent" /></button>
                         </div>
-                        <div className="col-span-2 md:col-span-1 relative">
-                            <label htmlFor="area" className="text-accent">Area:</label>
-                            <input id="area" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={`${propertyDetails.square_meters}m²`} readOnly />
-                            <button className="absolute top-2 right-2"  onClick={() => handleOpenModal(propertyDetails?.square_meters, "Area (m²)")} ><FaRegEdit className="text-accent" /></button>
+                        <div className="col-span-2 md:col-span-1 flex h-fit">
+                            <label htmlFor="area" className="text-accent mr-2 font-medium">Area:</label>
+                            <input id="area" type="text" className="text-accent font-light w-full bg-base-100" value={`${propertyDetails.square_meters}m²`} readOnly />
+                            <button onClick={() => handleOpenModal(propertyDetails?.square_meters, "Area (m²)")} ><FaRegEdit className="text-accent" /></button>
                         </div>
-                        <div className="col-span-2 md:col-span-1 relative">
-                            <label htmlFor="price" className="text-accent">Price per night:</label>
-                            <input id="price" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={`${Number.parseFloat(propertyDetails.price).toFixed(2)}€`}  readOnly />
-                            <button className="absolute top-2 right-2"  onClick={() => handleOpenModal({price: propertyDetails.price, after_commission: propertyDetails.after_commission, recommended_price: propertyDetails.recommended_price}, "Price (per night €)")}><FaRegEdit className="text-accent" /></button>
-                            <div className="form-control">
-                                <label className="label cursor-pointer">
-                                    <span className="label-text">Updates automatically with the best price </span> 
-                                    <input type="checkbox" defaultChecked={propertyDetails.update_price_automatically} onClick={handleUpdatePriceAutomatically} className="checkbox" />
-                                </label>
+                        <div className="col-span-2 md:col-span-1 flex flex-wrap">
+                            <div className="flex flex-row w-full">
+                                <label htmlFor="price" className="text-accent mr-2 font-medium  w-1/3">Price per night:</label>
+                                <input id="price" type="text" className="text-accent font-light bg-base-100 w-full" value={`${Number.parseFloat(propertyDetails.price).toFixed(2)}€`}  readOnly />
+                                <button className="ml-auto" onClick={() => handleOpenModal({price: propertyDetails.price, after_commission: propertyDetails.after_commission, recommended_price: propertyDetails.recommended_price}, "Price (per night €)")}>
+                                    <FaRegEdit className="text-accent" />
+                                </button>
+                            </div>
+                            <div className="mt-2 w-full">
+                                <div className="form-control">
+                                    <label className="label cursor-pointer">
+                                        <span className="label-text text-primary">Updates automatically with the recommended price </span> 
+                                        <input type="checkbox"  defaultChecked={propertyDetails.update_price_automatically} onClick={handleUpdatePriceAutomatically} className="checkbox border-primary" />
+                                    </label>
+                                </div>
                             </div>
                         </div>
+                        
                     </div>
+                    
                 </div>
                 <div className="flex flex-wrap-reverse w-full p-2">
-                    <div className="w-full md:w-1/4 pr-4">
-                        <p className="font-medium text-accent text-lg mt-4">Rules of the property:</p>
-                        <div className="relative pt-4">
-                            <label htmlFor="text" className="text-accent">Check In:</label>
-                            <input id="text" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={`${propertyDetails?.house_rules.check_in.begin_time} - ${propertyDetails?.house_rules.check_in.end_time}`} readOnly />
-                            <button className="absolute top-2 right-2 pt-3"  onClick={() => handleOpenModal(propertyDetails?.house_rules.check_in.begin_time + " - " + propertyDetails?.house_rules.check_in.end_time, "Check In")}><FaRegEdit className="text-accent" /></button>
+                    <div className="flex flex-col gap-4 md:w-1/4 pr-8">
+                        <div>
+                            <p className="text-xl font-semibold text-accent">Rules of the property:</p>
+                            <hr/>
                         </div>
-                        <div className="relative pt-4">
-                            <label htmlFor="text" className="text-accent">Check Out:</label>
-                            <input id="text" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={`${propertyDetails?.house_rules.check_out.begin_time} - ${propertyDetails?.house_rules.check_out.end_time}`} readOnly />
-                            <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(propertyDetails?.house_rules.check_out.begin_time + " - " + propertyDetails?.house_rules.check_out.end_time, "Check Out")}><FaRegEdit className="text-accent" /></button>
+                        <div className="col-span-2 md:col-span-1 flex">
+                            <label htmlFor="text" className="text-accent mr-2 font-medium w-full">Check In:</label>
+                            <input id="text" type="text" className="text-accent font-light w-full bg-base-100" value={`${propertyDetails?.house_rules.check_in.begin_time} - ${propertyDetails?.house_rules.check_in.end_time}`} readOnly />
+                            <button  onClick={() => handleOpenModal(propertyDetails?.house_rules.check_in.begin_time + " - " + propertyDetails?.house_rules.check_in.end_time, "Check In")}><FaRegEdit className="text-accent" /></button>
                         </div>
-                        <div className="relative pt-4">
-                            <label htmlFor="text" className="text-accent">Rest Time:</label>
-                            <input id="text" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={`${propertyDetails?.house_rules.rest_time.begin_time} - ${propertyDetails?.house_rules.rest_time.end_time}`} readOnly />
-                            <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(propertyDetails?.house_rules.rest_time.begin_time + " - " + propertyDetails?.house_rules.rest_time.end_time, "Rest Time")}><FaRegEdit className="text-accent" /></button>
+                        <div className="col-span-2 md:col-span-1 flex">
+                            <label htmlFor="text" className="text-accent mr-2 font-medium w-full">Check Out:</label>
+                            <input id="text" type="text" className="text-accent font-light w-full bg-base-100" value={`${propertyDetails?.house_rules.check_out.begin_time} - ${propertyDetails?.house_rules.check_out.end_time}`} readOnly />
+                            <button onClick={() => handleOpenModal(propertyDetails?.house_rules.check_out.begin_time + " - " + propertyDetails?.house_rules.check_out.end_time, "Check Out")}><FaRegEdit className="text-accent" /></button>
                         </div>
-                        <div className="relative pt-4">
-                            {Object.entries(getBooleanHouseRules()).map(([rule, bool_value], i) => (
-                                <p key={i} className={`font-bold capitalize ${bool_value ? "text-green-500" : "text-red-500"}`}>{rule}: <span className="text-accent font-light">{bool_value ? "Allowed" : "Not Allowed"}</span></p>
-                            ))}
-                            <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(getBooleanHouseRules(), "House Rules")}><FaRegEdit className="text-accent" /></button>
+                        <div className="col-span-2 md:col-span-1 flex">
+                            <label htmlFor="text" className="text-accent mr-2 font-medium w-full">Rest Time:</label>
+                            <input id="text" type="text" className="text-accent font-light w-full bg-base-100" value={`${propertyDetails?.house_rules.rest_time.begin_time} - ${propertyDetails?.house_rules.rest_time.end_time}`} readOnly />
+                            <button onClick={() => handleOpenModal(propertyDetails?.house_rules.rest_time.begin_time + " - " + propertyDetails?.house_rules.rest_time.end_time, "Rest Time")}><FaRegEdit className="text-accent" /></button>
                         </div>
+                        <div className="col-span-2 md:col-span-1 flex mt-8">
+                            <div className="flex flex-col gap-4 w-full">
+                                {Object.entries(getBooleanHouseRules()).map(([rule, bool_value], i) => (
+                                    <p key={i} className={`font-bold capitalize ${bool_value ? "text-green-500" : "text-red-500"}`}>{rule}: <span className="text-accent font-light">{bool_value ? "Allowed" : "Not Allowed"}</span></p>
+                                ))}
+                            </div>
+                            <button onClick={() => handleOpenModal(getBooleanHouseRules(), "House Rules")}><FaRegEdit className="text-accent" /></button>
+                        </div>
+
                     </div>
-                    <div className="w-full md:w-3/4">
-                        <div className="relative pt-4">
-                            <label htmlFor="text" className="text-accent">Bathrooms:</label>
+                    <div className="flex flex-col gap-6 md:w-3/4">
+                        <div>
+                            <h1 className="text-xl font-semibold text-accent">Facilities</h1>
+                            <hr/>
+                        </div>
+
+                        <div className="relative">
+                            <label htmlFor="text" className="text-accent font-medium">Bathrooms:</label>
                             <div className="overflow-x-auto">
                                 <table className="table">
                                     <thead>
@@ -178,10 +199,10 @@ export function DetailsInfo() {
                                         <th></th>
                                     </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody className=" font-light">
                                         {Object.entries(propertyDetails?.bathrooms ?? {}).map(([bathroomId, items]) => (                                                    
                                         <tr key={bathroomId}>
-                                            <th>{bathroomId}</th>
+                                            <th className="font-semibold">{bathroomId}</th>
                                             <td className="w-full">{(items.fixtures as string[]).join(', ')}</td>
                                             <td className="text-end w-full"><button onClick={() => handleOpenModal(items.fixtures, "Bathroom " + bathroomId)}><FaRegEdit className="text-accent" /></button></td>
                                             <td className="text-end"><button onClick={() => handleOpenDeleteModal("Bathroom " + bathroomId)}><IoTrashOutline className=" text-red-600" /></button></td>
@@ -190,10 +211,10 @@ export function DetailsInfo() {
                                     </tbody>
                                 </table>
                             </div>
-                            <button className="absolute top-2 right-2 pt-6 text-xl" onClick={() => handleOpenModal("", "New Bathroom")}><BsPlusSquare className="text-accent" /></button>
+                            <button className="absolute top-2 right-2 text-xl" onClick={() => handleOpenModal("", "New Bathroom")}><BsPlusSquare className="text-accent" /></button>
                         </div>
                         <div className="relative pt-4">
-                            <label htmlFor="text" className="text-accent">Bedrooms:</label>
+                            <label htmlFor="text" className="text-accent font-medium">Bedrooms:</label>
                             <div className="overflow-x-auto">
                                 <table className="table">
                                     <thead>
@@ -204,10 +225,10 @@ export function DetailsInfo() {
                                         <th></th>
                                     </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody className="font-light">
                                         {Object.entries(propertyDetails?.bedrooms ?? {}).map(([bedroomId, bedroomDetails]) => (
                                         <tr key={bedroomId}>
-                                            <th>{bedroomId}</th>
+                                            <th className="font-semibold">{bedroomId}</th>
                                             <td className="w-full">{bedroomDetails.beds.map(bed => bed.type + ": " + bed.number_beds).join(", ")}</td>
                                             <td className="text-end w-full"><button onClick={() => handleOpenModal(bedroomDetails.beds, "Bedroom " + bedroomId)}><FaRegEdit className="text-accent" /></button></td>
                                             <td className="text-end"><button onClick={() => handleOpenDeleteModal("Bedroom " + bedroomId)}><IoTrashOutline className=" text-red-600" /></button></td>
@@ -216,25 +237,29 @@ export function DetailsInfo() {
                                     </tbody>
                                 </table>
                             </div>
-                            <button className="absolute top-2 right-2 pt-6 text-xl" onClick={() => handleOpenModal([] as Bed[], "New Bedroom")}><BsPlusSquare className="text-accent" /></button>
+                            <button className="absolute top-2 right-2 text-xl" onClick={() => handleOpenModal([] as Bed[], "New Bedroom")}><BsPlusSquare className="text-accent" /></button>
+                        </div>
+                        <div className="col-span-2 md:col-span-1 flex">
+                            <label htmlFor="text" className="text-accent font-medium">Amenities:</label>
+                            <textarea id="amenties" className="ml-4 text-accent font-light bg-base-100 h-fit w-full" value={propertyDetails?.amenities.join(', ')} readOnly />
+                            <button onClick={() => handleOpenModal(propertyDetails?.amenities, "Amenities")}><FaRegEdit className="text-accent" /></button>
+                        </div>
+                        <div>
+                            <h1 className="text-xl font-semibold text-accent">Additional Details</h1>
+                            <hr/>
+                        </div>
+                        <div className="col-span-2 md:col-span-1 flex">
+                            <label htmlFor="text" className="text-accent font-medium w-1/5">Additional Information:</label>
+                            <textarea id="additional_info" className="text-accent font-light bg-base-100 h-fit w-full" value={propertyDetails?.additional_info} readOnly />
+                            <button onClick={() => handleOpenModal(propertyDetails?.additional_info, "Additional Info")}><FaRegEdit className="text-accent" /></button>
+                        </div>
+                        <div className="col-span-2 md:col-span-1 flex">
+                            <label htmlFor="text" className="text-accent font-medium w-1/5 ">Cancellation Policy:</label>
+                            <textarea id="cancellationPolicy" className="text-accent font-light bg-base-100 h-fit w-full" value={propertyDetails?.cancellation_policy} readOnly />
+                            <button onClick={() => handleOpenModal(propertyDetails?.cancellation_policy, "Cancellation Policy")}><FaRegEdit className="text-accent" /></button>
                         </div>
                         <div className="relative pt-4">
-                            <label htmlFor="text" className="text-accent">Amenities:</label>
-                            <textarea id="amenties" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails?.amenities.join(', ')} readOnly />
-                            <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(propertyDetails?.amenities, "Amenities")}><FaRegEdit className="text-accent" /></button>
-                        </div>
-                        <div className="relative pt-4">
-                            <label htmlFor="text" className="text-accent">Additional Information:</label>
-                            <textarea id="additional_info" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails?.additional_info} readOnly />
-                            <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(propertyDetails?.additional_info, "Additional Info")}><FaRegEdit className="text-accent" /></button>
-                        </div>
-                        <div className="relative pt-4">
-                            <label htmlFor="text" className="text-accent">Cancellation Policy:</label>
-                            <textarea id="cancellationPolicy" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails?.cancellation_policy} readOnly />
-                            <button className="absolute top-2 right-2 pt-3" onClick={() => handleOpenModal(propertyDetails?.cancellation_policy, "Cancellation Policy")}><FaRegEdit className="text-accent" /></button>
-                        </div>
-                        <div className="relative pt-4">
-                            <label htmlFor="text" className="text-accent">Contacts:</label>
+                            <label htmlFor="text" className="text-accent font-medium">Contacts:</label>
                             <div className="overflow-x-auto">
                                 <table className="table">
                                     <thead>
@@ -246,10 +271,10 @@ export function DetailsInfo() {
                                         <th></th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody className="font-light">
                                         {propertyDetails?.contacts.map((contact, index) => (
                                         <tr key={index}>
-                                            <th className=" whitespace-nowrap">{contact.name}</th>
+                                            <th className="whitespace-nowrap font-semibold">{contact.name}</th>
                                             <td>{contact.phone_number}</td>
                                             <td className="text-end" ><button onClick={() => handleOpenModal({name: contact.name, phone_number: Number.parseInt(contact.phone_number), index: index}, "Contact " + contact.name)}><FaRegEdit className="text-accent" /></button></td>
                                             <td className="text-end"><button onClick={() => handleOpenDeleteModal("Contact " + contact.name, index)}><IoTrashOutline className=" text-red-600" /></button></td>
@@ -258,7 +283,7 @@ export function DetailsInfo() {
                                     </tbody>
                                 </table>
                             </div>
-                            <button className="absolute top-2 right-2 pt-6 text-xl" onClick={() => handleOpenModal({name: "", phone_number: 0}, "New Contact")}><BsPlusSquare className="text-accent" /></button>
+                            <button className="absolute top-2 right-2 text-xl" onClick={() => handleOpenModal({name: "", phone_number: 0}, "New Contact")}><BsPlusSquare className="text-accent" /></button>
                         </div>
                     </div>
                 </div>
