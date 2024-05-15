@@ -11,6 +11,8 @@ import Navbar from "../components/Navbar";
 import { fetchProperty, updateProperty } from "../services/Property.service";
 import { Amenity, BathroomFixture, Bed, IFetchProperty } from "../types/PropertyType";
 import PropertyDetailsAllTables from "../components/PropertyDetailsAllTables";
+import { useMemo } from "react";
+import { getRandomImages } from "../utils/property_utils";
 
 export type ModalContentType = string | number | Bed[] | { price: number; after_commission: boolean; recommended_price: number;}
                                 | string[] | { name: string; phone_number: number; index: number; } | { name: string; phone_number: number; }  
@@ -34,8 +36,14 @@ export default function PropertyDetails() {
     const authHeader = useAuthHeader() ?? '';
     const queryClient = useQueryClient();
     const id = useParams<{ id: string }>().id?.toString() ?? "";
-
+    
     const { data: propertyDetails } = useQuery<IFetchProperty>(`property${id}`, () => fetchProperty(id, authHeader).then(data => data), { staleTime: Infinity });
+    
+    // keeps images betweeen renders, unless property details changes
+    const images = useMemo(() => {
+        return getRandomImages(propertyDetails?.title ?? 'a');
+    }, [propertyDetails]);
+
     if (!propertyDetails) {
         return (
             <div className="flex justify-center items-center h-screen">
@@ -95,17 +103,17 @@ export default function PropertyDetails() {
                         <div className="flex flex-wrap">
                             <div className="w-full md:w-1/4 p-2">
                                 <figure>
-                                    <img className="rounded-t-xl w-full md:w-auto" src="https://images.adsttc.com/media/images/5a54/84b8/f197/cc41/af00/0485/newsletter/JM_HabitacaoBarreiro_Ovar_166.jpg?1515488423" alt="Shoes" />
+                                    <img className="rounded-t-xl w-full md:w-auto" src={images[0]} alt="Shoes" />
                                 </figure>
                                 <div className="flex flex-row">
                                     <figure className="w-1/3">
-                                        <img src="https://www.jasminsoftware.pt/wp-content/uploads/2020/05/alojamento_local_dicas.jpg" className="object-cover w-full h-full" alt="Imagem 1" />
+                                        <img src={images[1]} className="object-cover w-full h-full" alt="Imagem 1" />
                                     </figure>
                                     <figure className="w-1/3">
-                                        <img src="https://cdn-dfjlp.nitrocdn.com/iUlbUegjmHRhHIJcQaVwEmsMirSBhuRt/assets/static/optimized/rev-a0b5f77/wp-content/uploads/2021/09/imagem-post-blog-1024x683.jpg" className="object-cover w-full h-full" alt="Imagem 2" />
+                                        <img src={images[2]} className="object-cover w-full h-full" alt="Imagem 2" />
                                     </figure>
                                     <figure className="w-1/3 relative">
-                                        <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/327465405.jpg?k=37cbf6e38bb0b65eb85d0e55b904c10123712e0556ba6ec4f337a4c78cb1d260&o=&hp=1" className="object-cover w-full h-full" alt="Imagem 3" />
+                                        <img src={images[3]} className="object-cover w-full h-full" alt="Imagem 3" />
                                         <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50">
                                             <button className="text-white text-3xl px-3 py-1 rounded-full mx-1">•••</button>
                                         </div>
@@ -122,7 +130,8 @@ export default function PropertyDetails() {
                                     <div className="col-span-2 md:col-span-1 relative">
                                         <label htmlFor="address" className="text-accent">Address:</label>
                                         <input id="address" type="text" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails.address} readOnly />
-                                        <button className="absolute top-2 right-2" onClick={() => handleOpenModal(propertyDetails?.address, "Address")}><FaRegEdit className="text-accent" /></button>                                    </div>
+                                        <button className="absolute top-2 right-2" onClick={() => handleOpenModal(propertyDetails?.address, "Address")}><FaRegEdit className="text-accent" /></button>                                    
+                                    </div>
                                     <div className="col-span-2 relative">
                                         <label htmlFor="description" className="text-accent">Description:</label>
                                         <textarea id="description" className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent" value={propertyDetails.description} readOnly />
