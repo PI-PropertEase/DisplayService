@@ -6,6 +6,7 @@ import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import { fetchProperty, updateProperty } from "../services/Property.service";
 import { Amenity, BathroomFixture, Bed, IFetchProperty } from "../types/PropertyType";
+import { useState } from "react";
 
 export type ModalContentType = string | number | Bed[] | { price: number; after_commission: boolean; recommended_price: number;}
                                 | string[] | { name: string; phone_number: number; index: number; } | { name: string; phone_number: number; }  
@@ -29,6 +30,7 @@ export function DetailsInfo() {
     const authHeader = useAuthHeader() ?? '';
     const queryClient = useQueryClient();
     const id = useParams<{ id: string }>().id?.toString() ?? "";
+    const [toastPrice, setToastPrice] = useState<boolean>(false) 
 
     const { data: propertyDetails } = useQuery<IFetchProperty>(`property${id}`, () => fetchProperty(id, authHeader).then(data => data), { staleTime: Infinity });
     if (!propertyDetails) {
@@ -76,7 +78,13 @@ export function DetailsInfo() {
             updatedPropertyDetails.price = updatedPropertyDetails.recommended_price;
         }
         updateProperty(id, updatedPropertyDetails, authHeader).then(() => queryClient.setQueryData(`property${id}`, updatedPropertyDetails)).catch(err => console.log(err));
-        
+        if (updatedPropertyDetails.update_price_automatically) {
+            setToastPrice(true)
+            setTimeout(() => {
+                setToastPrice(false)
+            }, 5000);
+        }
+
     }
 
     return (
@@ -139,21 +147,22 @@ export function DetailsInfo() {
                             </div>
                             <div className="mt-2 w-full">
                                 <div className="form-control flex flex-row justify-between relative">
-                                    <div className="flex items-center gap-1">
+                                    <div className="flex items-center gap-1 justify-between">
                                         <span className="label-text text-primary">Updates automatically with recommended price:</span>
-
                                     </div>
-                                    <label className="label cursor-pointer">
+                                    <div className="flex flex-row items-center">
                                         <div className="tooltip tooltip-secondary tooltip-left mr-2 font-thin" data-tip="Enable this checkbox to automatically update the property's price based on market trends every day at midnight.">
                                             <button className="btn btn-ghost btn-xs">?</button>
                                         </div>
-                                        <input 
-                                            type="checkbox" 
-                                            defaultChecked={propertyDetails.update_price_automatically} 
-                                            onClick={handleUpdatePriceAutomatically} 
-                                            className="checkbox border-primary justify-end" 
-                                        />
-                                    </label>
+                                        <label className="label cursor-pointer">
+                                            <input 
+                                                type="checkbox" 
+                                                defaultChecked={propertyDetails.update_price_automatically} 
+                                                onClick={handleUpdatePriceAutomatically} 
+                                                className="checkbox border-primary justify-end" 
+                                            />
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -294,6 +303,13 @@ export function DetailsInfo() {
                             </div>
                             <button className="absolute top-2 right-2 text-xl" onClick={() => handleOpenModal({name: "", phone_number: 0}, "New Contact")}><BsPlusSquare className="text-accent" /></button>
                         </div>
+                        {toastPrice &&
+                            <div className={`toast toast-end transition-opacity duration-500 ${toastPrice ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                                <div className="alert alert-success font-thin">
+                                    <span>Automatic price updates have been successfully activated.<br /> A new price will be recommended at midnight.</span>
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
