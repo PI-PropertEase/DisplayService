@@ -1,7 +1,7 @@
 import { MdKeyboardArrowDown } from "react-icons/md";
 import ToogleDarkMode from "./ToogleDarkMode";
 import useSignOut from 'react-auth-kit/hooks/useSignOut'
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { IUserState } from "../types/UserType";
 
@@ -20,11 +20,13 @@ export default function Navbar() {
     <>
       <div className="navbar bg-secondary fixed z-20">
         <div className="flex-1">
+          <Link to="/dashboard">
           <img
                 className="h-16 pl-4"
                 src="/src/assets/logo.png"
                 alt="PropertEase Logo"
           />
+          </Link>
         </div>
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">

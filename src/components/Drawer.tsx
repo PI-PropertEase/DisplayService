@@ -3,7 +3,6 @@ import { LuLayoutDashboard } from "react-icons/lu";
 import { CiBoxList } from "react-icons/ci";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { GrIntegration } from "react-icons/gr";
-import { LuBarChart } from "react-icons/lu";
 import { Link } from "react-router-dom";
 
 export default function Drawer() {
@@ -17,10 +16,10 @@ export default function Drawer() {
     <div className="" onMouseEnter={toggleShowText} onMouseLeave={toggleShowText} >
       <input id="my-drawer" type="checkbox" className="drawer-toggle" defaultChecked />
       <div className="h-screen">
-        <ul className="menu h-full bg-primary flex flex-col gap-8 pt-8 text-white shadow-lg">
+        <ul className="menu h-full bg-primary flex flex-col gap-8 text-white shadow-lg">
           <Link to="/dashboard">
           <li
-            className="text-2xl font-light rounded-md lg:hidden"
+            className="text-2xl font-light rounded-md lg:hidden mt-24"
             
           >
             
@@ -61,54 +60,40 @@ export default function Drawer() {
           >
             <p>
               <GrIntegration />
-              {showText && <span className="ml-2">Integrations</span>}
+              {showText && <span className="ml-2">Channel Manager</span>}
             </p>
           </li>
           </Link>
-          <li
-            className="text-2xl font-light rounded-md lg:hidden"
-            
-          >
-            <p>
-              <LuBarChart />
-              {showText && <span className="ml-2">Statistics</span>}
-            </p>
-          </li>
 
           {/* Ícones e textos visíveis em telas maiores */}
           <Link to="/dashboard">
-          <li className="text-2xl font-light rounded-md hidden lg:flex">
+          <li className="text-2xl font-light rounded-md hidden lg:flex gap-2">
             <p>
               <LuLayoutDashboard /> My business
             </p>
           </li>
           </Link>
           <Link to="/properties">
-          <li className="text-2xl font-light rounded-md hidden lg:flex">
+          <li className="text-2xl font-light rounded-md hidden lg:flex gap-2">
             <p>
               <CiBoxList /> Properties List
             </p>
           </li>
           </Link>
           <Link to="/calendar">
-          <li className="text-2xl font-light rounded-md hidden lg:flex">
+          <li className="text-2xl font-light rounded-md hidden lg:flex gap-2">
             <p>
               <FaRegCalendarAlt /> Calendar
             </p>
           </li>
           </Link>
           <Link to="/integrations">
-          <li className="text-2xl font-light rounded-md hidden lg:flex">
+          <li className="text-2xl font-light rounded-md hidden lg:flex gap-2">
             <p>
-              <GrIntegration /> Integrations
+              <GrIntegration /> Channel Manager
             </p>
           </li>
           </Link>
-          <li className="text-2xl font-light rounded-md hidden lg:flex">
-            <p>
-              <LuBarChart /> Statistics
-            </p>
-          </li>
         </ul>
       </div>
     </div>
