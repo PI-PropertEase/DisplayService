@@ -138,7 +138,7 @@ const ReservationTable = () => {
               )
             }) : (
               <tr>
-                <td colSpan={8} className="text-center text-lg font-thin">No reservations on present or future found</td>
+                <td colSpan={8} className="text-center text-lg font-thin">{showAllReservations? "No reservations found" : "No reservations on present or future found"}</td>
               </tr>
               
             )}

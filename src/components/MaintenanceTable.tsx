@@ -13,6 +13,8 @@ const MaintenanceTable = () => {
   const { maintenanceEvents } = useContext(ManagementContext);  
   const { properties } = useContext(PropertyContext)
 
+  const [showAllEvents, setShowAllEvents] = useState<boolean>(false)
+
   const {setModalOpen, setModalAction, setDeleteModalOpen, setSelectedEvent} = useContext(EventModalContext);
 
   const maintenanceEventsData = insertPropertyInEvent(properties, maintenanceEvents)
@@ -33,9 +35,21 @@ const MaintenanceTable = () => {
   // example: current page is 2 -> only show buttons for pages [1, 2, 3, 4]
   paginationArray = paginationArray.filter((n) => !(Math.abs(paginationNumber - n) > 2))
 
+  const filteredMaintenanceEvents = (showAllEvents ? maintenanceEventsData : maintenanceEventsData?.filter(event => { const now = new Date(); return event.begin_datetime > now || event.end_datetime > now })) ?? []
+
+  const handleShowAll = (): void => {
+    setShowAllEvents(!showAllEvents);
+  };
+
+
 
   return (
     <>
+      <div className="flex justify-end mb-4">
+        <button className="tooltip tooltip-secondary text-accent tooltip-left tooltip-sm btn btn-outline btn-primary btn-xs font-thin" data-tip={showAllEvents? "Only present and future events" : "Include past events"} onClick={handleShowAll}>
+          {showAllEvents? "Show less" : "Show all"}
+        </button>
+      </div>
       <table className="table">
         {/* head */}
         <thead className="bg-secondary dark:bg-[#242424] text-black dark:text-white">
@@ -50,7 +64,7 @@ const MaintenanceTable = () => {
         </thead>
         <tbody>
           {/* row 1 */}
-          {(maintenanceEventsData ?? [])
+          {filteredMaintenanceEvents.length > 0 ? filteredMaintenanceEvents 
             .slice(PAGE_SIZE * (paginationNumber - 1), PAGE_SIZE * paginationNumber)
             .map((maintenanceEvent) => {
               return (
@@ -120,7 +134,12 @@ const MaintenanceTable = () => {
                   </td>
                 </tr>
               )
-            })}
+            }): (
+              <tr>
+                <td colSpan={6} className="text-center text-lg font-thin">{showAllEvents? "No events found" : "No events on present or future found"}</td>
+              </tr>
+              
+            )}
         </tbody>
       </table>
       {/* Table Footer */}

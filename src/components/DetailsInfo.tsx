@@ -129,7 +129,7 @@ export function DetailsInfo() {
                         </div>
                         <div className="col-span-2 md:col-span-1 flex ">
                             <label htmlFor="guests" className="text-accent mr-2 font-medium w-1/3">Number of guests:</label>
-                            <input id="guests" type="number" className="text-accent font-light bg-base-100 h-fit w-full" value={propertyDetails.number_guests} readOnly />
+                            <input id="guests" type="text" className="text-accent font-light bg-base-100 h-fit w-full" value={propertyDetails.number_guests} readOnly />
                             <button onClick={() => handleOpenModal(propertyDetails?.number_guests, "Number of guests")}><FaRegEdit className="text-accent" /></button>
                         </div>
                         <div className="col-span-2 md:col-span-1 flex h-fit">
@@ -138,9 +138,9 @@ export function DetailsInfo() {
                             <button onClick={() => handleOpenModal(propertyDetails?.square_meters, "Area (m²)")} ><FaRegEdit className="text-accent" /></button>
                         </div>
                         <div className="col-span-2 md:col-span-1 flex flex-wrap">
-                            <div className="flex flex-row w-full">
-                                <label htmlFor="price" className="text-accent mr-2 font-medium  w-1/3">Price per night:</label>
-                                <input id="price" type="text" className="text-accent font-light bg-base-100 w-full" value={`${Number.parseFloat(propertyDetails.price).toFixed(2)}€`}  readOnly />
+                            <div className="flex flex-row w-full items-center">
+                                <label htmlFor="price" className="text-accent mr-2 font-medium w-1/3">Price per night:</label>
+                                <input id="price" type="text" className="text-accent font-light bg-base-100 w-full text-xl" value={`${Number.parseFloat(propertyDetails.price).toFixed(2)}€`}  readOnly />
                                 <button className="ml-auto" onClick={() => handleOpenModal({price: propertyDetails.price, after_commission: propertyDetails.after_commission, recommended_price: propertyDetails.recommended_price}, "Price (per night €)")}>
                                     <FaRegEdit className="text-accent" />
                                 </button>
