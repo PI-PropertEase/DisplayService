@@ -138,17 +138,26 @@ export function DetailsInfo() {
                                 </button>
                             </div>
                             <div className="mt-2 w-full">
-                                <div className="form-control">
+                                <div className="form-control flex flex-row justify-between relative">
+                                    <div className="flex items-center gap-1">
+                                        <span className="label-text text-primary">Updates automatically with recommended price:</span>
+
+                                    </div>
                                     <label className="label cursor-pointer">
-                                        <span className="label-text text-primary">Updates automatically with the recommended price </span> 
-                                        <input type="checkbox"  defaultChecked={propertyDetails.update_price_automatically} onClick={handleUpdatePriceAutomatically} className="checkbox border-primary" />
+                                        <div className="tooltip tooltip-secondary tooltip-left mr-2 font-thin" data-tip="Enable this checkbox to automatically update the property's price based on market trends every day at midnight.">
+                                            <button className="btn btn-ghost btn-xs">?</button>
+                                        </div>
+                                        <input 
+                                            type="checkbox" 
+                                            defaultChecked={propertyDetails.update_price_automatically} 
+                                            onClick={handleUpdatePriceAutomatically} 
+                                            className="checkbox border-primary justify-end" 
+                                        />
                                     </label>
                                 </div>
                             </div>
                         </div>
-                        
                     </div>
-                    
                 </div>
                 <div className="flex flex-wrap-reverse w-full p-2">
                     <div className="flex flex-col gap-4 md:w-1/4 pr-8">
