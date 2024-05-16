@@ -1,4 +1,4 @@
-import { useContext, useState } from "react"
+import { useContext, useMemo, useState } from "react"
 import { ReservationContext } from "../context/ReservationContext"
 import { PropertyContext } from "../context/PropertyContext"
 import { insertPropertyInReservation } from "../utils/reservationpropertyunifier"
@@ -16,13 +16,15 @@ const ReservationTable = () => {
   const [keyModalOpen, setKeyModalOpen] = useState<boolean>(false);
   // selectedReservation is for sending this data into the GenerateKeyModal
   const [selectedReservation, setSelectedReservation] = useState<IReservation | undefined>(undefined);
-  const [showAllReservations, setShowAllReservations] = useState<boolean>(false)
+  const [showAllReservations, setShowAllReservations] = useState<boolean>(false);
 
   const PAGE_SIZE = 10
 
   const [paginationNumber, setPaginationNumber] = useState<number>(1)
 
   const numberOfPages = Math.ceil((reservations?.length ?? 0) / PAGE_SIZE)
+
+  const currentDate = useMemo(() => new Date(), []);
 
   let paginationArray: number[] = [] // [1,2, ..., n] where n = number of pages
 
@@ -124,14 +126,17 @@ const ReservationTable = () => {
                     className="text-center max-[760px]:flex max-[760px]:before:content-datalabel"
                   >
                     <button
-                      className="max-[760px]:ml-auto tooltip tooltip-left tooltip-secondary" 
+                      className="max-[760px]:ml-auto tooltip tooltip-left tooltip-secondary"
+                      disabled={reservation.begin_datetime.getTime() < currentDate.getTime()}
                       onClick={() => {
+                        if (reservation.begin_datetime.getTime() < currentDate.getTime()) return;
                         setKeyModalOpen(true);
-                        setSelectedReservation(reservation)
+                        setSelectedReservation(reservation);
                       }}
-                      data-tip="Press to generate a key code for the client and send it by email."
+                      data-tip={reservation.begin_datetime.getTime() < currentDate.getTime() ? "Reservation happened in the past, can't send keycode."
+                      : "Press to generate a key code for the client and send it by email."}
                     >
-                      <RiMailSendLine size={20} /> 
+                      <RiMailSendLine size={20} style={{color: reservation.begin_datetime.getTime() < currentDate.getTime() ? "gray" : "black"}}/> 
                     </button>
                   </td>
                 </tr>

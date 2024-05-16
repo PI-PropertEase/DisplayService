@@ -76,9 +76,6 @@ const EventModal = () => {
     }
     setShowError(false)
 
-    console.log(endDate)
-    console.log(beginDate)
-
     try {
       if (modalAction === "Create") {
         if ((eventType as IEventType)!== IEventType.CLEANING && (eventType as IEventType)!== IEventType.MAINTENANCE) {
