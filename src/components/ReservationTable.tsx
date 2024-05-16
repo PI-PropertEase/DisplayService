@@ -111,11 +111,12 @@ const ReservationTable = () => {
                     className="text-center max-[760px]:flex max-[760px]:before:content-datalabel"
                   >
                     <button
-                      className="max-[760px]:ml-auto"
+                      className="max-[760px]:ml-auto tooltip tooltip-left tooltip-secondary" 
                       onClick={() => {
                         setKeyModalOpen(true);
                         setSelectedReservation(reservation)
                       }}
+                      data-tip="Press to generate a key code for the client and send it by email."
                     >
                       <RiMailSendLine size={20} /> 
                     </button>
