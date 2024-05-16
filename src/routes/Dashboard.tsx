@@ -26,11 +26,11 @@ const Dashboard = () => {
             ) : (user?.connected_services?.length ?? 0) == 0 ? (
               <div className="flex flex-col flex-1 gap-4 p-8 overflow-auto pt-28 justify-center items-center text-center text-4xl">
                 You have not yet connected to any external service.
-                <button className="btn btn-primary w-20">
-                  <Link to={"/integrations"}>
+                <Link to={"/integrations"}>
+                  <button className="btn btn-primary w-20">
                     Connect now
-                  </Link> 
                   </button>
+                </Link> 
               </div>
             ) : (
               <div className="flex flex-col flex-1 p-8 overflow-auto pt-28">
