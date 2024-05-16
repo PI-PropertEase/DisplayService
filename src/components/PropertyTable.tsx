@@ -8,6 +8,8 @@ import { PropertyContext } from "../context/PropertyContext"
 import { ReservationContext } from "../context/ReservationContext"
 import { getPropertiesForPropertyTable } from "../utils/reservationpropertyunifier"
 import { IProperty } from "../types/PropertyType"
+import { ServiceEnum } from "../types/UserType"
+import { Dropdown } from "./Dropdown"
 
 const PropertyTable = () => {
   const PAGE_SIZE = 10
@@ -16,9 +18,15 @@ const PropertyTable = () => {
 
   const { reservations: reservationData } = useContext(ReservationContext)
 
-  const propertyList: IProperty[] = getPropertiesForPropertyTable(propertyData, reservationData);
-
+  let propertyList: IProperty[] = getPropertiesForPropertyTable(propertyData, reservationData);
+  
   const [paginationNumber, setPaginationNumber] = useState<number>(1)
+
+  // if undefined, shows all properties without filtering
+  const [filterService, setFilterService] = useState<ServiceEnum | undefined>(undefined);
+
+  if (filterService)
+    propertyList = propertyList.filter((prop) => prop.services.some(service => service == filterService))
 
   const numberOfPages = Math.ceil((propertyList?.length ?? 0) / PAGE_SIZE)
 
@@ -34,11 +42,23 @@ const PropertyTable = () => {
 
   return (
     <div className="overflow-auto h-full">
-      <div className="table-cell h-[4rem] pl-6 align-middle text-xl">
-        Properties
-        <span className="ml-3 badge text-[0.75rem] bg-secondary text-[#FDA882] dark:bg-orange-900 dark:text-secondary border-none">
-          {propertyList?.length ?? 0} Properties
-        </span>
+      <div className="flex flex-column items-center justify-center pt-1">
+        <div className="table-cell h-[4rem] pl-6 text-xl text-center align-bottom">
+          Properties
+          <span className="ml-3 badge text-[0.75rem] bg-secondary text-[#FDA882] dark:bg-orange-900 dark:text-secondary border-none">
+            {propertyList?.length ?? 0} Properties
+          </span>
+        </div>
+        <div className="mr-0 ml-auto pr-6">
+          <Dropdown 
+            placeholder="Filter by Service"
+            options={[ServiceEnum.ZOOKING, ServiceEnum.EARTHSTAYIN, ServiceEnum.CLICKANDGO]}
+            onSelect={(service: string | null) => {
+              if (service) setFilterService(service as ServiceEnum);
+              else setFilterService(undefined);
+            }}
+          />
+        </div>
       </div>
       <table className="table">
         {/* head */}
