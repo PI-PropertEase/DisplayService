@@ -1,5 +1,5 @@
 import { IFetchProperty, IProperty, PropertyStatus } from "../types/PropertyType"
-import { IEvent, IReservation } from "../types/ReservationType"
+import { IEvent, IReservation, ReservationStatus } from "../types/ReservationType"
 
 const insertReservationsInProperty = (
   reservationData: IReservation[],
@@ -89,6 +89,7 @@ export const getPropertiesForPropertyTable = (
     const currTime = new Date()
     let closestReservation: IReservation | undefined = undefined
     prop.reservations.forEach((r) => {
+      if (r.reservation_status !== ReservationStatus.PENDING) return;
       // if reservation is ongoing, status is either CHECK-OUT SOON (end_datetime is within 1 day reach)
       // or OCCUPIED, if the previous condition is not met
       if (r.begin_datetime < new Date() && r.end_datetime > new Date()) {
