@@ -16,6 +16,7 @@ const ReservationTable = () => {
   const [keyModalOpen, setKeyModalOpen] = useState<boolean>(false);
   // selectedReservation is for sending this data into the GenerateKeyModal
   const [selectedReservation, setSelectedReservation] = useState<IReservation | undefined>(undefined);
+  const [showAllReservations, setShowAllReservations] = useState<boolean>(false)
 
   const PAGE_SIZE = 10
 
@@ -33,8 +34,21 @@ const ReservationTable = () => {
   // example: current page is 2 -> only show buttons for pages [1, 2, 3, 4]
   paginationArray = paginationArray.filter((n) => !(Math.abs(paginationNumber - n) > 2))
 
+  const filteredReservations = (showAllReservations ? reservations : reservations?.filter(reservation => { const now = new Date(); return reservation.begin_datetime > now || reservation.end_datetime > now })) ?? []
+
+  const handleShowAll = (): void => {
+    setShowAllReservations(!showAllReservations);
+  };
+
+
   return (
     <>
+      <div className="flex justify-end mb-4">
+        <button className="tooltip tooltip-secondary text-accent tooltip-left tooltip-sm btn btn-outline btn-primary btn-xs font-thin" data-tip={showAllReservations? "Only present and future reservations" : "Include past reservations"} onClick={handleShowAll}>
+          {showAllReservations? "Show less" : "Show all"}
+        </button>
+      </div>
+      
       <table className="table">
         {/* head */}
         <thead className="bg-secondary dark:bg-[#242424] text-black dark:text-white">
@@ -50,8 +64,7 @@ const ReservationTable = () => {
           </tr>
         </thead>
         <tbody>
-          {/* row 1 */}
-          {(reservations ?? [])
+          {filteredReservations.length > 0 ? filteredReservations 
             .slice(PAGE_SIZE * (paginationNumber - 1), PAGE_SIZE * paginationNumber)
             .map((reservation) => {
               return (
@@ -123,7 +136,12 @@ const ReservationTable = () => {
                   </td>
                 </tr>
               )
-            })}
+            }) : (
+              <tr>
+                <td colSpan={8} className="text-center text-lg font-thin">No reservations on present or future found</td>
+              </tr>
+              
+            )}
         </tbody>
       </table>
       {/* Table Footer */}
