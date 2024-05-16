@@ -7,6 +7,7 @@ import EventModal from "./EventModal"
 import DeleteEventModal from "./DeleteEventModal"
 import { EventModalContext } from "../context/EventModalContext"
 import { DetailsInfo } from "./DetailsInfo"
+import { IEventType } from "../types/ReservationType"
 
 enum TableTabs {
   DETAILS = "details",
@@ -19,7 +20,8 @@ const PropertyDetailsAllTables = () => {
   // selectedEvent is used to pass this data into the modal for editing/deleting a certain event
   const [selectedTab, setSelectedTab] = useState<TableTabs>(TableTabs.DETAILS)
 
-  const { setModalOpen, setModalAction } = useContext(EventModalContext)
+  const { setModalOpen, setModalAction, setEventType } = useContext(EventModalContext)
+
 
   return (
     <>
@@ -28,6 +30,7 @@ const PropertyDetailsAllTables = () => {
               <button
               onClick={() => {
                 setModalAction("Create")
+                setEventType(selectedTab === TableTabs.CLEANING ? IEventType.CLEANING : IEventType.MAINTENANCE)
                 setModalOpen(true)
               }}
               className="btn sm:btn-sm btn-xs btn-outline btn-success"
