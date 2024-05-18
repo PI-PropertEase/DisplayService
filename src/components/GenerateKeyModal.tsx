@@ -68,6 +68,11 @@ const GenerateKeyModal = ({reservation, isOpen, setOpen}: GenerateKeyModalProps)
                             />
                         </div>
                         <hr />
+                        <div className="pt-5">
+                            <span className="text-warning font-bold">WARNING:{"  "}</span>
+                            this will send an e-mail with the provided key code for opening the door to the following client:
+                            <span className="font-bold">{"  "}{reservation?.client_email}</span>
+                        </div>
                         <div className="flex flex-col pt-5 gap-2">
                             <label>
                                 Keycode to open door:
@@ -84,11 +89,6 @@ const GenerateKeyModal = ({reservation, isOpen, setOpen}: GenerateKeyModalProps)
                                 </button>
                                 </div>
                             </div>
-                        </div>
-                        <div className="pt-5">
-                            <span className="text-warning font-bold">WARNING:{"  "}</span>
-                            this will send an e-mail with the provided key code for opening the door to the following client:
-                            <span className="font-bold">{"  "}{reservation?.client_email}</span>
                         </div>
                         <div className="flex gap-2 items-center pt-2">
                             <span className="label-text font-bold">Are you sure?</span> 
