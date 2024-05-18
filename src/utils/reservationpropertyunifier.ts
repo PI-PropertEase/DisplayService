@@ -1,5 +1,5 @@
 import { IFetchProperty, IProperty, PropertyStatus } from "../types/PropertyType"
-import { IEvent, IReservation } from "../types/ReservationType"
+import { IEvent, IReservation, ReservationStatus } from "../types/ReservationType"
 
 const insertReservationsInProperty = (
   reservationData: IReservation[],
@@ -77,6 +77,7 @@ export const getPropertiesForPropertyTable = (
         title: prop.title,
         address: prop.address,
         status: PropertyStatus.FREE,
+        services: prop.services,
         arrival: undefined,
         departure: undefined,
         price: prop.price,
@@ -88,6 +89,7 @@ export const getPropertiesForPropertyTable = (
     const currTime = new Date()
     let closestReservation: IReservation | undefined = undefined
     prop.reservations.forEach((r) => {
+      if (r.reservation_status !== ReservationStatus.PENDING) return;
       // if reservation is ongoing, status is either CHECK-OUT SOON (end_datetime is within 1 day reach)
       // or OCCUPIED, if the previous condition is not met
       if (r.begin_datetime < new Date() && r.end_datetime > new Date()) {
@@ -96,6 +98,7 @@ export const getPropertiesForPropertyTable = (
             id: prop._id,
             title: prop.title,
             address: prop.address,
+            services: prop.services,
             status: PropertyStatus.CHECK_OUT_SOON,
             arrival: r.begin_datetime,
             departure: r.end_datetime,
@@ -107,6 +110,7 @@ export const getPropertiesForPropertyTable = (
           id: prop._id,
           title: prop.title,
           address: prop.address,
+          services: prop.services,
           status: PropertyStatus.OCCUPIED,
           arrival: r.begin_datetime,
           departure: r.end_datetime,
@@ -134,6 +138,7 @@ export const getPropertiesForPropertyTable = (
           id: prop._id,
           title: prop.title,
           address: prop.address,
+          services: prop.services,
           status: PropertyStatus.CHECK_IN_SOON,
           arrival: (closestReservation as IReservation).begin_datetime,
           departure: (closestReservation as IReservation).end_datetime,
@@ -145,6 +150,7 @@ export const getPropertiesForPropertyTable = (
         id: prop._id,
         title: prop.title,
         address: prop.address,
+        services: prop.services,
         status: PropertyStatus.FREE,
         arrival: closestReservation !== undefined ? (closestReservation as IReservation).begin_datetime : undefined,
         departure: closestReservation !== undefined ? (closestReservation as IReservation).end_datetime : undefined,
