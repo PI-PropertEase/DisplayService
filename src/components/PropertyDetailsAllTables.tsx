@@ -8,6 +8,7 @@ import DeleteEventModal from "./DeleteEventModal"
 import { EventModalContext } from "../context/EventModalContext"
 import { DetailsInfo } from "./DetailsInfo"
 import { IEventType } from "../types/ReservationType"
+import { PropertyDetailsToastContext } from "../context/PropertyDetailsToastContext"
 
 enum TableTabs {
   DETAILS = "details",
@@ -21,6 +22,8 @@ const PropertyDetailsAllTables = () => {
   const [selectedTab, setSelectedTab] = useState<TableTabs>(TableTabs.DETAILS)
 
   const { setModalOpen, setModalAction, setEventType } = useContext(EventModalContext)
+
+  const {toastMessage, isShowing} = useContext(PropertyDetailsToastContext);
 
 
   return (
@@ -81,6 +84,13 @@ const PropertyDetailsAllTables = () => {
         ) : (
           ""
         )}
+        {isShowing &&
+            <div className={`toast toast-end transition-opacity duration-500 ${isShowing ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                <div className="alert alert-success font-thin">
+                    <span>{toastMessage}</span>
+                </div>
+            </div>
+        }
         <EventModal />
         <DeleteEventModal />
       </div>

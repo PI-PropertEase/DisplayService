@@ -19,6 +19,7 @@ import { ReservationContextProvider } from "./context/ReservationContext"
 import { EventModalContextProvider } from "./context/EventModalContext"
 import { ManagementContextProvider } from "./context/ManagementContext"
 import { EventContextProvider } from "./context/EventContext"
+import { PropertyDetailsToastContextProvider } from "./context/PropertyDetailsToastContext"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -72,13 +73,15 @@ const myRouter = createBrowserRouter([
     element: (
       <RequireAuth fallbackPath="/">
         <PropertyContextProvider>
-          <ReservationContextProvider>
-            <EventModalContextProvider>
-              <ManagementContextProvider>
-                <PropertyDetails />
-              </ManagementContextProvider>
-            </EventModalContextProvider>
-          </ReservationContextProvider>
+          <PropertyDetailsToastContextProvider>
+            <ReservationContextProvider>
+              <EventModalContextProvider>
+                <ManagementContextProvider>
+                  <PropertyDetails />
+                </ManagementContextProvider>
+              </EventModalContextProvider>
+            </ReservationContextProvider>
+          </PropertyDetailsToastContextProvider>
         </PropertyContextProvider>
       </RequireAuth>
     ),
