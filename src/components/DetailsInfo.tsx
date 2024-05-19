@@ -6,8 +6,9 @@ import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import { fetchProperty, updateProperty } from "../services/Property.service";
 import { Amenity, BathroomFixture, Bed, IFetchProperty } from "../types/PropertyType";
-import { useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { getRandomImages } from "../utils/property_utils";
+import { PropertyDetailsToastContext } from "../context/PropertyDetailsToastContext";
 
 export type ModalContentType = string | number | Bed[] | { price: number; after_commission: boolean; recommended_price: number;}
                                 | string[] | { name: string; phone_number: number; index: number; } | { name: string; phone_number: number; }  
@@ -31,7 +32,7 @@ export function DetailsInfo() {
     const authHeader = useAuthHeader() ?? '';
     const queryClient = useQueryClient();
     const id = useParams<{ id: string }>().id?.toString() ?? "";
-    const [toastPrice, setToastPrice] = useState<boolean>(false) 
+    const {setIsShowing, setToastMessage} = useContext(PropertyDetailsToastContext);
 
     
     const { data: propertyDetails } = useQuery<IFetchProperty>(`property${id}`, () => fetchProperty(id, authHeader).then(data => data), { staleTime: Infinity });
@@ -87,9 +88,11 @@ export function DetailsInfo() {
         }
         updateProperty(id, updatedPropertyDetails, authHeader).then(() => queryClient.setQueryData(`property${id}`, updatedPropertyDetails)).catch(err => console.log(err));
         if (updatedPropertyDetails.update_price_automatically) {
-            setToastPrice(true)
+            setIsShowing(true)
+            setToastMessage("Automatic price updates have been successfully activated. A new price will be recommended at midnight.")
             setTimeout(() => {
-                setToastPrice(false)
+                setToastMessage("")
+                setIsShowing(false)
             }, 5000);
         }
 
@@ -311,13 +314,7 @@ export function DetailsInfo() {
                             </div>
                             <button className="absolute top-2 right-2 text-xl" onClick={() => handleOpenModal({name: "", phone_number: 0}, "New Contact")}><BsPlusSquare className="text-accent" /></button>
                         </div>
-                        {toastPrice &&
-                            <div className={`toast toast-end transition-opacity duration-500 ${toastPrice ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-                                <div className="alert alert-success font-thin">
-                                    <span>Automatic price updates have been successfully activated.<br /> A new price will be recommended at midnight.</span>
-                                </div>
-                            </div>
-                        }
+                        
                     </div>
                 </div>
             </div>

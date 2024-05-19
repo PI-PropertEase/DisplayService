@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
 import { IoDiceOutline } from "react-icons/io5";
 import { IReservation } from "../types/ReservationType";
 import { sendKeyEmail } from "../services/calendar.service";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { PropertyDetailsToastContext } from "../context/PropertyDetailsToastContext";
 
 interface GenerateKeyModalProps {
     isOpen: boolean
@@ -17,6 +18,9 @@ const GenerateKeyModal = ({reservation, isOpen, setOpen}: GenerateKeyModalProps)
     const [errorMessage, setErrorMessage] = useState<string>("")
     const [keycodeInput, setKeycodeInput] = useState<string>("")
     const [confirmation, setConfirmation] = useState<boolean>(false)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+
+    const {setIsShowing, setToastMessage} = useContext(PropertyDetailsToastContext);
 
     const handleConfirm = () => {
         if (keycodeInput == "") {
@@ -31,10 +35,19 @@ const GenerateKeyModal = ({reservation, isOpen, setOpen}: GenerateKeyModalProps)
         }
         if (!reservation) return
         setShowError(false)
-        sendKeyEmail(authHeader, keycodeInput, reservation).then(() => handleClose()).catch((_reason) => {
+        setIsLoading(true)
+        sendKeyEmail(authHeader, keycodeInput, reservation).then(() => {
+            handleClose()
+            setIsShowing(true)
+            setToastMessage(`Successfully sent email with keycode to open door to ${reservation.client_email}!`)
+            setTimeout(() => {
+                setToastMessage("")
+                setIsShowing(false)
+            }, 5000)
+        }).catch((_reason) => {
             setErrorMessage("Failed to send email.")
             setShowError(true)
-        })
+        }).finally(() => setIsLoading(false))
     }
 
     const handleClose = () => {
@@ -117,10 +130,13 @@ const GenerateKeyModal = ({reservation, isOpen, setOpen}: GenerateKeyModalProps)
                             </div>
                         )}
                         <div className="modal-action flex flex-row items-center justify-center gap-2">
-                            <button className="btn btn-primary" onClick={handleConfirm as () => void}>
-                            Confirm
+                            <button className={`btn btn-primary ${isLoading ? "btn-disabled" : ""}`} onClick={() => {if (!isLoading) handleConfirm()}}>
+                                {isLoading && (
+                                    <span className="loading loading-spinner"></span>
+                                )}
+                                Confirm
                             </button>
-                            <button className="btn btn-secondary" onClick={() => handleClose()}>
+                            <button className={`btn btn-secondary ${isLoading ? "btn-disabled" : ""}`} onClick={() => {if (!isLoading) handleClose()}}>
                             Cancel
                             </button>
                         </div>
