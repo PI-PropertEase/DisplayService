@@ -84,12 +84,12 @@ export const getPropertiesForPropertyTable = (
       })
       return;
     }
-
+    
     // if there are reservations, get the closest one 
     const currTime = new Date()
     let closestReservation: IReservation | undefined = undefined
     prop.reservations.forEach((r) => {
-      if (r.reservation_status !== ReservationStatus.PENDING) return;
+      if (r.reservation_status !== ReservationStatus.CONFIRMED) return;
       // if reservation is ongoing, status is either CHECK-OUT SOON (end_datetime is within 1 day reach)
       // or OCCUPIED, if the previous condition is not met
       if (r.begin_datetime < new Date() && r.end_datetime > new Date()) {
