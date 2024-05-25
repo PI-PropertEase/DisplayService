@@ -35,7 +35,6 @@ export default function WeekCalendar() {
       const title = (e.type === IEventType.CLEANING ? "Cleaning 🧹 - " + e.property?.title : 
                     e.type === IEventType.MAINTENANCE ? "Maintenance 🔧 - " + e.property?.title :
                     e.type === IEventType.RESERVATION ? e.property?.title : "No title" ) ?? "No title"
-      console.log("title em questão: ", title)
       convertedEvents.push({
         title: title,
         start: e.begin_datetime.toISOString().split("T")[0],
