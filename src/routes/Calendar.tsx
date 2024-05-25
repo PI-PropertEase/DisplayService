@@ -29,7 +29,7 @@ const Calendar = () => {
         <div className="flex flex-col flex-1 p-8 overflow-auto pt-28">
           <div className="px-4">
             <h1 className="text-accent text-2xl font-semibold">Calendar</h1>
-            <p className="font-light mb-4">This page allows you to view a calendar with all reservations and cleaning/maintenance events on your properties. <span>You can scroll horizontally</span>.</p>
+            <p className="font-light mb-4">This page allows you to view a calendar with all reservations and cleaning/maintenance events on your properties. You can <span className="font-bold">scroll horizontally</span>.</p>
           </div>
           <div className="flex flex-row px-4 gap-8 items-center">
             <h3 className="text-2xl">Platforms</h3>
