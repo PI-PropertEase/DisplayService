@@ -12,14 +12,13 @@ export const convertToCalendarInterface = (
   const calendarEvents: CalendarEventInterface[] = []
 
   const unifiedData = insertPropertyInEvent(properties, fetchedEvents)
-
   unifiedData?.forEach((r) => {
     calendarEvents.push({
         platform: r.service as string,
         resourceId: r.property?.title ?? "",
         title: r.property?.title ?? "",
-        start: r.begin_datetime.toISOString().split('T')[0],
-        end: r.end_datetime.toISOString().split('T')[0],
+        start: r.begin_datetime.toISOString(),
+        end: r.end_datetime.toISOString(),
     })
   })
 
