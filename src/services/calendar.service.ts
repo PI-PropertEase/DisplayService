@@ -157,7 +157,6 @@ export const fetchMaintenanceEventsByPropertyId = async (authHeader: string, pro
 }
 
 
-// TODO: deal with error case
 export const createCleaningEvent = async (authHeader: string, cleaningEvent: ICleaning): Promise<ICleaning> => {
   const res = await axios.post<ICleaning>(`${URL}/events/management/cleaning`, 
   serializeEvent(cleaningEvent),
@@ -170,7 +169,6 @@ export const createCleaningEvent = async (authHeader: string, cleaningEvent: ICl
   return res.data
 }
 
-// TODO: deal with error case
 export const createMaintenanceEvent = async (authHeader: string, maintenanceEvent: IMaintenance): Promise<IMaintenance> => {
   const res = await axios.post<IMaintenance>(`${URL}/events/management/maintenance`, 
   serializeEvent(maintenanceEvent),
@@ -184,7 +182,6 @@ export const createMaintenanceEvent = async (authHeader: string, maintenanceEven
 }
 
 
-// TODO: deal with error case
 export const updateCleaningEvent = async (authHeader: string, cleaningEvent: IUpdateCleaning, id: number): Promise<IUpdateCleaning> => {
   const res = await axios.put<IUpdateCleaning>(`${URL}/events/management/cleaning/${id}`, 
   serializeUpdateEvent(cleaningEvent),
@@ -198,7 +195,6 @@ export const updateCleaningEvent = async (authHeader: string, cleaningEvent: IUp
 }
 
 
-// TODO: deal with error case
 export const updateMaintenanceEvent = async (authHeader: string, maintenanceEvent: IUpdateMaintenance, id: number): Promise<IUpdateMaintenance> => {
   const res = await axios.put<IUpdateMaintenance>(`${URL}/events/management/maintenance/${id}`, 
   serializeUpdateEvent(maintenanceEvent),
