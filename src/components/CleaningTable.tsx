@@ -123,7 +123,7 @@ const CleaningTable = () => {
                     <button
                       className="max-[760px]:ml-auto"
                       onClick={() => {
-                        setSelectedEvent(cleaningEvent) // TODO: the type on this is messed up
+                        setSelectedEvent(cleaningEvent)
                         setDeleteModalOpen(true)
                       }}
                     >
