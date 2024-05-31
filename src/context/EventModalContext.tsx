@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React, { createContext, useState } from "react"
-import { IEvent } from "../types/ReservationType"
+import { IEvent, IEventType } from "../types/ReservationType"
 
 interface EventModalContextType {
     modalOpen: boolean
@@ -11,6 +11,8 @@ interface EventModalContextType {
     setDeleteModalOpen: React.Dispatch<React.SetStateAction<boolean>>
     selectedEvent: IEvent | undefined
     setSelectedEvent: React.Dispatch<React.SetStateAction<IEvent | undefined>>
+    eventType: string
+    setEventType: React.Dispatch<React.SetStateAction<IEventType>>
 }
 
 const defaultContextState: EventModalContextType = {
@@ -21,7 +23,9 @@ const defaultContextState: EventModalContextType = {
     deleteModalOpen: false,
     setDeleteModalOpen: () => {},
     selectedEvent: undefined,
-    setSelectedEvent: () => {}
+    setSelectedEvent: () => {},
+    eventType: IEventType.CLEANING,
+    setEventType: () => {},
 }
 
 export const EventModalContext = createContext<EventModalContextType>(defaultContextState)
@@ -34,6 +38,7 @@ export const EventModalContextProvider: React.FC<{ children: React.ReactNode }> 
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false)
 
   const [selectedEvent, setSelectedEvent] = useState<IEvent | undefined>(undefined)
+  const [eventType, setEventType] = useState<IEventType>(IEventType.CLEANING)
 
   return (
     <EventModalContext.Provider
@@ -45,7 +50,10 @@ export const EventModalContextProvider: React.FC<{ children: React.ReactNode }> 
         deleteModalOpen,
         setDeleteModalOpen,
         selectedEvent,
-        setSelectedEvent
+        setSelectedEvent,
+        eventType,
+        setEventType,
+
       }}
     >
       {children}

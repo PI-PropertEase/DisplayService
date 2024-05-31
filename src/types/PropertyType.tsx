@@ -1,8 +1,11 @@
+import { ServiceEnum } from "./UserType";
+
 export interface IFetchProperty {
     _id?: number;
     user_email: string;
     title: string;
     address: string;
+    location: string;
     description: string;
     number_guests: number;
     square_meters: number;
@@ -14,6 +17,7 @@ export interface IFetchProperty {
     house_rules: HouseRules;
     additional_info: string;
     cancellation_policy: string;
+    services: ServiceEnum[];
     contacts: Contact[];
     recommended_price: number;
     update_price_automatically: boolean;
@@ -99,6 +103,7 @@ export interface IProperty {
   title: string;
   address: string;
   status: PropertyStatus;
+  services: ServiceEnum[];
   arrival?: Date;
   departure?: Date;
   price: number;

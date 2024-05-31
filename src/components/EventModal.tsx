@@ -5,13 +5,12 @@ import useAuthHeader from "react-auth-kit/hooks/useAuthHeader"
 import useAuthUser from "react-auth-kit/hooks/useAuthUser"
 import Flatpickr from "react-flatpickr"
 import { IoCloseOutline } from "react-icons/io5"
-import { useQuery, useQueryClient } from "react-query"
+import { useQueryClient } from "react-query"
 import { useParams } from "react-router-dom"
 import { EventModalContext } from "../context/EventModalContext"
 import {
   createCleaningEvent,
   createMaintenanceEvent,
-  fetchManagementTypes,
   updateCleaningEvent,
   updateMaintenanceEvent,
 } from "../services/calendar.service"
@@ -24,10 +23,9 @@ import {
   IUpdateMaintenance,
 } from "../types/ReservationType"
 import { IUser } from "../types/UserType"
-import { Dropdown } from "./Dropdown"
 
 const EventModal = () => {
-  const { modalOpen, setModalOpen, modalAction, selectedEvent } = useContext(EventModalContext)
+  const { modalOpen, setModalOpen, modalAction, selectedEvent, eventType } = useContext(EventModalContext)
   const minDate = new Date()
   minDate.setHours(0, 0, 0, 0)
 
@@ -37,8 +35,6 @@ const EventModal = () => {
   const [beginDate, setBeginDate] = useState<Date>(selectedEvent?.begin_datetime ?? new Date())
   const [endDate, setEndDate] = useState<Date>(selectedEvent?.end_datetime ?? new Date())
 
-  const [managementType, setManagementType] = useState<IEventType | null>(null)
-  const [managementTypes, setManagementTypes] = useState<IEventType[]>([])
 
   const [errorMessage, setErrorMessage] = useState<string>("")
   const [nameInput, setNameInput] = useState<string>("")
@@ -48,25 +44,11 @@ const EventModal = () => {
 
   const queryClient = useQueryClient()
 
-  const { data: fetchedManagementTypes } = useQuery<IEventType[]>(
-    "fetchManagementTypes",
-    () => fetchManagementTypes(token),
-    {
-      staleTime: 10000,
-    }
-  )
-
-  useEffect(() => {
-    if (fetchedManagementTypes) {
-      setManagementTypes(fetchedManagementTypes)
-    }
-  }, [fetchedManagementTypes])
 
   useEffect(() => {
     if (selectedEvent) {
       setBeginDate(selectedEvent.begin_datetime)
       setEndDate(selectedEvent.end_datetime)
-      setManagementType(selectedEvent.type)
       setNameInput(
         selectedEvent.type === IEventType.CLEANING
           ? (selectedEvent as ICleaning).worker_name
@@ -83,7 +65,8 @@ const EventModal = () => {
   }
 
   const handleConfirm = async () => {
-    if (beginDate >= endDate) {
+
+    if (beginDate.getTime() >= endDate.getTime()) {
       showErrorMessage("Error! Invalid time interval. Begin time should be before end time.")
       return
     }
@@ -95,7 +78,7 @@ const EventModal = () => {
 
     try {
       if (modalAction === "Create") {
-        if (managementType !== IEventType.CLEANING && managementType !== IEventType.MAINTENANCE) {
+        if ((eventType as IEventType)!== IEventType.CLEANING && (eventType as IEventType)!== IEventType.MAINTENANCE) {
           showErrorMessage("Error! Please select an event type.")
           return
         }
@@ -103,17 +86,16 @@ const EventModal = () => {
         const event = {
           property_id: propertyId,
           owner_email: userEmail ?? "",
-          begin_datetime: beginDate,
-          end_datetime: endDate,
-          type:
-            managementType === IEventType.CLEANING ? IEventType.CLEANING : IEventType.MAINTENANCE,
+          begin_datetime: new Date(beginDate?.getTime() - beginDate?.getTimezoneOffset() * 60 * 1000),
+          end_datetime: new Date(endDate?.getTime() - endDate?.getTimezoneOffset() * 60 * 1000),
+          type: eventType
         }
 
-        if (managementType === IEventType.CLEANING) {
+        if ((eventType as IEventType) === IEventType.CLEANING) {
           (event as ICleaning).worker_name = nameInput
           await createCleaningEvent(token, event as ICleaning)
           await queryClient.invalidateQueries("fetchCleaningEvents")
-        } else if (managementType === IEventType.MAINTENANCE) {
+        } else if ((eventType as IEventType) === IEventType.MAINTENANCE) {
           (event as IMaintenance).company_name = nameInput
           await createMaintenanceEvent(token, event as IMaintenance)
           await queryClient.invalidateQueries("fetchMaintenanceEvents")
@@ -147,7 +129,6 @@ const EventModal = () => {
       } else {
         showErrorMessage("An error occurred. Please try again.")
       }
-      console.log("error em questao", error)
       return
     }
 
@@ -171,25 +152,17 @@ const EventModal = () => {
               <hr />
               <div className="flex flex-col pt-5 gap-2">
                 {modalAction === "Create" && (
-                  <div className="flex flex-row items-center">
-                    Event type:
-                    <div className="ml-3 mr-3">
-                      <Dropdown
-                        options={managementTypes}
-                        placeholder="Select event type"
-                        onSelect={(option) => {
-                          setManagementType(option as IEventType)
-                        }}
-                      />
-                    </div>
+                  <div className="flex flex-row items-center gap-2">
+                    <p className="font-medium">Event type:</p>
+                    <p>{eventType.charAt(0).toUpperCase() + eventType.slice(1)}</p>
                   </div>
                 )}
-                {managementType !== null && (
+                {eventType !== null && (
                   <>
                     <label>
-                      {managementType === IEventType.CLEANING
+                      {(eventType as IEventType) === IEventType.CLEANING
                         ? "Worker Name:"
-                        : managementType === IEventType.MAINTENANCE
+                        : (eventType as IEventType) === IEventType.MAINTENANCE
                         ? "Company Name:"
                         : ""}
                     </label>
@@ -204,8 +177,8 @@ const EventModal = () => {
                 <Flatpickr
                   data-enable-time
                   value={beginDate}
-                  onChange={([date]) => {
-                    setBeginDate(date)
+                  onChange={(date: Date[]) => {
+                    setBeginDate(date[0]);
                   }}
                   className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent"
                   options={{
@@ -216,8 +189,8 @@ const EventModal = () => {
                 <Flatpickr
                   data-enable-time
                   value={endDate}
-                  onChange={([date]) => {
-                    setEndDate(date)
+                  onChange={(date: Date[]) => {
+                    setEndDate(date[0]);
                   }}
                   className="bg-base-200 p-2 rounded-xl mt-2 w-full text-accent"
                   options={{

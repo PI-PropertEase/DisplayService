@@ -9,10 +9,21 @@ import useSignIn from "react-auth-kit/hooks/useSignIn";
 import { handleFirebaseLogin } from "../utils/firebase";
 import axios from "axios";
 import { IUser } from "../types/UserType";
+import { useState } from "react";
 
 export default function Home() {
   const navigate = useNavigate();
   const signIn = useSignIn();
+  const [alertMessage, setAlertMessage] = useState<string>("");
+  const [showErrorAlert, setShowErrorAlert] = useState<boolean>(false);
+
+  const showAndSetAlert = (message: string) => {
+    setAlertMessage(message);
+    setShowErrorAlert(true);
+    setTimeout(() => {
+      setShowErrorAlert(false);
+    }, 5000)
+  }
 
   const handleSignIn = async () => {
     const result = await handleFirebaseLogin();
@@ -49,10 +60,10 @@ export default function Home() {
         ) {
           navigate("/dashboard");
         } else {
-          console.error("Failure signing in with react auth kit");
+          showAndSetAlert("Failure while signing in...");
         }
       } catch (error) {
-        console.log("Error occured during authentication: ", error);
+        showAndSetAlert("Failure while signing in");
       }
     }
   };
@@ -98,10 +109,10 @@ export default function Home() {
         ) {
           navigate("/dashboard");
         } else {
-          console.error("Failure signing in with react auth kit");
+          showAndSetAlert("Failure while signing up...");
         }
       } catch (error) {
-        console.log("Error occured during authentication: ", error);
+        showAndSetAlert("Failure while signing up.");
       }
     }
   };
@@ -219,6 +230,12 @@ export default function Home() {
             </div>
           </div>
         </div>
+        {showErrorAlert && (
+          <div role="alert" className="w-[20%] alert alert-error fixed bottom-2 right-2" style={{wordWrap: "break-word"}}>
+            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <span>Error: {alertMessage}</span>
+          </div>
+        )}
       </div>
     </>
   );
